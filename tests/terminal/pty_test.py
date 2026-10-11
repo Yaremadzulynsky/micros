@@ -63,6 +63,10 @@ with line_editor(shell,None):
             until(b'STATE')
             os.write(master,b'\x03')
             self.assertIn(b'Interrupted',until(b'fixture> '))
+            # Prompt output can precede readline's input preparation. Wait for
+            # echoed editable text before testing cancellation at the prompt.
+            os.write(master,b'discard_this')
+            until(b'discard_this')
             os.write(master,b'\x03')
             until(b'fixture> ')
             os.write(master,b'\x04')
