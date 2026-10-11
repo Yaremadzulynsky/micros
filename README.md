@@ -9,25 +9,85 @@ and does not provide process memory isolation.
 
 ## Install and start
 
-Follow the [Quickstart: install the SDK and CLI](https://docs.meetmicros.com/site/get-started/#install-cli).
-It covers cloning current `main` into a tools directory, running setup once,
-adding the launcher to PATH, and creating a separate application. The repository
-is public. No board or server is needed
-for the first generation, composition and host test.
+Start on macOS or Linux with Git, Python 3.10–3.12 and a C17 compiler.
+No board or server is needed for your first application test.
 
-The checkout route uses `micros new` to create a project and its generated
-`./micros` launcher for application commands. Each `service.toml` owns a service's
-implementation and contract; `units/<hardware-id>.toml` owns board-specific choices.
-`micros.lock` checks the SDK revision. Keep application source outside this repository.
+### 1. Install the SDK and CLI
 
-[Documentation](https://docs.meetmicros.com/) ·
-[Write a service](docs/site/write-a-service.md) ·
-[Contributing and SDK tests](CONTRIBUTING.md)
+Clone the SDK into an unused tools directory and set it up once:
 
-The older `v0.1.0-preview.1` release has [historical instructions](docs/site/developer-preview.md)
-and [dated validation evidence](docs/site/preview-evidence.md). It is not the
-current installation route. Other MCU targets, cross-board coordination and base
-OTA remain experimental; check the relevant target guide before using hardware.
+```sh
+mkdir -p "$HOME/tools"
+git clone --branch main https://github.com/Yaremadzulynsky/micros.git "$HOME/tools/micros"
+cd "$HOME/tools/micros"
+./micros setup
+
+export MICROS_SDK="$HOME/tools/micros"
+export PATH="$MICROS_SDK:$PATH"
+command -v micros
+micros --help
+```
+
+`setup` creates the SDK's Python environment and installs its dependencies.
+The exports apply to this terminal; add them to your shell's startup file to keep
+them for future sessions.
+
+### 2. Create your application
+
+Keep application source outside the SDK checkout. From the same terminal:
+
+```sh
+cd "$HOME"
+micros new my-application
+cd my-application
+./micros generate
+./micros compose
+```
+
+This creates a hello service, generates its interfaces and resolves its deployment
+declaration offline. `new` requires a directory that does not already exist.
+
+```text
+my-application/
+  micros                         # Application CLI launcher
+  micros.lock                    # Exact SDK revision
+  host.toml                      # Local runtime deployment
+  units/000000000000.toml         # Board deployment placeholder
+  services/hello/service.toml     # Service contract and configuration
+  services/hello/src/service.c    # Your service implementation
+  tests/                         # Application host tests
+```
+
+The application links to your SDK checkout and checks its revision against
+`micros.lock`. Keep that matching checkout available; pulling a newer SDK does
+not automatically upgrade existing applications.
+
+### 3. Run your first test
+
+From the application directory:
+
+```sh
+./micros test
+```
+
+The starter compiles the hello service and tests its lifecycle, greeting and
+cleanup on your computer. Edit `services/hello/` in your application, then
+regenerate and test as you develop. Generated output goes under `build/`.
+
+### 4. Run your application
+
+- **On your computer:** follow [local deployment](https://docs.meetmicros.com/site/get-started/#deploy-host)
+  to run the persistent runtime on macOS ARM64 or Linux ARM64/x86-64.
+- **On an ESP32:** follow [board setup](docs/site/set-up-an-esp32.md), then
+  [deploy your application](docs/site/deploy-an-application.md). Replace the unit
+  placeholder with your board's hardware ID and settings first.
+- **On ESP8266 or MKR WiFi 1010:** use the matching starter and
+  [experimental USB guide](docs/site/experimental-usb.md).
+
+The [full quickstart](https://docs.meetmicros.com/site/get-started/) covers setup
+options, SDK selection and deployment prerequisites. Continue with
+[Write a service](docs/site/write-a-service.md), or use
+[Contributing and SDK tests](CONTRIBUTING.md) to work on Micros itself.
 
 ## Repository map
 
