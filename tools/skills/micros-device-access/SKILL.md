@@ -5,7 +5,7 @@ description: Discover micros devices, run a bounded board health survey, and dia
 
 # Access a micros device
 
-Run commands from the micros repository root. Read [terminal operations](../../../docs/archive/documentation/OPERATIONS.md) for command semantics and [deployment](../../../docs/archive/documentation/DEPLOYING.md) for identity and transport details. Check `./micros --help` and the relevant subcommand help when platform support or flags are uncertain.
+Run CLI commands from the application directory so its unit and SDK lock are selected. From the SDK root, pass `--project PATH/TO/UNIT.toml` to source plan/build/deploy commands. Read [terminal operations](../../../docs/site/cli.md) for command semantics and [deployment](../../../docs/site/deploy-an-application.md) for identity and transport details. Check `./micros --help` and the relevant subcommand help when platform support or flags are uncertain.
 
 ## Identify and inspect
 
@@ -13,7 +13,7 @@ Run commands from the micros repository root. Read [terminal operations](../../.
 2. Run `./micros status -d NAME_OR_ID --json` and `./micros logs -d NAME_OR_ID --json`. Inspect the returned shape before scripting against it. Use `./micros doctor -d NAME_OR_ID` when connectivity or base compatibility needs diagnosis.
 3. Relate the reported hardware identity to `units/<12-lowercase-MAC-digits>.toml`. Inspect that file for intended services and wiring. Runtime liveness alone does not establish correct sensor readings or application behavior; check task-specific logs or observations.
 
-The configured server is the default remote route: boards connect outward to it. A local saved profile is not the live roster. USB is an explicit onboarding/recovery route; read [onboarding](../../../docs/archive/documentation/ONBOARDING.md) if requested. Determine the actual platform before applying ESP32-specific instructions.
+The configured server is the default remote route: boards connect outward to it. A local saved profile is not the live roster. USB is an explicit onboarding/recovery route; read [onboarding](../../../docs/site/set-up-an-esp32.md) if requested. Determine the actual platform before applying ESP32-specific instructions.
 
 ## Default health survey
 

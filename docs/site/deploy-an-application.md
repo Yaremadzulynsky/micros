@@ -37,6 +37,10 @@ identical stopped content can restart without uploading. `--force` requests a fu
 activation. Content hashes identify releases; a version bump is not required.
 A preview is not a saved executable plan: a later source deploy checks current inputs.
 
+For a changed ESP32 application, deployment transfers all prepared service images
+and the complete configuration to the candidate bank, even when only one service
+will reload. Transfer scope and restart scope are separate.
+
 ## 02 · What restarts {#what-restarts}
 
 On ESP32 bases advertising `selective_deploy`, compatible updates reload changed

@@ -19,7 +19,10 @@ system-diagnosis skills for board investigations, then select specialized skills
 as needed. Agents that do not load `AGENTS.md` can be directed to the relevant
 `tools/skills/<name>/SKILL.md` explicitly. This folder does not install skills globally.
 Keep the checkout available because the skills link to its maintained documentation
-and source. Commands run from the repository root.
+and source. Run application CLI commands from your application directory. When
+working from the SDK root instead, pass `--project PATH/TO/UNIT.toml` to source
+plan/build/deploy commands. SDK helper scripts use the checkout-relative paths
+shown in their references.
 
 Start general board investigations with `micros-device-access`. It maps the live
 application, compares progress over a bounded window, captures existing data and

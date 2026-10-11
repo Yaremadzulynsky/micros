@@ -5,7 +5,7 @@ description: Plot real micros pin-related or sensor diagnostics from captured re
 
 # Graph measured diagnostics
 
-Run device commands from the repository root. First identify what the requested chart represents: raw electrical pin levels, debounced button events, sensor measurements, or delivery latency. These are different signals; do not substitute one silently.
+Run device CLI commands from the application directory; run SDK helper scripts from the SDK root as their references specify. First identify what the requested chart represents: raw electrical pin levels, debounced button events, sensor measurements, or delivery latency. These are different signals; do not substitute one silently.
 
 ## Establish an actual data source
 
@@ -25,7 +25,7 @@ and viewer loss events; do not compete with manual bridge readers on the same po
 
 Existing sources include [DHT diagnostic logs and local environment IPC](../../../examples/services/dht/README.md) and [button latency logs](../../../examples/services/logger/README.md). Use `./micros logs -d NAME_OR_ID --json` for a snapshot, or a bounded `--follow` capture. Inspect the CLI output and producer's actual formatting before writing a parser. Keep raw capture data so the chart can be reproduced. Stop the capture process when its observation window ends.
 
-If the requested signal is not exported, explain the specific missing acquisition path. If implementation is in scope, follow [SDK](../../../docs/archive/documentation/SDK.md) and the pin-monitor ownership constraints to add instrumentation, build and verify it before collecting. Otherwise report the gap and the available measurements. Do not produce synthetic data as a hardware result.
+If the requested signal is not exported, explain the specific missing acquisition path. If implementation is in scope, follow [SDK](../../../docs/site/service-api.md) and the pin-monitor ownership constraints to add instrumentation, build and verify it before collecting. Otherwise report the gap and the available measurements. Do not produce synthetic data as a hardware result.
 
 ## Preserve measurement meaning
 

@@ -1,7 +1,7 @@
 # Set up coordination for a diagnostic test
 
 Use this when a functional test needs typed state/action/event transport between
-services on different devices. Read the [coordination contract](../../../../docs/archive/documentation/COORDINATION.md)
+services on different devices. Read the [coordination contract](../../../../docs/site/coordination-reference.md)
 and [current CLI](../../../../src/micros_tooling/fleet/coordination.py). Local bindings and
 ordinary bridge channels do not need these server routes.
 

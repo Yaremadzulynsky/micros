@@ -39,7 +39,7 @@ Choose between published data and a physical diagnostic:
   supported input mode; do not infer voltage suitability from a pin name.
 - If the owner must be replaced, state that intervention and preserve the complete
   original release. Use the [installation procedure](../micros-diagnostic-services/SKILL.md)
-  only within the authorized task. Installation pauses the whole application.
+  only within the authorized task. Check the plan: adding instrumentation can require whole-application activation.
 
 For the existing-data path, use the [shared capture procedure](../micros-device-access/references/capture-access.md)
 and evaluate progress, validity and gaps against the producer's declared cadence.
