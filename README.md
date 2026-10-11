@@ -11,7 +11,7 @@ and application updates on top of the resident OS.
 
 ## 01 · Get the SDK
 
-Use macOS or Linux with Git and Python 3.10–3.12. No board or server needed.
+Use macOS or Linux with Git to clone the SDK. No board or server needed.
 Choose an unused SDK directory:
 
 ```sh
@@ -23,6 +23,11 @@ cd "$HOME/tools/micros"
 export MICROS_SDK="$HOME/tools/micros"
 export PATH="$MICROS_SDK:$PATH"
 ```
+
+`setup` checks your computer and installs missing development tools and Python
+dependencies. Use `./micros setup --check` to check without installing. See
+[setup requirements](https://docs.meetmicros.com/site/get-started/#setup-requirements)
+for package managers and administrator access.
 
 Add the two exports to your shell's startup file to keep them for new terminals.
 

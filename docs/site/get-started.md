@@ -18,7 +18,7 @@ No board or server is needed to generate and compose your first application.
 
 ## 01 · Install the SDK and CLI {#install-cli}
 
-Use macOS or Linux with Git and Python 3.10–3.12. The public SDK can be cloned without GitHub authentication.
+Use macOS or Linux with Git to clone the SDK. The public SDK can be cloned without GitHub authentication.
 Choose an unused installation directory; this example uses `~/tools/micros`:
 
 ```sh
@@ -33,10 +33,37 @@ command -v micros
 micros --help
 ```
 
-`command -v micros` should show your checkout's `micros` file. `setup` creates
-`build/python` and installs the Python dependencies; it selects Python 3.10–3.12.
-Set `MICROS_PYTHON` to a supported interpreter if you need to choose one explicitly.
-Target compilers, flashing tools and Docker are separate prerequisites.
+`command -v micros` should show your checkout's `micros` file.
+
+### What setup checks {#setup-requirements}
+
+`./micros setup` reports each prerequisite, installs missing tools, then checks
+again. It prepares Git, Python 3.10–3.12 with virtual-environment support, C17 and
+C++17 compilers, Make, CMake 3.24+, Ninja and the SDK's Python dependencies.
+Python packages and missing CMake/Ninja installations live in `build/python`;
+the CLI makes these build tools available automatically.
+
+To inspect your computer without installing or downloading anything:
+
+```sh
+./micros setup --check
+```
+
+The check exits successfully only when all host prerequisites are ready.
+Automatic system-package installation uses **Homebrew on macOS**, or **apt/dnf
+on Linux**; Linux may ask for your sudo password. If macOS needs Apple's Command
+Line Tools, setup opens their installer: finish it and rerun setup. If Homebrew
+is missing, install it from [brew.sh](https://brew.sh/) first. Other Linux package
+managers require you to install the reported system tools yourself.
+
+Setup uses an existing supported Python when available. `MICROS_PYTHON` can select
+one explicitly; an invalid override or an incompatible existing `build/python`
+is reported and preserved. Linux repositories must provide a supported Python.
+Setup does not upgrade the OS or change your shell startup files.
+
+Board toolchains, flashing tools, Docker and contributor-only tools such as
+Node.js are separate. Use `./micros setup --esp32` to also install the pinned
+ESP32 SDK; see the target guide for other boards.
 
 The two `export` lines apply to the current terminal. To keep them for new
 terminals, add those same lines to your shell's startup file (for example
@@ -102,8 +129,8 @@ See [contributor checks](contributing.md) for the full SDK host suite.
 
 ### Deploy a persistent local application {#deploy-host}
 
-On Linux ARM64/x86-64 or macOS ARM64, install CMake 3.24+ and C17/C++17
-compilers, then run from the generated application directory:
+After setup on Linux ARM64/x86-64 or macOS ARM64, run from the generated
+application directory:
 
 ```sh
 ./micros host deploy

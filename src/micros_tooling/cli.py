@@ -56,6 +56,8 @@ def run(args):
         result = subprocess.run([str(checkout / 'micros'), *args],
             env=dict(os.environ, MICROS_PYTHON=sys.executable))
         return result.returncode
+    # Setup may install CMake/Ninja inside this SDK's Python environment.
+    os.environ['PATH'] = str(checkout / 'build/python/bin') + os.pathsep + os.environ.get('PATH', '')
     current = source_checkout()
     if checkout != current:
         sdk.check_dependencies(checkout)

@@ -3,6 +3,7 @@
 Start with the root `./micros` command. The installed launcher and checkout launcher
 share the implementation in [`src/micros_tooling/`](../src/micros_tooling/README.md).
 
+- `setup.sh`: checks host prerequisites and installs missing development tools before Python is available.
 - `cli/`: lower-level script interfaces for remote and desktop runtime control.
 - `packaging/`: demonstration/fixture package builders and a compatibility command.
 - `checks/`: native ABI compile checks.

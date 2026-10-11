@@ -204,6 +204,8 @@ if((APPLE AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64") OR
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/deployment/external_host_test.py"
         "$<TARGET_FILE:micros-control>")
     set_tests_properties(external_host_deployment PROPERTIES TIMEOUT 600)
+    add_test(NAME setup_prerequisites COMMAND ${Python3_EXECUTABLE}
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/cli/setup_test.py")
     add_test(NAME launcher_parity COMMAND ${Python3_EXECUTABLE}
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/cli/launcher_test.py")
     add_test(NAME application_command_defaults COMMAND ${Python3_EXECUTABLE}
