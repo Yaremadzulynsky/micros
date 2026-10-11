@@ -4,15 +4,26 @@
 
 Micros provides service lifecycle management, declared resources, typed messages,
 remote inspection and application updates without replacing the resident OS.
-The goal is computer-like visibility and control on small devices. It is not Linux
-and does not provide process memory isolation.
+The goal is computer-like visibility and control on small devices. Native services
+are trusted code and share memory; Micros does not provide process isolation.
+
+[Documentation](https://docs.meetmicros.com/) ·
+[Quickstart](#install-and-start) ·
+[Write a service](docs/site/write-a-service.md) ·
+[Repository map](#repository-map)
+
+---
 
 ## Install and start
 
-Start on macOS or Linux with Git, Python 3.10–3.12 and a C17 compiler.
-No board or server is needed for your first application test.
+**Install → Create → Test → Deploy**
 
-### 1. Install the SDK and CLI
+Start on macOS or Linux with Git, Python 3.10–3.12 and a C17 compiler.
+
+> [!TIP]
+> Your first application runs a host test on your computer. No board or server needed.
+
+### 01 · Install the SDK and CLI
 
 Clone the SDK into an unused tools directory and set it up once:
 
@@ -32,7 +43,7 @@ micros --help
 The exports apply to this terminal; add them to your shell's startup file to keep
 them for future sessions.
 
-### 2. Create your application
+### 02 · Create your application
 
 Keep application source outside the SDK checkout. From the same terminal:
 
@@ -47,6 +58,9 @@ cd my-application
 This creates a hello service, generates its interfaces and resolves its deployment
 declaration offline. `new` requires a directory that does not already exist.
 
+<details>
+<summary>Your application layout</summary>
+
 ```text
 my-application/
   micros                         # Application CLI launcher
@@ -58,11 +72,13 @@ my-application/
   tests/                         # Application host tests
 ```
 
+</details>
+
 The application links to your SDK checkout and checks its revision against
 `micros.lock`. Keep that matching checkout available; pulling a newer SDK does
 not automatically upgrade existing applications.
 
-### 3. Run your first test
+### 03 · Run your first test
 
 From the application directory:
 
@@ -74,20 +90,23 @@ The starter compiles the hello service and tests its lifecycle, greeting and
 cleanup on your computer. Edit `services/hello/` in your application, then
 regenerate and test as you develop. Generated output goes under `build/`.
 
-### 4. Run your application
+### 04 · Choose where to run
 
-- **On your computer:** follow [local deployment](https://docs.meetmicros.com/site/get-started/#deploy-host)
-  to run the persistent runtime on macOS ARM64 or Linux ARM64/x86-64.
-- **On an ESP32:** follow [board setup](docs/site/set-up-an-esp32.md), then
-  [deploy your application](docs/site/deploy-an-application.md). Replace the unit
-  placeholder with your board's hardware ID and settings first.
-- **On ESP8266 or MKR WiFi 1010:** use the matching starter and
-  [experimental USB guide](docs/site/experimental-usb.md).
+| Run on | Start here |
+| --- | --- |
+| **Your computer** · macOS ARM64, Linux ARM64/x86-64 | [Deploy to the local runtime](https://docs.meetmicros.com/site/get-started/#deploy-host) |
+| **ESP32** | [Set up your board](docs/site/set-up-an-esp32.md), then [deploy your application](docs/site/deploy-an-application.md) |
+| **ESP8266 / MKR WiFi 1010** · experimental | [Choose a starter and deploy over USB](docs/site/experimental-usb.md) |
+
+For hardware deployment, replace the unit placeholder with your board's hardware
+ID and settings before deploying.
 
 The [full quickstart](https://docs.meetmicros.com/site/get-started/) covers setup
 options, SDK selection and deployment prerequisites. Continue with
 [Write a service](docs/site/write-a-service.md), or use
 [Contributing and SDK tests](CONTRIBUTING.md) to work on Micros itself.
+
+---
 
 ## Repository map
 
@@ -105,10 +124,11 @@ Application source and deployment declarations belong in the project created by
 `micros new`, outside this SDK checkout. The product website lives in the separate
 `micros-website` repository; the management server and console remain here.
 `build/` is disposable generated output. `.micros/` is private operational and
-recovery state: preserve it. Archived documentation retains its original paths
-and measurements; it does not describe the current implementation.
+recovery state: preserve it.
 
-## Understand the limits
+---
+
+## Runtime boundaries
 
 - Native services are trusted code without memory isolation; a fault can affect
   the whole device. The [native ABI](src/sdk/abi/include/micros/service.h) remains experimental.
@@ -120,6 +140,8 @@ and measurements; it does not describe the current implementation.
 - Logs are bounded, volatile diagnostics, not a durable historical record.
 
 [Architecture](docs/site/architecture.md) · [Updates and recovery](docs/site/updates-and-recovery.md)
+
+---
 
 Original Micros code is [MIT licensed](LICENSE). Bundled dependencies retain their
 [upstream licenses](THIRD_PARTY_NOTICES.md).

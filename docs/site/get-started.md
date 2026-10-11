@@ -12,7 +12,7 @@ Start · Quickstart
 # Quickstart
 
 Clone the SDK once, set up its Python tools, and create your application in a
-separate directory. These instructions use current `main`, not the frozen preview tag.
+separate directory. These instructions use current `main`.
 No board or server is needed to generate and compose your first application.
 {: .arch-intro}
 
@@ -160,5 +160,4 @@ friendly device names require the configured server roster.
 | ESP8266, 4 MiB; Arduino MKR WiFi 1010 | [Experimental USB deployment](experimental-usb.md), including target-specific unit settings and prerequisites |
 
 Continue with [Write a service](write-a-service.md) or
-[Deploy and update](deploy-an-application.md). The older preview's
-[dated evidence](preview-evidence.md) describes that release, not current validation.
+[Deploy and update](deploy-an-application.md).
