@@ -1,0 +1,133 @@
+# Diagnostic example recipe. Review identity, hardware, services and bindings before deployment.
+
+[project]
+name = "Bounded input recorder"
+
+[board]
+profile = "adafruit_feather_esp32_v2"
+flash_mb = 8
+recovery_button = ""
+
+[board.gpio.signal]
+pin = 38
+direction = "input"
+
+[services.recorder]
+source = "../../services/diagnostics/signal-recorder"
+name = "diagnostic.signal-recorder"
+version = "1.0.0"
+
+[services.recorder.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.recorder.capabilities]
+gpio = ["signal"]
+timers = 0
+
+[services.recorder.config_schema.run_id]
+type = "uint32"
+default = 1
+min = 1
+max = 4294967295
+
+[services.recorder.config_schema.sample_interval_ms]
+type = "uint32"
+default = 10
+min = 10
+max = 60000
+
+[services.recorder.config_schema.duration_ms]
+type = "uint32"
+default = 10000
+min = 10
+max = 60000
+
+[services.recorder.config_schema.analog]
+type = "uint32"
+default = 0
+min = 0
+max = 1
+
+[services.recorder.config_schema.trigger]
+type = "uint32"
+default = 1
+min = 0
+max = 4
+
+[services.recorder.config_schema.threshold]
+type = "uint32"
+default = 1
+min = 0
+max = 4095
+
+[services.recorder.config_schema.pre_samples]
+type = "uint32"
+default = 8
+min = 0
+max = 15
+
+[services.recorder.config_schema.post_samples]
+type = "uint32"
+default = 8
+min = 0
+max = 16
+
+[services.recorder.memory]
+arena = "RAM"
+stack_bytes = 4096
+
+[services.recorder.publications.records]
+channel = "records"
+
+[services.recorder.publications.status]
+channel = "capture_status"
+
+[services.bridge]
+source = "../../services/network-bridge"
+name = "board.network-bridge"
+version = "1.1.0"
+
+[services.bridge.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.bridge.capabilities]
+gpio = []
+timers = 0
+
+[services.bridge.memory]
+arena = "RAM"
+stack_bytes = 4096
+
+[services.bridge.subscriptions.records]
+channel = "records"
+
+[services.bridge.subscriptions.capture_status]
+channel = "capture_status"
+
+[channels.records]
+key = 1
+policy = "stream"
+depth = 8
+max_payload = 256
+schema = "../../src/sdk/protos/diagnostics/v1/capture_record.proto"
+name = "diagnostics.records"
+interface = "micros.diagnostics.records"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+
+[channels.capture_status]
+key = 2
+policy = "latest"
+depth = 1
+max_payload = 128
+schema = "../../src/sdk/protos/diagnostics/v1/capture_status.proto"
+name = "diagnostics.capture_status"
+interface = "micros.diagnostics.capture_status"
+major = 1
+minor = 0
+accepts_minor = [0, 0]

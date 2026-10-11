@@ -1,0 +1,9 @@
+# Shared pin sample message contract.
+[interface]
+name = "pin.samples"
+interface = "micros.pin.sample"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+max_payload = 64
+schema = "pin_sample.proto"

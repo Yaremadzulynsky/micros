@@ -1,0 +1,7 @@
+syntax = "proto3";
+package micros.ir.v1;
+message Result {
+  uint32 request_id = 1;
+  fixed32 code = 2;
+  uint32 status = 3; // 0=sent, 1=busy, 2=invalid, 3=timeout, 4=duplicate.
+}

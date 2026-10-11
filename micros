@@ -1,0 +1,45 @@
+#!/bin/sh
+# Resolve the repository without depending on the caller's working directory.
+MICROS_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+if [ "$1" = setup ]; then
+    if [ "$2" = --help ]; then
+        echo 'Usage: ./micros setup [--esp32]  (Python dependencies; optionally install pinned ESP32 SDK)'
+        exit 0
+    fi
+    if [ "$#" -gt 2 ] || { [ "$#" -eq 2 ] && [ "$2" != --esp32 ]; }; then
+        echo 'Usage: ./micros setup [--esp32]' >&2
+        exit 2
+    fi
+    # grpcio-tools 1.62.3 ships wheels for Python 3.10–3.12. Do not fall
+    # through to a failing source build on a newer system Python.
+    micros_python="${MICROS_PYTHON:-}"
+    if [ -z "$micros_python" ]; then
+        for candidate in python3.12 python3.11 python3.10 python3; do
+            if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c 'import sys; sys.exit(not ((3, 10) <= sys.version_info[:2] < (3, 13)))' 2>/dev/null; then
+                micros_python="$candidate"
+                break
+            fi
+        done
+    fi
+    if [ -z "$micros_python" ] || ! "$micros_python" -c 'import sys; sys.exit(not ((3, 10) <= sys.version_info[:2] < (3, 13)))' 2>/dev/null; then
+        echo 'micros: setup requires Python 3.10–3.12. Install Python 3.12 or set MICROS_PYTHON to a supported interpreter.' >&2
+        exit 1
+    fi
+    if [ -x "$MICROS_ROOT/build/python/bin/python" ] && ! "$MICROS_ROOT/build/python/bin/python" -c 'import sys; sys.exit(not ((3, 10) <= sys.version_info[:2] < (3, 13)))' 2>/dev/null; then
+        echo 'micros: build/python uses unsupported Python. Move that virtual environment aside, then rerun ./micros setup.' >&2
+        exit 1
+    fi
+    "$micros_python" -m venv "$MICROS_ROOT/build/python" || exit $?
+    "$MICROS_ROOT/build/python/bin/python" -m pip install -r "$MICROS_ROOT/tools/requirements-dev.txt" || exit $?
+    "$MICROS_ROOT/build/python/bin/python" -m pip install --no-deps -e "$MICROS_ROOT" || exit $?
+    if [ "$2" = --esp32 ]; then
+        PATH="$MICROS_ROOT/build/python/bin:$PATH" exec "$MICROS_ROOT/build/python/bin/python" "$MICROS_ROOT/src/micros_tooling/platforms/esp32/bootstrap.py"
+    fi
+    exit 0
+fi
+if [ ! -x "$MICROS_ROOT/build/python/bin/python" ]; then
+    echo 'micros: Python environment missing. Run ./micros setup first.' >&2
+    exit 1
+fi
+export PYTHONPATH="$MICROS_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+exec "$MICROS_ROOT/build/python/bin/python" -m micros_tooling.cli "$@"

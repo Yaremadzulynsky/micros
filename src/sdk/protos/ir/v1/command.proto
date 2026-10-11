@@ -1,0 +1,6 @@
+syntax = "proto3";
+package micros.ir.v1;
+message Command {
+  uint32 request_id = 1;
+  fixed32 code = 2; // NEC least-significant-bit-first integer; one 38kHz frame.
+}

@@ -1,0 +1,36 @@
+{
+  "compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-14.2.0_20251107) 14.2.0",
+  "variant": "v1",
+  "code_base": "0x4008cae0",
+  "data_base": "0x3ffb44e0",
+  "code_bytes": 164,
+  "data_bytes": 132,
+  "bss_bytes": 0,
+  "descriptor_offset": 84,
+  "runtime_relocations": 0,
+  "strategy": "link-time fixed slot; reject mismatched base addresses",
+  "flags": [
+    "-Os",
+    "-ffreestanding",
+    "-fno-builtin",
+    "-fno-common",
+    "-fno-stack-protector",
+    "-fno-unwind-tables",
+    "-fno-asynchronous-unwind-tables",
+    "-fno-jump-tables",
+    "-fno-tree-switch-conversion",
+    "-fno-tree-loop-distribute-patterns",
+    "-falign-functions=4",
+    "-mtext-section-literals",
+    "-mlongcalls",
+    "-Wall",
+    "-Wextra",
+    "-Werror"
+  ],
+  "memory": {
+    "arena_bytes": 4,
+    "arena_alignment": 4,
+    "stack_bytes": 4096
+  },
+  "slot": 3
+}

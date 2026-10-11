@@ -1,0 +1,3 @@
+syntax = "proto3";
+package micros.coordination.v1;
+message Target { uint32 value = 1; }

@@ -1,0 +1,167 @@
+---
+title: Server and console
+hide:
+  - toc
+---
+
+<span class="docs-editorial"></span>
+
+Start · Server and console
+{: .arch-eyebrow}
+
+# Server and console
+
+The server includes the browser console. Start it locally with an empty roster,
+or use a LAN address when connecting a board or another computer. There is no
+separate frontend build.
+{: .arch-intro}
+
+## 01 · Prepare the host {#prepare-the-host}
+
+Install the CLI from [Quickstart](get-started.md#install-cli) on a supported macOS
+or 64-bit Linux host with OpenSSL and Docker with its Compose plugin. On a
+headless Pi, run these commands over SSH after setting PATH as shown in Quickstart.
+
+```sh
+micros --help
+docker compose version
+docker info
+```
+
+Docker must be running and accessible to your user. The first start downloads
+and builds its container image. ESP32 tools are unnecessary for the console alone.
+
+## 02 · Choose local or LAN access {#choose-local-or-lan-access}
+
+For a console used **only on this computer**:
+
+```sh
+micros server setup --host localhost
+MICROS_SERVER_BIND=127.0.0.1 micros server start
+```
+
+For a **board, LAN client, or headless Pi**, substitute the server's reachable IP
+or hostname:
+
+```sh
+micros server setup --host SERVER_LAN_IP
+micros server start
+```
+
+Clients need access to TCP 8443. `--host` sets the certificate/client address;
+it does not assign a static IP or change the listening interfaces. A stable
+hostname or DHCP reservation is useful but not required. Repeat the loopback
+prefix whenever starting a local-only server.
+
+Setup refuses existing client configuration. For an already configured server,
+use `server start` rather than creating a new identity. Expect
+`Server ready at https://…:8443`, then check:
+
+```sh
+micros server devices
+```
+
+An empty roster is normal.
+
+### Board certificate trust
+
+Browser trust and board trust are separate. ESP8266 enrollment builds embed the
+configured server's public `relay-ca.pem`; the server private key never belongs
+on a board. A supplied `enroll --firmware` base must already trust that server.
+Changing the server certificate requires rebuilding and installing the matching
+base. Standalone ESP8266 builds default to bundled public roots; to target a
+private server, build with:
+
+```sh
+build/python/bin/python src/micros_tooling/platforms/build_esp8266.py \
+  --relay-ca /private/server/servercert.pem --output build/esp8266/private-base
+```
+
+For IPv4 server addresses, setup includes both an IP subject alternative name
+and an exact DNS-name entry for the pinned ESP8266 TLS library, which only reads
+DNS entries. Modern clients still verify the standard IP entry.
+
+MKR WiFi 1010 uses the NINA module's persistent certificate store. Enrollment
+does not install a private server CA there. Arduino's
+[Firmware Uploader](https://arduino.github.io/arduino-fwuploader/2.4/usage/)
+supports `certificates flash --file servercert.pem`, but **replaces the entire
+store**: supply every root you intend to retain together. Review this trust
+change before running the tool and restore the Micro-S base after its helper
+sketch. Match the stock root bundle to the NINA release: the uploader's tested
+MKR limit is 128 KiB, and the latest upstream bundle can exceed it. The helper
+sketch may already be installed when the tool rejects a bundle. If software reset
+cannot enter the bootloader afterward, double-press the board's Reset button
+before restoring the base. Until that store trusts your server, use the
+[experimental USB path](experimental-usb.md); do not disable TLS verification.
+
+### Keep a test server separate
+
+The default Docker Compose project is `micros-management`. A different state
+directory alone does **not** isolate containers. For a separate test, choose an
+unused project name and empty private client directory:
+
+```sh
+export MICROS_CLIENT_DIR="$PWD/.micros/test-server"
+export MICROS_COMPOSE_PROJECT=micros-consumer-test
+micros server setup --host localhost
+MICROS_SERVER_BIND=127.0.0.1 micros server start
+# When finished, with both variables still set:
+micros server shutdown
+```
+
+`micros server --compose-project micros-consumer-test start` is the equivalent
+explicit option; pass the same name to `shutdown`. Names must start with a
+lowercase letter or digit and contain only lowercase letters, digits, `_` or `-`.
+Check `docker compose ls` and port 8443 first. Project isolation does not allow
+two servers to bind that same host port; leave an existing server untouched.
+
+## 03 · Open the console {#open-the-console}
+
+Establish trust for your server's `servercert.pem` through your browser/OS
+certificate management, verifying the host and certificate. Keep `prvtkey.pem`
+and operator tokens private; do not disable TLS checks to connect.
+
+On a computer with the server's operator configuration:
+
+```sh
+micros server console
+```
+
+This opens `/console/` with a short-lived sign-in ticket. For a headless Pi,
+the command cannot open a browser on your laptop. Open
+`https://SERVER_LAN_IP:8443/console/` on the laptop and sign in with the operator
+token, or securely copy **only** `client.json`, `servercert.pem`, and `admin.token`
+to a private laptop directory and run:
+
+```sh
+micros server import-client PRIVATE_COPIED_DIRECTORY
+micros server console
+```
+
+Do not run `server setup` on the laptop to connect to an existing server: that
+creates another identity. Do not copy the server private key or registry.
+
+## 04 · Add a board and stop the server {#add-a-board-and-stop-the-server}
+
+Follow [board enrollment](set-up-an-esp32.md). After enrollment,
+`micros server devices` should show the board online.
+
+```sh
+micros server shutdown
+```
+
+Shutdown stops the container and retains state. Its location follows
+`MICROS_CLIENT_DIR`, an existing legacy `.micros/server/client.json`, then
+`$XDG_CONFIG_HOME/micros/server` or `~/.config/micros/server`. Preserve that directory
+when moving the server. See [private backups](cli.md#private-backups).
+
+| Failure | Fix |
+| --- | --- |
+| Docker unavailable | Start Docker; check `docker info` permissions. |
+| Port 8443 occupied | Check the existing listener; the setup CLI has no port option. |
+| Certificate error | Use the configured hostname and establish trust for its matching certificate. |
+| Laptop/board cannot connect | Check server address, port binding, firewall, and LAN reachability. |
+
+Frontend/backend development instructions live with the
+[server source](../../src/server/README.md). To inspect published service data, see
+[Service channels](inspect-service-channels.md).

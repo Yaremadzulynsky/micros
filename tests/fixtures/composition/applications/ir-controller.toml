@@ -1,0 +1,41 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+# Application services and local channels. Hardware and network connections belong in the deployment.
+
+[project]
+name = "Device-independent coordination controller"
+
+[services.controller]
+manifest = "../../../../examples/services/coordination-controller/service.toml"
+memory = { arena = "RAM", stack_bytes = 2048 }
+
+[services.controller.publications.target]
+channel = "target"
+kind = "state"
+
+[services.controller.publications.operation]
+channel = "operation"
+kind = "action"
+
+[channels.target]
+key = 2
+name = "coord.target"
+interface = "micros.coordination.target"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+policy = "latest"
+depth = 1
+max_payload = 16
+schema = "../../../../src/sdk/protos/coordination/v1/target.proto"
+
+[channels.operation]
+key = 1
+name = "ir.actions"
+interface = "micros.coordination.ir.action"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+policy = "latest"
+depth = 1
+max_payload = 32
+schema = "../../../../src/sdk/protos/coordination/v1/ir_action.proto"

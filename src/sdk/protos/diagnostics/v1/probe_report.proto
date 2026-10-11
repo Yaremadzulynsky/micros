@@ -1,0 +1,18 @@
+syntax = "proto3";
+package micros.diagnostics.v1;
+// Probe receipt time is not publication time or proof of application consumption.
+message ProbeReport {
+  uint32 run_id = 1;
+  uint64 started_us = 2;
+  uint64 observed_us = 3;
+  uint64 first_received_us = 4;
+  uint64 last_received_us = 5;
+  uint64 max_silence_us = 6;
+  uint32 messages = 7;
+  uint32 empty_reads = 8;
+  uint32 missed_events = 9; // Loss notifications, not a count of lost messages.
+  uint32 decode_errors = 10;
+  sint32 last_error = 11;
+  bool done = 12;
+  uint32 reason = 13; // 0 observing, 1 duration, 2 message limit, 3 read failure.
+}

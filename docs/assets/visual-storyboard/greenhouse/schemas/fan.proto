@@ -1,0 +1,9 @@
+// Proposed greenhouse message contract; no service implementation is supplied.
+syntax = "proto3";
+package example.greenhouse;
+message FanStatus {
+  uint32 sequence = 1;
+  uint64 monotonic_us = 2;
+  bool on = 3;
+  bool reading_valid = 4;
+}

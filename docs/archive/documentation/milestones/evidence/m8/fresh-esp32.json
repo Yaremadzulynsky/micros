@@ -1,0 +1,151 @@
+{
+  "source_only_build": true,
+  "network_credentials_present": false,
+  "firmware_bytes": 254304,
+  "services": {
+    "button": {
+      "compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-14.2.0_20251107) 14.2.0",
+      "variant": "v1",
+      "code_base": "0x40083620",
+      "data_base": "0x3ffb5a90",
+      "code_bytes": 1024,
+      "data_bytes": 48,
+      "bss_bytes": 0,
+      "descriptor_offset": 0,
+      "runtime_relocations": 0,
+      "strategy": "link-time fixed slot; reject mismatched base addresses",
+      "flags": [
+        "-Os",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-common",
+        "-fno-stack-protector",
+        "-fno-unwind-tables",
+        "-fno-asynchronous-unwind-tables",
+        "-fno-jump-tables",
+        "-fno-tree-switch-conversion",
+        "-fno-tree-loop-distribute-patterns",
+        "-falign-functions=4",
+        "-mtext-section-literals",
+        "-mlongcalls",
+        "-Wall",
+        "-Wextra",
+        "-Werror"
+      ],
+      "memory": {
+        "arena_bytes": 40,
+        "arena_alignment": 8,
+        "stack_bytes": 4096
+      },
+      "slot": 0
+    },
+    "logger": {
+      "compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-14.2.0_20251107) 14.2.0",
+      "variant": "v1",
+      "code_base": "0x40085620",
+      "data_base": "0x3ffb4a90",
+      "code_bytes": 2264,
+      "data_bytes": 112,
+      "bss_bytes": 0,
+      "descriptor_offset": 64,
+      "runtime_relocations": 0,
+      "strategy": "link-time fixed slot; reject mismatched base addresses",
+      "flags": [
+        "-Os",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-common",
+        "-fno-stack-protector",
+        "-fno-unwind-tables",
+        "-fno-asynchronous-unwind-tables",
+        "-fno-jump-tables",
+        "-fno-tree-switch-conversion",
+        "-fno-tree-loop-distribute-patterns",
+        "-falign-functions=4",
+        "-mtext-section-literals",
+        "-mlongcalls",
+        "-Wall",
+        "-Wextra",
+        "-Werror"
+      ],
+      "memory": {
+        "arena_bytes": 40,
+        "arena_alignment": 8,
+        "stack_bytes": 4096
+      },
+      "slot": 1
+    },
+    "led": {
+      "compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-14.2.0_20251107) 14.2.0",
+      "variant": "v1",
+      "code_base": "0x40087620",
+      "data_base": "0x3ffb3a90",
+      "code_bytes": 1104,
+      "data_bytes": 124,
+      "bss_bytes": 0,
+      "descriptor_offset": 76,
+      "runtime_relocations": 0,
+      "strategy": "link-time fixed slot; reject mismatched base addresses",
+      "flags": [
+        "-Os",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fno-common",
+        "-fno-stack-protector",
+        "-fno-unwind-tables",
+        "-fno-asynchronous-unwind-tables",
+        "-fno-jump-tables",
+        "-fno-tree-switch-conversion",
+        "-fno-tree-loop-distribute-patterns",
+        "-falign-functions=4",
+        "-mtext-section-literals",
+        "-mlongcalls",
+        "-Wall",
+        "-Wextra",
+        "-Werror"
+      ],
+      "memory": {
+        "arena_bytes": 40,
+        "arena_alignment": 8,
+        "stack_bytes": 4096
+      },
+      "slot": 2
+    }
+  },
+  "cpp": {
+    "compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-14.2.0_20251107) 14.2.0",
+    "variant": "v1",
+    "code_base": "0x40089620",
+    "data_base": "0x3ffb2a90",
+    "code_bytes": 164,
+    "data_bytes": 132,
+    "bss_bytes": 0,
+    "descriptor_offset": 84,
+    "runtime_relocations": 0,
+    "strategy": "link-time fixed slot; reject mismatched base addresses",
+    "flags": [
+      "-Os",
+      "-ffreestanding",
+      "-fno-builtin",
+      "-fno-common",
+      "-fno-stack-protector",
+      "-fno-unwind-tables",
+      "-fno-asynchronous-unwind-tables",
+      "-fno-jump-tables",
+      "-fno-tree-switch-conversion",
+      "-fno-tree-loop-distribute-patterns",
+      "-falign-functions=4",
+      "-mtext-section-literals",
+      "-mlongcalls",
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "memory": {
+      "arena_bytes": 4,
+      "arena_alignment": 4,
+      "stack_bytes": 4096
+    },
+    "slot": 3
+  }
+}

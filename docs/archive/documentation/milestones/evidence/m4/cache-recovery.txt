@@ -1,0 +1,7 @@
+Test project /Users/yaremadzulynsky/Software/Major_Projects/micros/build/host
+    Start 2: local_management
+1/1 Test #2: local_management .................   Passed    5.35 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   5.35 sec

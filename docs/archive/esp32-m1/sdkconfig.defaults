@@ -1,0 +1,18 @@
+# M1 board profile; conservative DIO/40 MHz and detected 8 MiB flash.
+CONFIG_IDF_TARGET="esp32"
+CONFIG_ESPTOOLPY_FLASHMODE_DIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_40M=y
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+# Supervisor parsing/diagnostic stack budget; distinct from the 4 KiB service stack.
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+# Co-locate supervisor/service on core 1 so publication and execution stay serialized.
+CONFIG_ESP_MAIN_TASK_AFFINITY_CPU1=y
+# 1000 Hz gives the prototype its nominal 1 ms task-yield granularity.
+CONFIG_FREERTOS_HZ=1000
+CONFIG_ESP_TASK_WDT_EN=y
+CONFIG_ESP_TASK_WDT_INIT=y
+CONFIG_ESP_TASK_WDT_PANIC=y
+# M0 fallback deadline: reset after a prolonged system stall, beyond hook budgets.
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=5
+CONFIG_ESP_SYSTEM_PANIC_PRINT_REBOOT=y
+CONFIG_COMPILER_OPTIMIZATION_SIZE=y

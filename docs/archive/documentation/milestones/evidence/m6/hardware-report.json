@@ -1,0 +1,66 @@
+[
+  {
+    "boundary": 1,
+    "old": 0,
+    "selected": 0
+  },
+  {
+    "boundary": 2,
+    "old": 0,
+    "selected": 0
+  },
+  {
+    "boundary": 3,
+    "old": 0,
+    "selected": 0
+  },
+  {
+    "boundary": 4,
+    "old": 0,
+    "selected": 0
+  },
+  {
+    "boundary": 5,
+    "old": 0,
+    "selected": 0
+  },
+  {
+    "boundary": 6,
+    "old": 0,
+    "selected": 0
+  },
+  {
+    "boundary": 7,
+    "old": 0,
+    "selected": 0
+  },
+  {
+    "boundary": 8,
+    "old": 0,
+    "selected": 0
+  },
+  {
+    "boundary": 9,
+    "old": 0,
+    "selected": 1
+  },
+  {
+    "boundary": 10,
+    "old": 1,
+    "selected": 0
+  },
+  {
+    "boundary": 11,
+    "old": 0,
+    "selected": 1
+  },
+  {
+    "boundary": 12,
+    "old": 1,
+    "selected": 0
+  },
+  {
+    "failed_candidate_rollback": true,
+    "selected": 0
+  }
+]

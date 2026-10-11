@@ -1,0 +1,23 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+# Physical wiring. Service selection belongs in applications/.
+
+[board]
+profile = "adafruit_feather_esp32_v2"
+flash_mb = 8
+recovery_button = "user_button"
+
+[board.gpio.user_button]
+pin = 38
+direction = "input"
+
+[board.gpio.rx]
+pin = 27
+direction = "input"
+
+[board.gpio.tx]
+pin = 25
+direction = "output"
+
+[board.gpio.monitor_analog]
+pin = 34
+direction = "input"

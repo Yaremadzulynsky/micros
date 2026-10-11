@@ -1,0 +1,55 @@
+{
+  "resources": {
+    "arena_bytes": 96,
+    "channel_bytes": 512,
+    "channels": 1,
+    "handles": 4,
+    "host_stack_bytes": 196608,
+    "image_bytes": 101144,
+    "kernel_metadata_bytes": 12148,
+    "reboot_required": 0,
+    "requested_stack_bytes": 12288,
+    "reserved_handles": 4,
+    "result": 0,
+    "services": 3,
+    "tasks": 3
+  },
+  "services": {
+    "demo.fast": {
+      "arena_alignment": 8,
+      "arena_bytes": 32,
+      "callbacks": 0,
+      "handles": 1,
+      "reboot_required": 0,
+      "result": 0,
+      "service_result": 0,
+      "stack_bytes": 4096,
+      "state": "Running",
+      "steps": 23
+    },
+    "demo.publisher": {
+      "arena_alignment": 8,
+      "arena_bytes": 32,
+      "callbacks": 1,
+      "handles": 2,
+      "reboot_required": 0,
+      "result": 0,
+      "service_result": 0,
+      "stack_bytes": 4096,
+      "state": "Running",
+      "steps": 23
+    },
+    "demo.slow": {
+      "arena_alignment": 8,
+      "arena_bytes": 32,
+      "callbacks": 0,
+      "handles": 1,
+      "reboot_required": 0,
+      "result": 0,
+      "service_result": 0,
+      "stack_bytes": 4096,
+      "state": "Running",
+      "steps": 23
+    }
+  }
+}

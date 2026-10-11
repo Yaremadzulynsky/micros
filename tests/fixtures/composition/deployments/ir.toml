@@ -1,0 +1,34 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+# Start here: devices, service connections, and streams exposed for viewing.
+
+[deployment]
+name = "IR coordination (ir)"
+
+[management.server]
+url = ""
+
+[devices.controller]
+id = "aabbccdd0004"
+board = "../boards/esp8266-controller.toml"
+application = "../applications/ir-controller.toml"
+
+[devices.feather]
+id = "aabbccdd0001"
+board = "../boards/feather-ir.toml"
+application = "../applications/ir-receiver.toml"
+
+[[connections]]
+name = "ir.target"
+from = "controller.controller.target"
+to = "feather.ir.target"
+
+[[connections]]
+name = "ir.operation"
+from = "controller.controller.operation"
+to = "feather.ir.operations"
+
+[streams.samples]
+from = "feather.monitor.samples"
+
+[streams.frames]
+from = "feather.ir.frames"

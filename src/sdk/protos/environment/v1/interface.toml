@@ -1,0 +1,6 @@
+[interface]
+interface = "micros.environment.reading"
+schema = "environment_reading.proto"
+
+[delivery]
+policy = "latest"

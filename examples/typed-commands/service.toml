@@ -1,0 +1,26 @@
+[service]
+name = "example.counter"
+version = "1.0.0"
+config_schema = {}
+subscriptions = {}
+publications = {}
+
+[service.build]
+api = "counter"
+sources = ["src/service.c", "src/commands.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[service.commands.get_value]
+description = "Read the current value"
+returns = { value = "Value" }
+
+[service.commands.set_value]
+description = "Set and return the current value"
+args = { value = "Value" }
+returns = { value = "Value" }
+
+[service.types.Value]
+type = "uint32"
+min = 0
+max = 100

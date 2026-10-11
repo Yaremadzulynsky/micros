@@ -1,0 +1,177 @@
+# Fixed four-service test application. Source paths are relative to each service directory.
+# Every service uses the same sections; empty tables/lists mean unused.
+# Config selects deployment values; config_schema defines types, defaults and bounds.
+
+[project]
+name = "Feather button colors"
+disabled_sdkconfig = ["CONFIG_PM_ENABLE"]
+
+[project.required_sdkconfig]
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ = "160"
+
+# Fixture builds have no server dependency; enrollment may be supplied explicitly.
+[management.server]
+url = ""
+
+[services.button]
+memory = { arena = "RAM" }
+source = "../../../examples/services/button"
+name = "board.button"
+version = "1.8.0"
+enabled = true
+
+[services.button.config]
+sample_interval_ms = 20
+debounce_ms = 40
+
+[services.button.config_schema]
+
+[services.button.config_schema.sample_interval_ms]
+type = "uint32"
+default = 20
+min = 1
+max = 1000
+
+[services.button.config_schema.debounce_ms]
+type = "uint32"
+default = 40
+min = 1
+max = 1000
+
+[services.button.build]
+sources = [
+    "src/service.c",
+]
+defines = []
+descriptor = "descriptor"
+
+[services.button.capabilities]
+gpio = ["user_button"]
+# Maximum simultaneously open software timers; unrelated to GPIO or hardware timer units.
+timers = 1
+
+[services.button.subscriptions]
+
+[services.button.publications]
+
+[services.button.publications.button]
+channel = "button"
+
+[services.logger]
+memory = { arena = "RAM" }
+source = "../../../examples/services/logger"
+name = "board.logger"
+version = "1.4.0"
+enabled = true
+
+[services.logger.config]
+
+[services.logger.config_schema]
+
+[services.logger.build]
+sources = [
+    "src/service.c",
+]
+defines = []
+descriptor = "descriptor"
+
+[services.logger.capabilities]
+gpio = []
+timers = 0
+
+[services.logger.subscriptions]
+
+[services.logger.subscriptions.button]
+channel = "button"
+
+[services.logger.publications]
+
+[services.colors]
+memory = { arena = "RAM" }
+source = "../../../examples/services/colors"
+name = "board.colors"
+version = "1.6.0"
+enabled = true
+
+[services.colors.config]
+brightness = 1
+initial_color = "blue"
+
+[services.colors.config_schema]
+
+[services.colors.config_schema.brightness]
+type = "uint32"
+default = 1
+min = 0
+max = 255
+
+[services.colors.config_schema.initial_color]
+type = "enum"
+default = "red"
+choices = [
+    "red",
+    "green",
+    "blue",
+    "yellow",
+    "cyan",
+    "magenta",
+    "white",
+    "off",
+]
+
+[services.colors.build]
+sources = [
+    "src/service.c",
+    "src/button_input.c",
+    "src/palette.c",
+    "drivers/neopixel.c",
+]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.colors.capabilities]
+gpio = ["neopixel_data", "neopixel_power"]
+timers = 0
+
+[services.colors.subscriptions]
+
+[services.colors.subscriptions.button]
+channel = "button"
+
+[services.colors.publications]
+
+[services.cpp]
+memory = { arena = "RAM" }
+source = "../../../examples/cpp-service"
+name = "board.cpp"
+version = "1.0.4"
+enabled = true
+
+[services.cpp.config]
+
+[services.cpp.config_schema]
+
+[services.cpp.build]
+sources = ["src/service.cpp"]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.cpp.capabilities]
+gpio = []
+timers = 0
+
+[services.cpp.subscriptions]
+
+[services.cpp.publications]
+
+[channels.button]
+accepts_minor = [1, 1]
+depth = 8
+interface = "micros.button.state"
+key = 1
+major = 1
+max_payload = 64
+minor = 1
+name = "button.state"
+policy = "stream"
+schema = "../../../src/sdk/protos/button/v1/button_state.proto"

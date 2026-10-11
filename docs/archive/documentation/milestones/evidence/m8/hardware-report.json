@@ -1,0 +1,163 @@
+{
+  "cpp_independent_native": true,
+  "four_running": true,
+  "cycles": 5,
+  "stopped_heaps": [
+    144452,
+    144452,
+    144452,
+    144452,
+    144452
+  ],
+  "reboot_reconstructed": true,
+  "plan": {
+    "format": 1,
+    "target": 2,
+    "services": [
+      {
+        "name": "board.button",
+        "version": "1.0.0",
+        "package_sha256": "b7ab45d161b9faae04ac50dfbff7f6b65e2d6e1f9d20f0da09db145942a2a83f",
+        "memory": {
+          "arena_alignment": 8,
+          "arena_bytes": 40,
+          "stack_bytes": 4096
+        },
+        "handles": 3,
+        "permissions": {
+          "timers": 1,
+          "gpio_mask": 2,
+          "publish_mask": 1,
+          "subscribe_mask": 0
+        }
+      },
+      {
+        "name": "board.cpp",
+        "version": "1.0.0",
+        "package_sha256": "3c89d84e866f95e5d752c1d1e526b3b3be65e65ee0e9c9336b6a056ca6d75dab",
+        "memory": {
+          "arena_alignment": 4,
+          "arena_bytes": 4,
+          "stack_bytes": 4096
+        },
+        "handles": 0,
+        "permissions": {
+          "timers": 0,
+          "gpio_mask": 0,
+          "publish_mask": 0,
+          "subscribe_mask": 0
+        }
+      },
+      {
+        "name": "board.led",
+        "version": "1.0.0",
+        "package_sha256": "eda34f8ca7e22968aade11d5458d81800e272e289caf608b2a1b23450ff88e09",
+        "memory": {
+          "arena_alignment": 8,
+          "arena_bytes": 40,
+          "stack_bytes": 4096
+        },
+        "handles": 2,
+        "permissions": {
+          "timers": 0,
+          "gpio_mask": 1,
+          "publish_mask": 0,
+          "subscribe_mask": 1
+        }
+      },
+      {
+        "name": "board.logger",
+        "version": "1.0.0",
+        "package_sha256": "189031f59637ed74d2979dd1a431a33dd7e4a1c7f0079aadbeff8511d00d0cf5",
+        "memory": {
+          "arena_alignment": 8,
+          "arena_bytes": 40,
+          "stack_bytes": 4096
+        },
+        "handles": 1,
+        "permissions": {
+          "timers": 0,
+          "gpio_mask": 0,
+          "publish_mask": 0,
+          "subscribe_mask": 1
+        }
+      }
+    ],
+    "channels": [
+      {
+        "name": "demo.samples",
+        "key": 1,
+        "policy": "stream",
+        "depth": 8,
+        "max_payload": 64
+      }
+    ],
+    "resources": {
+      "image_bytes": 4972,
+      "arena_bytes": 124,
+      "requested_stack_bytes": 16384,
+      "host_stack_bytes": 16384,
+      "handles": 6,
+      "channel_bytes": 512
+    }
+  },
+  "running": [
+    "LATENCY_US=1839",
+    "ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0",
+    "STATUS bank=1 services=4 heap=109560 baseline_heap=210560 led=0 button=1",
+    "USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0",
+    "SERVICE index=0 state=Running result=0 steps=2970 callbacks=0 stack_free=2944",
+    "SERVICE index=1 state=Running result=0 steps=2969 callbacks=0 stack_free=2872",
+    "SERVICE index=2 state=Running result=0 steps=2968 callbacks=0 stack_free=2788",
+    "SERVICE index=3 state=Running result=0 steps=2966 callbacks=61 stack_free=3312",
+    "END STATUS"
+  ],
+  "final": [
+    "LED level=0 verified",
+    "ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0",
+    "STATUS bank=1 services=4 heap=126928 baseline_heap=210560 led=0 button=1",
+    "USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0",
+    "SERVICE index=0 state=Running result=0 steps=510 callbacks=0 stack_free=2944",
+    "SERVICE index=1 state=Running result=0 steps=509 callbacks=0 stack_free=2872",
+    "SERVICE index=2 state=Running result=0 steps=508 callbacks=0 stack_free=2784",
+    "SERVICE index=3 state=Running result=0 steps=506 callbacks=11 stack_free=3324",
+    "END STATUS"
+  ],
+  "firmware_sha256": "c50d8ba4475b790762282a369e637fdf2fcccc8fe078e26e1ad408b0b291758c",
+  "cpp_image": {
+    "compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-14.2.0_20251107) 14.2.0",
+    "variant": "v1",
+    "code_base": "0x4008cae0",
+    "data_base": "0x3ffb44e0",
+    "code_bytes": 164,
+    "data_bytes": 132,
+    "bss_bytes": 0,
+    "descriptor_offset": 84,
+    "runtime_relocations": 0,
+    "strategy": "link-time fixed slot; reject mismatched base addresses",
+    "flags": [
+      "-Os",
+      "-ffreestanding",
+      "-fno-builtin",
+      "-fno-common",
+      "-fno-stack-protector",
+      "-fno-unwind-tables",
+      "-fno-asynchronous-unwind-tables",
+      "-fno-jump-tables",
+      "-fno-tree-switch-conversion",
+      "-fno-tree-loop-distribute-patterns",
+      "-falign-functions=4",
+      "-mtext-section-literals",
+      "-mlongcalls",
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "memory": {
+      "arena_bytes": 4,
+      "arena_alignment": 4,
+      "stack_bytes": 4096
+    },
+    "slot": 3
+  }
+}

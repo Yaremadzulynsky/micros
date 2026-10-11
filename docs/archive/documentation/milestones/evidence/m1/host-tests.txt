@@ -1,0 +1,2 @@
+PASS two independent variants, two clean cycles each, 11 rejected images
+PASS uncooperative hook terminates the host runtime without reclaiming live code

@@ -1,0 +1,30 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+# Application services and local channels. Hardware and network connections belong in the deployment.
+
+[project]
+disabled_sdkconfig = ["CONFIG_PM_ENABLE"]
+name = "Sensor fixture"
+
+[project.required_sdkconfig]
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ = "160"
+
+[services.dht]
+manifest = "../../../../examples/services/dht/service.toml"
+memory = { arena = "RAM", stack_bytes = 4096 }
+
+
+
+[services.dht.publications.environment]
+channel = "environment"
+
+[channels.environment]
+accepts_minor = [0, 0]
+depth = 1
+interface = "micros.environment.reading"
+key = 2
+major = 1
+max_payload = 64
+minor = 0
+name = "environment.reading"
+policy = "latest"
+schema = "../../../../src/sdk/protos/environment/v1/environment_reading.proto"

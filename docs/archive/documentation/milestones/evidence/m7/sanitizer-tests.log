@@ -1,0 +1,39 @@
+Test project /Users/yaremadzulynsky/Software/Major_Projects/micros/build/host-sanitize
+      Start  1: management_authentication
+ 1/17 Test  #1: management_authentication ........   Passed    0.35 sec
+      Start  2: activation_host
+ 2/17 Test  #2: activation_host ..................   Passed    8.51 sec
+      Start  3: activation_journal
+ 3/17 Test  #3: activation_journal ...............   Passed    0.32 sec
+      Start  4: board_simulation
+ 4/17 Test  #4: board_simulation .................   Passed    0.97 sec
+      Start  5: package_admission
+ 5/17 Test  #5: package_admission ................   Passed    0.06 sec
+      Start  6: local_management
+ 6/17 Test  #6: local_management .................   Passed    4.70 sec
+      Start  7: codec_boundaries
+ 7/17 Test  #7: codec_boundaries .................   Passed    0.07 sec
+      Start  8: ipc_boundaries
+ 8/17 Test  #8: ipc_boundaries ...................   Passed    0.58 sec
+      Start  9: protobuf_interoperability
+ 9/17 Test  #9: protobuf_interoperability ........   Passed    6.01 sec
+      Start 10: pipeline_demo
+10/17 Test #10: pipeline_demo ....................   Passed    2.85 sec
+      Start 11: runtime_lifecycle
+11/17 Test #11: runtime_lifecycle ................   Passed   11.15 sec
+      Start 12: runtime_HANG_INIT
+12/17 Test #12: runtime_HANG_INIT ................   Passed    0.37 sec
+      Start 13: runtime_HANG_START
+13/17 Test #13: runtime_HANG_START ...............   Passed    0.43 sec
+      Start 14: runtime_HANG_STEP
+14/17 Test #14: runtime_HANG_STEP ................   Passed    0.38 sec
+      Start 15: runtime_HANG_STOP
+15/17 Test #15: runtime_HANG_STOP ................   Passed    0.37 sec
+      Start 16: runtime_HANG_CALLBACK
+16/17 Test #16: runtime_HANG_CALLBACK ............   Passed    0.41 sec
+      Start 17: host_loader
+17/17 Test #17: host_loader ......................   Passed    3.38 sec
+
+100% tests passed, 0 tests failed out of 17
+
+Total Test time (real) =  40.91 sec

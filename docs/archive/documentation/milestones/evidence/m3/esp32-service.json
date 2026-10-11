@@ -1,0 +1,30 @@
+{
+  "compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-14.2.0_20251107) 14.2.0",
+  "variant": "v1",
+  "code_base": "0x40083590",
+  "data_base": "0x3ffba970",
+  "code_bytes": 280,
+  "data_bytes": 148,
+  "bss_bytes": 4,
+  "descriptor_offset": 96,
+  "runtime_relocations": 0,
+  "strategy": "link-time fixed slot; reject mismatched base addresses",
+  "flags": [
+    "-std=c17",
+    "-Os",
+    "-ffreestanding",
+    "-fno-builtin",
+    "-fno-common",
+    "-fno-stack-protector",
+    "-fno-unwind-tables",
+    "-fno-asynchronous-unwind-tables",
+    "-fno-jump-tables",
+    "-fno-tree-switch-conversion",
+    "-falign-functions=4",
+    "-mtext-section-literals",
+    "-mlongcalls",
+    "-Wall",
+    "-Wextra",
+    "-Werror"
+  ]
+}

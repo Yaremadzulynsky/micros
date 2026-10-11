@@ -1,0 +1,5 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+# Physical wiring. Service selection belongs in applications/.
+
+[board]
+profile = "esp8266_4mb"

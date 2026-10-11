@@ -1,0 +1,8 @@
+# Add after compose.yaml for a cloudflared connector running on the Docker host.
+# Both listeners stay on loopback; the public device route targets only 8444.
+services:
+  management:
+    command: [python, -u, -m, server.relay, --state, /state, --agent-port, "8444"]
+    ports: !override
+      - "127.0.0.1:8443:8443"
+      - "127.0.0.1:8444:8444"

@@ -1,0 +1,306 @@
+{
+  "router": {
+    "counts": {
+      "exchanges": 18,
+      "dropped": 9,
+      "forwarded": 1,
+      "rejected": 0
+    },
+    "routes": [
+      {
+        "name": "ir.target",
+        "epoch": 54992198,
+        "bound": [
+          "source",
+          "target"
+        ],
+        "blocked": null,
+        "drops": {
+          "target": 3
+        }
+      },
+      {
+        "name": "ir.operation",
+        "epoch": 54992237,
+        "bound": [
+          "source",
+          "target"
+        ],
+        "blocked": null,
+        "drops": {
+          "target": 3,
+          "source": 3
+        }
+      }
+    ],
+    "events": [
+      {
+        "route": "ir.target",
+        "event": "record",
+        "side": "source",
+        "generation": 54992198,
+        "revision": 1,
+        "status": 0,
+        "applied_generation": 0,
+        "applied_revision": 0,
+        "payload": "0849"
+      },
+      {
+        "route": "ir.operation",
+        "event": "record",
+        "side": "target",
+        "generation": 54992237,
+        "revision": 1,
+        "status": 2,
+        "applied_generation": 0,
+        "applied_revision": 0,
+        "payload": "0880fe93da0b100118012049"
+      },
+      {
+        "route": "ir.operation",
+        "event": "record",
+        "side": "source",
+        "generation": 54992237,
+        "revision": 1,
+        "status": 0,
+        "applied_generation": 0,
+        "applied_revision": 0,
+        "payload": "0880fe93da0b"
+      },
+      {
+        "route": "ir.target",
+        "event": "drop",
+        "to": "target"
+      },
+      {
+        "route": "ir.operation",
+        "event": "drop",
+        "to": "target"
+      },
+      {
+        "route": "ir.operation",
+        "event": "drop",
+        "to": "source"
+      },
+      {
+        "route": "ir.target",
+        "event": "drop",
+        "to": "target"
+      },
+      {
+        "route": "ir.operation",
+        "event": "drop",
+        "to": "source"
+      },
+      {
+        "route": "ir.operation",
+        "event": "drop",
+        "to": "target"
+      },
+      {
+        "route": "ir.target",
+        "event": "drop",
+        "to": "target"
+      },
+      {
+        "route": "ir.operation",
+        "event": "drop",
+        "to": "source"
+      },
+      {
+        "route": "ir.operation",
+        "event": "drop",
+        "to": "target"
+      }
+    ]
+  },
+  "physical_result": {
+    "code": "0xbb44ff00",
+    "transmissions": 1,
+    "optical_matches": 1,
+    "applied_value": 73
+  },
+  "captured_utc": "2026-09-11T20:20:58Z",
+  "bindings": [
+    {
+      "name": "ir.target",
+      "kind": "state",
+      "schema": "55dc98be9441be870592a60f7c88bb1ca56010ad8e9ca55b7b70f291a977e829",
+      "max_payload": 16,
+      "drop_first": 3,
+      "source": {
+        "device": "b0a732c8082c",
+        "key": 3,
+        "base": "6e7609120d45b5340d01c8e8bccd80291a83e8fefd1d3d8ed8b076a428d70863",
+        "graph": "5c3c8fe487f7cdc12e321a43eefe6fc5dcdf9392732cfe022a22d24899bf9372",
+        "sequence": 12
+      },
+      "target": {
+        "device": "e89f6d30e1a8",
+        "key": 2,
+        "base": "b239aa5d5cb8213a27b5f8c073f22fe0aaba2c4611025dcbaed6c045842bf6e8",
+        "graph": "10c8500e05377c802e3b7c7689e397b268727b5207ad58b64b9082bb63aa3d41",
+        "sequence": 48
+      }
+    },
+    {
+      "name": "ir.operation",
+      "kind": "action",
+      "schema": "3ab3c1108d187c70d182d3750cb45aed6b16e0e72b4a35c50c58c20e66ea4785",
+      "max_payload": 32,
+      "drop_first": 3,
+      "source": {
+        "device": "b0a732c8082c",
+        "key": 1,
+        "base": "6e7609120d45b5340d01c8e8bccd80291a83e8fefd1d3d8ed8b076a428d70863",
+        "graph": "5c3c8fe487f7cdc12e321a43eefe6fc5dcdf9392732cfe022a22d24899bf9372",
+        "sequence": 12
+      },
+      "target": {
+        "device": "e89f6d30e1a8",
+        "key": 1,
+        "base": "b239aa5d5cb8213a27b5f8c073f22fe0aaba2c4611025dcbaed6c045842bf6e8",
+        "graph": "10c8500e05377c802e3b7c7689e397b268727b5207ad58b64b9082bb63aa3d41",
+        "sequence": 48
+      }
+    }
+  ],
+  "original_boot_ids": {
+    "controller": "d36359eb34dd7bdf",
+    "executor": "b8a7de1359f63b8f"
+  },
+  "executor_logs": {
+    "boot_id": "b8a7de1359f63b8f",
+    "lines": [
+      "COORD IR READY rx=27 tx=25 typed action and state ports",
+      "COORD IR STATE APPLIED",
+      "COORD IR EXECUTE",
+      "COORD IR OPTICAL MATCH",
+      "COORD IR COMPLETE optical verified"
+    ]
+  },
+  "repeated_observation": {
+    "router": {
+      "counts": {
+        "exchanges": 281,
+        "dropped": 9,
+        "forwarded": 198,
+        "rejected": 0
+      },
+      "routes": [
+        {
+          "name": "ir.target",
+          "epoch": 54992198,
+          "bound": [
+            "source",
+            "target"
+          ],
+          "blocked": null,
+          "drops": {
+            "target": 3
+          }
+        },
+        {
+          "name": "ir.operation",
+          "epoch": 54992237,
+          "bound": [
+            "source",
+            "target"
+          ],
+          "blocked": null,
+          "drops": {
+            "target": 3,
+            "source": 3
+          }
+        }
+      ],
+      "events": [
+        {
+          "route": "ir.target",
+          "event": "record",
+          "side": "source",
+          "generation": 54992198,
+          "revision": 1,
+          "status": 0,
+          "applied_generation": 0,
+          "applied_revision": 0,
+          "payload": "0849"
+        },
+        {
+          "route": "ir.operation",
+          "event": "record",
+          "side": "target",
+          "generation": 54992237,
+          "revision": 1,
+          "status": 2,
+          "applied_generation": 0,
+          "applied_revision": 0,
+          "payload": "0880fe93da0b100118012049"
+        },
+        {
+          "route": "ir.operation",
+          "event": "record",
+          "side": "source",
+          "generation": 54992237,
+          "revision": 1,
+          "status": 0,
+          "applied_generation": 0,
+          "applied_revision": 0,
+          "payload": "0880fe93da0b"
+        },
+        {
+          "route": "ir.target",
+          "event": "drop",
+          "to": "target"
+        },
+        {
+          "route": "ir.operation",
+          "event": "drop",
+          "to": "target"
+        },
+        {
+          "route": "ir.operation",
+          "event": "drop",
+          "to": "source"
+        },
+        {
+          "route": "ir.target",
+          "event": "drop",
+          "to": "target"
+        },
+        {
+          "route": "ir.operation",
+          "event": "drop",
+          "to": "source"
+        },
+        {
+          "route": "ir.operation",
+          "event": "drop",
+          "to": "target"
+        },
+        {
+          "route": "ir.target",
+          "event": "drop",
+          "to": "target"
+        },
+        {
+          "route": "ir.operation",
+          "event": "drop",
+          "to": "source"
+        },
+        {
+          "route": "ir.operation",
+          "event": "drop",
+          "to": "target"
+        }
+      ]
+    },
+    "physical_result": {
+      "code": "0xbb44ff00",
+      "transmissions": 1,
+      "optical_matches": 1,
+      "applied_value": 73
+    },
+    "captured_utc": "2026-09-11T20:22:39Z"
+  }
+}

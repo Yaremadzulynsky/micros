@@ -1,0 +1,10 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+# USB probe: ESP32-D0WD-V3 revision 3.1, 4 MiB flash, 40 MHz crystal.
+# No onboard controls or externally connected button/NeoPixel.
+[board]
+profile = "esp32_d0wd_v3_no_controls"
+flash_mb = 4
+# USB serial management and ROM flashing remain available.
+recovery_button = ""
+
+[board.gpio]

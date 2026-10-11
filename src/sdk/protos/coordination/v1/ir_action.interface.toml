@@ -1,0 +1,7 @@
+[interface]
+interface = "micros.coordination.ir.action"
+schema = "ir_action.proto"
+
+[delivery]
+policy = "latest"
+kind = "action"

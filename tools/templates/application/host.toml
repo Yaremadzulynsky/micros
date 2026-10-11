@@ -1,0 +1,8 @@
+# Local native application. No hardware identity or board definition is needed.
+[project]
+name = "My host application"
+
+[services.hello]
+source = "services/hello"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 4096 }

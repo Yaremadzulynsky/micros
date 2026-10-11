@@ -1,0 +1,5 @@
+syntax = "proto3";
+package micros.example.shell;
+message SetValue {
+  uint32 value = 1;
+}

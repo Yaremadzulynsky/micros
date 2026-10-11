@@ -1,0 +1,50 @@
+syntax = "proto3";
+package micros.coordination.prototype;
+import "nanopb.proto";
+
+// Runtime-owned metadata. Application developers define only the payload schema
+// and port kind. Experimental: not a deployed ABI or an authenticated packet.
+message Frame {
+  uint32 protocol = 1; // Must be 1.
+  uint32 binding = 2;  // Nonzero, deployment-resolved logical port binding.
+  uint64 generation = 3; // Exact authorized binding generation, never guessed.
+
+  message State {
+    message Applied {
+      uint32 binding = 1;
+      uint64 generation = 2;
+      uint64 revision = 3;
+    }
+    uint64 revision = 1; // Nonzero; changes with payload or applied reference.
+    uint64 refresh = 2;  // Nonzero; advances on each source advertisement.
+    bytes payload = 3 [(nanopb).max_size = 96]; // Complete application snapshot.
+    Applied applied = 4; // Optional application confirmation using a runtime token.
+  }
+  message Request {
+    uint64 sequence = 1; // Nonzero; one outstanding request per binding.
+    bytes payload = 2 [(nanopb).max_size = 96];
+  }
+  message Result {
+    enum Status {
+      UNSPECIFIED = 0;
+      ACCEPTED = 1;
+      COMPLETED = 2;
+      FAILED = 3;
+      REJECTED = 4;
+      INDETERMINATE = 5;
+    }
+    uint64 sequence = 1;
+    Status status = 2;
+    bytes payload = 3 [(nanopb).max_size = 96]; // Typed result, including errors.
+  }
+  message Event {
+    uint64 sequence = 1;
+    bytes payload = 2 [(nanopb).max_size = 96];
+  }
+  oneof record {
+    State state = 10;
+    Request request = 11;
+    Result result = 12;
+    Event event = 13;
+  }
+}

@@ -1,0 +1,76 @@
+"""Ensure board selection cannot silently target another unit."""
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch, Mock
+
+from micros_tooling.config import application as project
+from micros_tooling.config.repository import ROOT
+
+
+class UnitSelectionTest(unittest.TestCase):
+    def test_explicit_selection_with_multiple_boards(self):
+        directory = ROOT / 'build/tests'
+        directory.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=directory) as temporary:
+            root = Path(temporary)
+            (root / 'units').mkdir()
+            state = root / 'state'
+            state.mkdir()
+            for identity in ('e89f6d30e1a8', 'b0a732c8082c'):
+                (root / 'units' / (identity + '.toml')).write_text(
+                    '[unit]\ndevice_id = "' + identity + '"\n[board]\nprofile = "test"\n')
+            (state / 'devices.json').write_text(json.dumps({'devices': {
+                'feather': {'device_id': 'e89f6d30e1a8'}}}))
+            with self.assertRaisesRegex(ValueError, 'Select -d'):
+                project.select_unit(root=root, state=state)
+            remote = Mock()
+            remote.raw.return_value = json.dumps({'devices': [dict(
+                name='feather', device_id='e89f6d30e1a8', online=False, last_seen=0)]}).encode()
+            with patch('micros_tooling.fleet.server.configured_remote', return_value=remote):
+                with self.assertRaisesRegex(ValueError, 'unknown or ambiguous'):
+                    project.select_unit('unknown', root=root, state=state)
+                self.assertEqual(project.select_unit('feather', root=root, state=state).stem, 'e89f6d30e1a8')
+            with patch('micros_tooling.fleet.server.configured_remote', return_value=None):
+                with self.assertRaisesRegex(ValueError, 'Server connection required'):
+                    project.select_unit('feather', root=root, state=state)
+            self.assertEqual(project.select_unit('b0a732c8082c', root=root, state=state).stem, 'b0a732c8082c')
+
+
+class ApplicationCommandsTest(unittest.TestCase):
+    def invoke(self, args):
+        with patch.dict('os.environ', {'MICROS_SDK': str(ROOT)}), \
+             patch.object(project.subprocess, 'call', return_value=0) as call, \
+             patch.object(project, 'select_unit', return_value=Path('/application/units/unit.toml')), \
+             patch.object(project, 'unit_identity', return_value='e89f6d30e1a8'):
+            dispatch = Mock(return_value=0)
+            result = project.main(args, Path('/application'), dispatch)
+            return result, (call.call_args or dispatch.call_args).args[0]
+
+    def test_deploy_routes_only_selected_unit_and_preserves_dry_run(self):
+        _, command = self.invoke(['deploy', '-d', 'feather', '--dry-run'])
+        self.assertEqual(command, ['deploy', '--project',
+                                  '/application/units/unit.toml', '--dry-run',
+                                  '-d', 'e89f6d30e1a8'])
+
+    def test_explicit_project_and_sdk_passthrough_are_preserved(self):
+        for args in (['generate', '--project', '/tmp/unit.toml'], ['sdk', 'devices']):
+            with self.subTest(args=args):
+                _, command = self.invoke(args)
+                self.assertEqual(command, [*(args[1:] if args[0] == 'sdk' else args)])
+
+    def test_plan_routes_only_selected_unit_and_preserves_json(self):
+        _, command = self.invoke(['plan', '-d', 'feather', '--json'])
+        self.assertEqual(command, ['plan', '--project',
+                                  '/application/units/unit.toml', '--json',
+                                  '-d', 'e89f6d30e1a8'])
+
+    def test_test_discovery_remains_application_local(self):
+        _, command = self.invoke(['test'])
+        self.assertEqual(command, [project.sys.executable, '-m', 'unittest', 'discover',
+                                  '-s', '/application/tests', '-p', '*_test.py'])
+
+
+if __name__ == "__main__":
+    unittest.main()

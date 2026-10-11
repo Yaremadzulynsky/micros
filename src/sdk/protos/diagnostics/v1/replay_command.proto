@@ -1,0 +1,12 @@
+syntax = "proto3";
+package micros.diagnostics.v1;
+import "nanopb.proto";
+message ReplayCommand {
+  uint32 run_id = 1;
+  uint32 operation = 2; // 1 LOAD, 2 START. One run per service activation.
+  uint32 index = 3; // LOAD: slot 0..15.
+  uint32 after_ms = 4; // LOAD: offset relative to START receipt on the MCU.
+  bytes payload = 5 [(nanopb).max_size = 48]; // Encoded message for the declared output schema.
+  uint32 count = 6; // START: exact number of loaded slots, 1..16.
+  bytes schema_sha256 = 7 [(nanopb).max_size = 32]; // Exact declared output schema, for LOAD and START.
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package micros.ir.v1;
+import "nanopb.proto";
+message Frame {
+  uint32 sequence = 1;
+  uint64 monotonic_us = 2;
+  uint32 offset = 3; // RMT word offset; two level/duration halfwords per word.
+  uint32 total_words = 4;
+  bool overflow = 5;
+  repeated fixed32 words = 6 [(nanopb).max_count = 20];
+}

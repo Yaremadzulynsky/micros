@@ -1,0 +1,16 @@
+# Replace this placeholder ID and filename together with your board's hardware ID.
+[unit]
+device_id = "000000000000"
+
+[project]
+name = "My board application"
+
+[board]
+profile = "esp32_d0wd_v3_no_controls"
+flash_mb = 4
+recovery_button = ""
+
+[services.hello]
+source = "../services/hello"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 4096 }

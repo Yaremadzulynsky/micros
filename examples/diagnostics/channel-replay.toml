@@ -1,0 +1,185 @@
+# Diagnostic example recipe. Review identity, hardware, services and bindings before deployment.
+
+[project]
+name = "Diagnostic replay and channel probe"
+
+[board]
+profile = "adafruit_feather_esp32_v2"
+flash_mb = 8
+recovery_button = ""
+
+[board.gpio]
+
+[services.replay]
+source = "../../services/diagnostics/replay-source"
+name = "diagnostic.replay-source"
+version = "1.0.0"
+
+[services.replay.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.replay.capabilities]
+gpio = []
+timers = 0
+
+[services.replay.config_schema.arm_timeout_ms]
+type = "uint32"
+default = 60000
+min = 100
+max = 600000
+
+[services.replay.config_schema.max_duration_ms]
+type = "uint32"
+default = 60000
+min = 1
+max = 60000
+
+[services.replay.config_schema.max_lateness_ms]
+type = "uint32"
+default = 250
+min = 1
+max = 5000
+
+[services.replay.memory]
+arena = "RAM"
+stack_bytes = 4096
+
+[services.replay.subscriptions.commands]
+channel = "commands"
+
+[services.replay.publications.output]
+channel = "samples"
+
+[services.replay.publications.status]
+channel = "replay_status"
+
+[services.probe]
+source = "../../services/diagnostics/channel-probe"
+name = "diagnostic.channel-probe"
+version = "1.0.0"
+
+[services.probe.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.probe.capabilities]
+gpio = []
+timers = 0
+
+[services.probe.config_schema.run_id]
+type = "uint32"
+default = 1
+min = 1
+max = 4294967295
+
+[services.probe.config_schema.duration_ms]
+type = "uint32"
+default = 10000
+min = 10
+max = 60000
+
+[services.probe.config_schema.max_messages]
+type = "uint32"
+default = 10000
+min = 1
+max = 100000
+
+[services.probe.config_schema.reads_per_step]
+type = "uint32"
+default = 4
+min = 1
+max = 8
+
+[services.probe.config_schema.report_interval_ms]
+type = "uint32"
+default = 1000
+min = 10
+max = 60000
+
+[services.probe.memory]
+arena = "RAM"
+stack_bytes = 4096
+
+[services.probe.subscriptions.input]
+channel = "samples"
+
+[services.probe.publications.report]
+channel = "probe_report"
+
+[services.bridge]
+source = "../../services/network-bridge"
+name = "board.network-bridge"
+version = "1.1.0"
+
+[services.bridge.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.bridge.capabilities]
+gpio = []
+timers = 0
+
+[services.bridge.memory]
+arena = "RAM"
+stack_bytes = 4096
+
+[services.bridge.publications.replay]
+channel = "commands"
+
+[services.bridge.subscriptions.replay_status]
+channel = "replay_status"
+
+[services.bridge.subscriptions.probe_report]
+channel = "probe_report"
+
+[channels.samples]
+key = 1
+policy = "stream"
+depth = 8
+max_payload = 64
+schema = "../../src/sdk/protos/pin/v1/pin_sample.proto"
+name = "pin.samples"
+interface = "micros.pin.sample"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+
+[channels.commands]
+key = 2
+policy = "stream"
+depth = 8
+max_payload = 128
+schema = "../../src/sdk/protos/diagnostics/v1/replay_command.proto"
+name = "diagnostics.commands"
+interface = "micros.diagnostics.commands"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+
+[channels.replay_status]
+key = 3
+policy = "latest"
+depth = 1
+max_payload = 128
+schema = "../../src/sdk/protos/diagnostics/v1/replay_status.proto"
+name = "diagnostics.replay_status"
+interface = "micros.diagnostics.replay_status"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+
+[channels.probe_report]
+key = 4
+policy = "latest"
+depth = 1
+max_payload = 128
+schema = "../../src/sdk/protos/diagnostics/v1/probe_report.proto"
+name = "diagnostics.probe_report"
+interface = "micros.diagnostics.probe_report"
+major = 1
+minor = 0
+accepts_minor = [0, 0]

@@ -1,0 +1,20 @@
+# Reusable service definition. Device settings and channel bindings belong in the consuming application repository.
+
+[service]
+timers = ["tick"]
+name = "coordination.controller"
+version = "1.2.0"
+
+[service.config]
+
+[service.build]
+api = "controller"
+sources = ["src/service.c"]
+descriptor = "micros_descriptor"
+
+
+[service.publications.target]
+interface = "../../../src/sdk/protos/coordination/v1/target.interface.toml"
+
+[service.publications.operation]
+interface = "../../../src/sdk/protos/coordination/v1/ir_action.interface.toml"

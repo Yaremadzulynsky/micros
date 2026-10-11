@@ -1,0 +1,10 @@
+syntax = "proto3";
+package micros.coordination.ir.v1;
+// Shared action request/result type. Runtime status distinguishes lifecycle.
+// Request: code. Result: code plus execution/optical evidence and applied state.
+message IrAction {
+  uint32 code = 1;
+  uint32 transmissions = 2;
+  uint32 optical_matches = 3;
+  uint32 applied_value = 4;
+}

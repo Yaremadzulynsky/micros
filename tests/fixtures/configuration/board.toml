@@ -1,0 +1,24 @@
+# Hardware definition for the connected Feather; application services stay in micros.toml.
+[board]
+profile = "adafruit_feather_esp32_v2"
+flash_mb = 8
+# Held low at boot to enter physical recovery.
+recovery_button = "user_button"
+
+[board.gpio.user_button]
+pin = 38
+direction = "input"
+
+[board.gpio.red_led]
+pin = 13
+direction = "output"
+
+
+# Dedicated pixel wiring; service drivers must acquire both named grants.
+[board.gpio.neopixel_data]
+pin = 0
+direction = "output"
+
+[board.gpio.neopixel_power]
+pin = 2
+direction = "output"

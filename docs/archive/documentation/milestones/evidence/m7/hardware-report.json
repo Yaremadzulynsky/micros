@@ -1,0 +1,61 @@
+{
+  "unauthorized_before_mutation": true,
+  "oversized_rejected": true,
+  "wrong_hash_rejected": true,
+  "unprovisioned_tls_rejected": true,
+  "interrupted_transfer_preserved_selection": true,
+  "firmware_endpoint_absent": true,
+  "remote_update_confirmed": true,
+  "stop_retry_safe": true,
+  "failed_candidate_rolled_back": true,
+  "before": {
+    "sequence": 24,
+    "good": 1,
+    "previous": 0,
+    "candidate": 4294967295,
+    "attempts": 0,
+    "pending": 0,
+    "good_sha256": "b24e3265db2fcb5b677b5d843a51e3c1af3da5288acda025c96cfb2bdedac816"
+  },
+  "after_update": {
+    "sequence": 27,
+    "good": 0,
+    "previous": 1,
+    "candidate": 4294967295,
+    "attempts": 0,
+    "pending": 0,
+    "good_sha256": "03e4b366ff6f79e061033ae7c8172c72504501d08d371ae5a31a2bb03248e7bc"
+  },
+  "final": {
+    "activation": {
+      "sequence": 31,
+      "good": 0,
+      "previous": 4294967295,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "03e4b366ff6f79e061033ae7c8172c72504501d08d371ae5a31a2bb03248e7bc"
+    },
+    "heap": 82512,
+    "services": [
+      {
+        "state": "Running",
+        "result": 0,
+        "steps": 10067,
+        "callbacks": 0
+      },
+      {
+        "state": "Running",
+        "result": 0,
+        "steps": 10066,
+        "callbacks": 0
+      },
+      {
+        "state": "Running",
+        "result": 0,
+        "steps": 10063,
+        "callbacks": 201
+      }
+    ]
+  }
+}

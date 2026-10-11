@@ -1,0 +1,6 @@
+[interface]
+interface = "micros.button.state"
+schema = "button_state.proto"
+
+[delivery]
+policy = "stream"

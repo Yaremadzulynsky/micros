@@ -1,0 +1,359 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+[unit]
+device_id = "aabbccdd0001"
+
+# Application configuration. Source paths in each build table are relative to its service source directory.
+# Every service uses the same sections; empty tables/lists mean unused.
+# Config selects deployment values; config_schema defines types, defaults and bounds.
+
+[project]
+name = "IR receiver fixture"
+disabled_sdkconfig = ["CONFIG_PM_ENABLE"]
+
+[project.required_sdkconfig]
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ = "160"
+
+# Stable public relay address through Cloudflare Tunnel.
+[management.server]
+url = ""
+
+[services.button]
+memory = { arena = "PSRAM", stack_bytes = 1024 }
+source = "../../../../examples/services/button"
+name = "board.button"
+version = "1.8.0"
+enabled = false
+
+[services.button.config]
+sample_interval_ms = 20
+debounce_ms = 40
+
+[services.button.config_schema]
+
+[services.button.config_schema.sample_interval_ms]
+type = "uint32"
+default = 20
+min = 1
+max = 1000
+
+[services.button.config_schema.debounce_ms]
+type = "uint32"
+default = 40
+min = 1
+max = 1000
+
+[services.button.build]
+sources = [
+    "src/service.c",
+]
+defines = []
+descriptor = "descriptor"
+
+[services.button.capabilities]
+gpio = ["user_button"]
+# Maximum simultaneously open software timers; unrelated to GPIO or hardware timer units.
+timers = 1
+
+[services.button.subscriptions]
+
+[services.button.publications]
+
+[services.button.publications.button]
+channel = "button"
+
+[services.logger]
+memory = { arena = "PSRAM", stack_bytes = 1024 }
+source = "../../../../examples/services/logger"
+name = "board.logger"
+version = "1.4.0"
+enabled = false
+
+[services.logger.config]
+
+[services.logger.config_schema]
+
+[services.logger.build]
+sources = [
+    "src/service.c",
+]
+defines = []
+descriptor = "descriptor"
+
+[services.logger.capabilities]
+gpio = []
+timers = 0
+
+[services.logger.subscriptions]
+
+[services.logger.subscriptions.button]
+channel = "button"
+
+[services.logger.publications]
+
+[services.colors]
+memory = { arena = "PSRAM", stack_bytes = 2048 }
+source = "../../../../examples/services/colors"
+name = "board.colors"
+version = "1.6.1"
+enabled = false
+
+[services.colors.config]
+brightness = 1
+initial_color = "blue"
+
+[services.colors.config_schema]
+
+[services.colors.config_schema.brightness]
+type = "uint32"
+default = 1
+min = 0
+max = 255
+
+[services.colors.config_schema.initial_color]
+type = "enum"
+default = "red"
+choices = [
+    "red",
+    "green",
+    "blue",
+    "yellow",
+    "cyan",
+    "magenta",
+    "white",
+    "off",
+]
+
+[services.colors.build]
+sources = [
+    "src/service.c",
+    "src/button_input.c",
+    "src/palette.c",
+    "drivers/neopixel.c",
+]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.colors.capabilities]
+gpio = ["neopixel_data", "neopixel_power"]
+timers = 0
+
+[services.colors.subscriptions]
+
+[services.colors.subscriptions.button]
+channel = "button"
+
+[services.colors.publications]
+
+[services.cpp]
+memory = { arena = "RAM", stack_bytes = 4096 }
+source = "../../../../examples/cpp-service"
+name = "board.cpp"
+version = "1.0.4"
+enabled = false
+
+[services.cpp.config]
+
+[services.cpp.config_schema]
+
+[services.cpp.build]
+sources = ["src/service.cpp"]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.cpp.capabilities]
+gpio = []
+timers = 0
+
+[services.cpp.subscriptions]
+
+[services.cpp.publications]
+
+[board]
+profile = "adafruit_feather_esp32_v2"
+flash_mb = 8
+# Held low at boot to enter physical recovery.
+recovery_button = "user_button"
+
+[board.gpio.user_button]
+pin = 38
+direction = "input"
+
+
+
+# Dedicated pixel wiring; service drivers must acquire both named grants.
+[services.dht]
+memory = { arena = "PSRAM", stack_bytes = 2048 }
+source = "../../../../examples/services/dht"
+name = "board.dht"
+version = "1.2.0"
+enabled = false
+
+[services.dht.config]
+[services.dht.config_schema]
+[services.dht.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.dht.capabilities]
+gpio = ["dht_data"]
+timers = 0
+[services.dht.subscriptions]
+[services.dht.publications]
+
+[services.dht.publications.environment]
+channel = "environment"
+
+
+# IR hardware owns GPIO27 and GPIO25; former service definitions remain disabled.
+[board.gpio.rx]
+pin = 27
+direction = "input"
+[board.gpio.tx]
+pin = 25
+direction = "output"
+[services.ir]
+source = "../../../../examples/services/ir-coordination"
+name = "board.ir-coordination"
+version = "3.1.0"
+enabled = true
+memory = { arena = "RAM", stack_bytes = 2048 }
+[services.ir.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.ir.capabilities]
+gpio = ["rx", "tx"]
+timers = 0
+[services.ir.config]
+[services.ir.config_schema]
+[services.ir.subscriptions]
+[services.ir.publications]
+
+[services.ir.subscriptions.operations]
+channel = "ir_actions"
+kind = "action"
+[services.ir.subscriptions.target]
+channel = "coord_target"
+kind = "state"
+[services.ir.publications.frames]
+channel = "ir_frames"
+[services.console]
+source = "../../../../examples/services/coordination-console"
+name = "board.console"
+version = "1.1.0"
+enabled = true
+memory = { arena = "RAM", stack_bytes = 2048 }
+[services.console.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.console.capabilities]
+gpio = []
+timers = 0
+[services.console.config]
+[services.console.config_schema]
+[services.console.subscriptions.frames]
+channel = "ir_frames"
+
+[channels.ir_actions]
+accepts_minor = [0, 0]
+depth = 1
+interface = "micros.coordination.ir.action"
+key = 1
+major = 1
+max_payload = 32
+minor = 0
+name = "ir.actions"
+policy = "latest"
+schema = "../../../../src/sdk/protos/coordination/v1/ir_action.proto"
+
+[channels.coord_target]
+accepts_minor = [0, 0]
+depth = 1
+interface = "micros.coordination.target"
+key = 2
+major = 1
+max_payload = 16
+minor = 0
+name = "coord.target"
+policy = "latest"
+schema = "../../../../src/sdk/protos/coordination/v1/target.proto"
+
+[channels.ir_frames]
+accepts_minor = [0, 0]
+depth = 8
+interface = "micros.ir.frame"
+key = 3
+major = 1
+max_payload = 160
+minor = 0
+name = "ir.frames"
+policy = "stream"
+schema = "../../../../src/sdk/protos/ir/v1/frame.proto"
+
+# Diagnostic inputs: retain the IR resource owners, use the free button and ADC1.
+[board.gpio.monitor_analog]
+pin = 34
+direction = "input"
+
+[services.monitor]
+source = "../../../../services/pin-monitor"
+name = "board.pin-monitor"
+version = "1.1.0"
+enabled = true
+memory = { arena = "RAM", stack_bytes = 2048 }
+[services.monitor.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.monitor.capabilities]
+gpio = ["user_button", "monitor_analog"]
+timers = 0
+[services.monitor.config]
+sample_interval_ms = 1000
+analog_mask = 2
+[services.monitor.config_schema.sample_interval_ms]
+type = "uint32"
+default = 1000
+min = 10
+max = 60000
+[services.monitor.config_schema.analog_mask]
+type = "uint32"
+default = 0
+min = 0
+max = 15
+[services.monitor.publications.samples]
+channel = "pin_samples"
+
+[services.bridge]
+source = "../../../../services/network-bridge"
+name = "board.network-bridge"
+version = "1.1.0"
+enabled = true
+memory = { arena = "RAM", stack_bytes = 2048 }
+[services.bridge.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.bridge.capabilities]
+gpio = []
+timers = 0
+[services.bridge.subscriptions.samples]
+channel = "pin_samples"
+
+[channels.pin_samples]
+key = 4
+name = "pin.samples"
+interface = "micros.pin.sample"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+policy = "stream"
+depth = 8
+max_payload = 64
+schema = "../../../../src/sdk/protos/pin/v1/pin_sample.proto"
+
+# Expose the existing typed IR command/result streams as well as diagnostics.
+# Each subscription has its own cursor; the physical IR console remains usable.
+[services.bridge.subscriptions.frames]
+channel = "ir_frames"

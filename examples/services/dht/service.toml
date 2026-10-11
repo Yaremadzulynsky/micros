@@ -1,0 +1,21 @@
+# Reusable service definition. Device settings and channel bindings belong in the consuming application repository.
+
+[service]
+name = "board.dht"
+version = "1.2.0"
+
+[service.config]
+
+[service.build]
+api = "dht"
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+
+[service.pins.dht_data]
+type = "input"
+fixed_pin = 27
+
+[service.publications.environment]
+interface = "../../../src/sdk/protos/environment/v1/interface.toml"

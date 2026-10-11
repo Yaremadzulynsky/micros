@@ -1,0 +1,61 @@
+<svg width="960" height="430" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" viewBox="0 0 960 430">
+<rect width="960" height="430" x="0" y="0" fill="none"></rect>
+<path d="M202 204C282.5 204 282.5 204 363 204" fill="none" pointer-events="visible" stroke="#8994da" stroke-width="1.6" class="zr2-cls-2"></path>
+<polygon points="363 204 356 200 356 208" fill="#8994da" class="zr2-cls-2"></polygon>
+<path d="M597 204C677.5 204 677.5 64 758 64" fill="none" pointer-events="visible" stroke="#8994da" stroke-width="1.6" class="zr2-cls-2"></path>
+<polygon points="758 64 751 60 751 68" fill="#8994da" class="zr2-cls-2"></polygon>
+<path d="M597 204C677.5 204 677.5 364 758 364" fill="none" pointer-events="visible" stroke="#8994da" stroke-width="1.6" class="zr2-cls-2"></path>
+<polygon points="758 364 751 360 751 368" fill="#8994da" class="zr2-cls-2"></polygon>
+<path d="M855 112C855 139 855 139 855 166" fill="none" pointer-events="visible" stroke="#8994da" stroke-width="1.6" class="zr2-cls-2"></path>
+<polygon points="855 166 851 159 859 159" fill="#8994da" class="zr2-cls-2"></polygon>
+<path d="M855 244C855 278 855 278 855 312" fill="none" pointer-events="visible" stroke="#8994da" stroke-width="1.6" class="zr2-cls-2"></path>
+<polygon points="855 312 851 305 859 305" fill="#8994da" class="zr2-cls-2"></polygon>
+<path d="M16 152L194 152A8 8 0 0 1 202 160L202 248A8 8 0 0 1 194 256L16 256A8 8 0 0 1 8 248L8 160A8 8 0 0 1 16 152Z" fill="#fff" stroke="#b0d8d0" stroke-width="1.4" filter="url(#zr2-s0)" class="zr2-cls-2"></path>
+<path d="M85.2 160l39.6 0l0 14l-39.6 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 600 9px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" x="105" y="167" fill="#168575">SERVICE</text>
+<path d="M54.9 178l100.2 0l0 20l-100.2 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 650 15px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="105" y="188" fill="#263449">Climate sensor</text>
+<path d="M41.3 224.5l127.3 0l0 17l-127.3 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="105" y="233" fill="#64748b">Temperature + humidity</text>
+<path d="M371 152L589 152A8 8 0 0 1 597 160L597 248A8 8 0 0 1 589 256L371 256A8 8 0 0 1 363 248L363 160A8 8 0 0 1 371 152Z" fill="#f4f5ff" stroke="#a5acf0" stroke-width="1.4" filter="url(#zr2-s0)" class="zr2-cls-2"></path>
+<path d="M440.2 160l79.7 0l0 14l-79.6 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 600 9px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="480" y="167" fill="#5965df">LATEST CHANNEL</text>
+<path d="M429 178l102 0l0 20l-102 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 650 15px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" x="480" y="188" fill="#5965df">climate.reading</text>
+<path d="M431.2 224.5l97.7 0l0 17l-97.7 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="480" y="233" fill="#64748b">Current conditions</text>
+<path d="M766 16L944 16A8 8 0 0 1 952 24L952 104A8 8 0 0 1 944 112L766 112A8 8 0 0 1 758 104L758 24A8 8 0 0 1 766 16Z" fill="#fff" stroke="#b0d8d0" stroke-width="1.4" filter="url(#zr2-s0)" class="zr2-cls-2"></path>
+<path d="M835.2 24l39.6 0l0 14l-39.6 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 600 9px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" x="855" y="31" fill="#168575">SERVICE</text>
+<path d="M809 42l92 0l0 20l-92 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 650 15px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="855" y="52" fill="#263449">Fan controller</text>
+<path d="M798.1 80.5l113.9 0l0 17l-113.9 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="855" y="89" fill="#64748b">Applies the fan policy</text>
+<path d="M766 166L944 166A8 8 0 0 1 952 174L952 236A8 8 0 0 1 944 244L766 244A8 8 0 0 1 758 236L758 174A8 8 0 0 1 766 166Z" fill="#f4f5ff" stroke="#a5acf0" stroke-width="1.4" filter="url(#zr2-s0)" class="zr2-cls-2"></path>
+<path d="M815.2 174l79.7 0l0 14l-79.6 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 600 9px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="855" y="181" fill="#5965df">LATEST CHANNEL</text>
+<path d="M822.3 192l65.4 0l0 20l-65.4 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 650 15px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" x="855" y="202" fill="#5965df">fan.status</text>
+<path d="M810.1 212.5l89.8 0l0 17l-89.8 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="855" y="221" fill="#64748b">Current fan state</text>
+<path d="M766 312L944 312A8 8 0 0 1 952 320L952 408A8 8 0 0 1 944 416L766 416A8 8 0 0 1 758 408L758 320A8 8 0 0 1 766 312Z" fill="#fff" stroke="#b0d8d0" stroke-width="1.4" filter="url(#zr2-s0)" class="zr2-cls-2"></path>
+<path d="M835.2 320l39.6 0l0 14l-39.6 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 600 9px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" x="855" y="327" fill="#168575">SERVICE</text>
+<path d="M808.1 338l93.8 0l0 20l-93.8 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 650 15px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="855" y="348" fill="#263449">Status display</text>
+<path d="M794.4 384.5l121.2 0l0 17l-121.2 0Z" fill="none" pointer-events="visible" class="zr2-cls-2"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="855" y="393" fill="#64748b">Shows both messages</text>
+<defs >
+<filter id="zr2-s0" x="-100%" y="-100%" width="300%" height="300%">
+<feDropShadow dx="0" dy="3" stdDeviation="5 5" flood-color="rgb(34,51,84)" flood-opacity="0.05"></feDropShadow>
+</filter>
+</defs>
+<style ><![CDATA[
+.zr2-cls-2:hover {
+pointer-events:none;
+}
+
+]]>
+
+</style>
+</svg>

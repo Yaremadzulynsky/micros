@@ -1,0 +1,100 @@
+# Host test fixture; no enrolled device or appliance recordings.
+[project]
+name = "IR channels"
+disabled_sdkconfig = ["CONFIG_PM_ENABLE"]
+[project.required_sdkconfig]
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ = "160"
+[board]
+profile = "adafruit_feather_esp32_v2"
+flash_mb = 8
+recovery_button = "user_button"
+[board.gpio.user_button]
+pin = 38
+direction = "input"
+[board.gpio.rx]
+pin = 27
+direction = "input"
+[board.gpio.tx]
+pin = 25
+direction = "output"
+[services.ir]
+source = "../../../examples/services/ir-capture"
+name = "board.ir-capture"
+version = "2.0.0"
+enabled = true
+memory = { arena = "RAM", stack_bytes = 2048 }
+[services.ir.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.ir.capabilities]
+gpio = ["rx", "tx"]
+timers = 0
+[services.ir.config]
+[services.ir.config_schema]
+[services.ir.subscriptions]
+[services.ir.publications]
+
+[services.ir.subscriptions.commands]
+channel = "ir_commands"
+[services.ir.publications.results]
+channel = "ir_results"
+[services.ir.publications.frames]
+channel = "ir_frames"
+[services.console]
+source = "../../../examples/services/ir-console"
+name = "board.console"
+version = "1.0.0"
+enabled = true
+memory = { arena = "RAM", stack_bytes = 2048 }
+[services.console.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.console.capabilities]
+gpio = []
+timers = 0
+[services.console.config]
+[services.console.config_schema]
+[services.console.publications.commands]
+channel = "ir_commands"
+[services.console.subscriptions.results]
+channel = "ir_results"
+[services.console.subscriptions.frames]
+channel = "ir_frames"
+
+[channels.ir_commands]
+accepts_minor = [0, 0]
+depth = 8
+interface = "micros.ir.command"
+key = 1
+major = 1
+max_payload = 32
+minor = 0
+name = "ir.commands"
+policy = "stream"
+schema = "../../../src/sdk/protos/ir/v1/command.proto"
+
+[channels.ir_results]
+accepts_minor = [0, 0]
+depth = 8
+interface = "micros.ir.result"
+key = 2
+major = 1
+max_payload = 32
+minor = 0
+name = "ir.results"
+policy = "stream"
+schema = "../../../src/sdk/protos/ir/v1/result.proto"
+
+[channels.ir_frames]
+accepts_minor = [0, 0]
+depth = 8
+interface = "micros.ir.frame"
+key = 3
+major = 1
+max_payload = 160
+minor = 0
+name = "ir.frames"
+policy = "stream"
+schema = "../../../src/sdk/protos/ir/v1/frame.proto"

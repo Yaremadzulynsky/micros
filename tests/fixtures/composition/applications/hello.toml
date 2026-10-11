@@ -1,0 +1,9 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+# A minimal application for the first-board documentation path.
+# Physical wiring and device identity are supplied by the deployment.
+[project]
+name = "Hello Micros"
+
+[services.hello]
+manifest = "../../../../examples/hello-service/service.toml"
+memory = { arena = "RAM", stack_bytes = 4096 }

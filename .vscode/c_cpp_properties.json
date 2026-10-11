@@ -1,0 +1,100 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "micros (ESP32 + host)",
+            "compileCommands": [
+                "${workspaceFolder}/build/esp32-board-config/compile_commands.json",
+                "${workspaceFolder}/build/host/compile_commands.json"
+            ],
+            "includePath": [
+                "${workspaceFolder}/examples/services/colors/generated",
+                "${workspaceFolder}/examples/services/button/generated",
+                "${workspaceFolder}/examples/services/logger/generated",
+                "${workspaceFolder}/examples/cpp-service/generated",
+                "${workspaceFolder}/src/sdk/c/include",
+                "${workspaceFolder}/src/third_party/nanopb",
+                "${workspaceFolder}/build/esp32-board-config/config",
+                "${workspaceFolder}/src/sdk/abi/include",
+                "${workspaceFolder}/src/firmware/kernel/loader",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/newlib/platform_include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/freertos/config/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/freertos/config/include/freertos",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/freertos/config/xtensa/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/freertos/FreeRTOS-Kernel/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/freertos/FreeRTOS-Kernel/portable/xtensa/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/freertos/esp_additions/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/include/soc",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/include/soc/esp32",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/dma/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/ldo/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/debug_probe/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/mspi_timing_tuning/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/mspi_timing_tuning/tuning_scheme_impl/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/power_supply/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/port/esp32/.",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_hw_support/port/esp32/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/heap/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/heap/tlsf",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/log/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/soc/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/soc/esp32",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/soc/esp32/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/soc/esp32/register",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/hal/platform_port/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/hal/esp32/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/hal/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_rom/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_rom/esp32/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_rom/esp32/include/esp32",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_rom/esp32",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_common/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_system/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_system/port/soc",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_system/port/include/private",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/xtensa/esp32/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/xtensa/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/xtensa/deprecated_include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_driver_uart/include",
+                "${workspaceFolder}/build/toolchains/esp-idf-v5.5.2/components/esp_timer/include",
+                "${userHome}/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20251107/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include",
+                "${userHome}/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20251107/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include-fixed",
+                "${userHome}/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20251107/xtensa-esp-elf/xtensa-esp-elf/include",
+                "${workspaceFolder}/build/esp32-board-config/generated"
+            ],
+            "defines": [
+                "ESP_PLATFORM",
+                "MICROS_SERVICE_TARGET=2"
+            ],
+            "cStandard": "gnu17",
+            "cppStandard": "c++17"
+        },
+        {
+            "name": "micros (host first)",
+            "intelliSenseMode": "macos-clang-arm64",
+            "compileCommands": [
+                "${workspaceFolder}/build/host/compile_commands.json",
+                "${workspaceFolder}/build/esp32-board-config/compile_commands.json"
+            ],
+            "includePath": [
+                "${workspaceFolder}/examples/services/colors/generated",
+                "${workspaceFolder}/examples/services/button/generated",
+                "${workspaceFolder}/examples/services/logger/generated",
+                "${workspaceFolder}/examples/cpp-service/generated",
+                "${workspaceFolder}/src/sdk/c/include",
+                "${workspaceFolder}/src/third_party/nanopb",
+                "${workspaceFolder}/src/sdk/abi/include",
+                "${workspaceFolder}/src/firmware/contracts/include",
+                "${workspaceFolder}/src/firmware/kernel/loader",
+                "${workspaceFolder}/build/esp32-board-config/generated"
+            ],
+            "defines": [
+                "MICROS_SERVICE_TARGET=1"
+            ],
+            "cStandard": "c17",
+            "cppStandard": "c++17"
+        }
+    ]
+}

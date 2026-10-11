@@ -1,0 +1,16 @@
+syntax = "proto3";
+package micros.diagnostics.v1;
+message CaptureStatus {
+  uint32 run_id = 1;
+  uint64 started_us = 2;
+  uint64 observed_us = 3;
+  uint64 trigger_us = 4;
+  uint32 retained = 5;
+  uint32 emitted = 6;
+  uint32 attempts = 7;
+  uint32 read_errors = 8;
+  uint32 skipped_scans = 9;
+  bool triggered = 10;
+  bool done = 11; // All retained records have been published, not necessarily read remotely.
+  uint32 reason = 12; // 0 acquiring, 1 requested post-trigger samples captured, 2 time limit.
+}

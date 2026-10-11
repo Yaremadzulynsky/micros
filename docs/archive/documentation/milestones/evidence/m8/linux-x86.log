@@ -1,0 +1,47 @@
+Internal ctest changing into directory: /output
+Test project /output
+      Start  1: elf_profile
+ 1/20 Test  #1: elf_profile ......................   Passed    0.02 sec
+      Start  2: cpp_lifecycle
+ 2/20 Test  #2: cpp_lifecycle ....................   Passed    0.16 sec
+      Start  3: management_authentication
+ 3/20 Test  #3: management_authentication ........   Passed    0.01 sec
+      Start  4: activation_host
+ 4/20 Test  #4: activation_host ..................   Passed    5.69 sec
+      Start  5: activation_journal
+ 5/20 Test  #5: activation_journal ...............   Passed    0.01 sec
+      Start  6: board_simulation
+ 6/20 Test  #6: board_simulation .................   Passed    0.29 sec
+      Start  7: package_admission
+ 7/20 Test  #7: package_admission ................   Passed    0.26 sec
+      Start  8: local_management
+ 8/20 Test  #8: local_management .................   Passed    5.23 sec
+      Start  9: codec_boundaries
+ 9/20 Test  #9: codec_boundaries .................   Passed    0.02 sec
+      Start 10: ipc_boundaries
+10/20 Test #10: ipc_boundaries ...................   Passed    0.03 sec
+      Start 11: protobuf_interoperability
+11/20 Test #11: protobuf_interoperability ........   Passed    1.28 sec
+      Start 12: pipeline_demo
+12/20 Test #12: pipeline_demo ....................   Passed    2.16 sec
+      Start 13: runtime_lifecycle
+13/20 Test #13: runtime_lifecycle ................   Passed    0.33 sec
+      Start 14: runtime_HANG_INIT
+14/20 Test #14: runtime_HANG_INIT ................   Passed    0.05 sec
+      Start 15: runtime_HANG_START
+15/20 Test #15: runtime_HANG_START ...............   Passed    0.05 sec
+      Start 16: runtime_HANG_STEP
+16/20 Test #16: runtime_HANG_STEP ................   Passed    0.05 sec
+      Start 17: runtime_HANG_STOP
+17/20 Test #17: runtime_HANG_STOP ................   Passed    0.06 sec
+      Start 18: runtime_HANG_CALLBACK
+18/20 Test #18: runtime_HANG_CALLBACK ............   Passed    0.05 sec
+      Start 19: linux_native_profile
+19/20 Test #19: linux_native_profile .............   Passed    1.25 sec
+      Start 20: host_loader
+20/20 Test #20: host_loader ......................   Passed    1.41 sec
+
+100% tests passed, 0 tests failed out of 20
+
+Total Test time (real) =  18.49 sec
+V1 install/run/loss/stop/restart/C++ update/rollback/reboot passed: /output/demo/run-n9yqgzuw

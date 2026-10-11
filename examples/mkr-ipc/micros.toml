@@ -1,0 +1,93 @@
+[project]
+name = "MKR button IPC"
+
+[board]
+profile = "arduino_mkr_wifi_1010"
+[board.gpio.user_button]
+pin = 7
+direction = "input"
+
+[services.button]
+memory = { arena = "RAM", stack_bytes = 1536 }
+source = "../../examples/services/button"
+name = "board.button"
+version = "1.8.0"
+enabled = true
+
+[services.button.config]
+sample_interval_ms = 20
+debounce_ms = 40
+
+[services.button.config_schema]
+
+[services.button.config_schema.sample_interval_ms]
+type = "uint32"
+default = 20
+min = 1
+max = 1000
+
+[services.button.config_schema.debounce_ms]
+type = "uint32"
+default = 40
+min = 1
+max = 1000
+
+[services.button.build]
+sources = [
+    "src/service.c",
+]
+defines = []
+descriptor = "descriptor"
+
+[services.button.capabilities]
+gpio = ["user_button"]
+# Maximum simultaneously open software timers; unrelated to GPIO or hardware timer units.
+timers = 1
+
+[services.button.subscriptions]
+
+[services.button.publications]
+
+[services.button.publications.button]
+channel = "button"
+
+[services.logger]
+memory = { arena = "RAM", stack_bytes = 1536 }
+source = "../../examples/services/logger"
+name = "board.logger"
+version = "1.4.0"
+enabled = true
+
+[services.logger.config]
+
+[services.logger.config_schema]
+
+[services.logger.build]
+sources = [
+    "src/service.c",
+]
+defines = []
+descriptor = "descriptor"
+
+[services.logger.capabilities]
+gpio = []
+timers = 0
+
+[services.logger.subscriptions]
+
+[services.logger.subscriptions.button]
+channel = "button"
+
+[services.logger.publications]
+
+[channels.button]
+accepts_minor = [1, 1]
+depth = 2
+interface = "micros.button.state"
+key = 1
+major = 1
+max_payload = 64
+minor = 1
+name = "button.state"
+policy = "stream"
+schema = "../../src/sdk/protos/button/v1/button_state.proto"

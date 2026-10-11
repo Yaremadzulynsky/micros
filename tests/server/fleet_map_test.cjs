@@ -1,0 +1,37 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const context={window:{},structuredClone};
+for(const file of ['sankey.min.js','service-graph.js'])vm.runInNewContext(fs.readFileSync('src/server/web/'+file,'utf8'),context);
+const {fleetModel,renderFleet,layout,trace}=context.window.microsGraph;
+const A='000000000001',B='000000000002',C='000000000003',D='000000000004';
+const route=(peer,direction,name='commands',state='Ready')=>({key:1,peer_device:peer,peer_name:'Remote',direction,route:name,state});
+const device=(id,connections=[])=>({device_id:id,name:'Board '+id.slice(-1),online:true,status:{services:[{name:'controller'}],channels:[{key:1,name:'same channel name'}],remote_connections:connections}});
+const boards=[device(A,[route(B,'subscribe'),route(C,'publish','feedback')]),device(B,[route(A,'publish')]),device(C,[route(A,'subscribe','feedback')]),device(D)];
+const graph=fleetModel(boards);
+assert.equal(graph.channels,2,'Reports from both ends produce one route');
+assert.equal(graph.nodes.filter(n=>n.kind==='board').length,4,'Keep disconnected boards');
+assert.equal(graph.edges.length,4);
+assert.equal(fleetModel([device(A),device(B)]).channels,0,'Matching channel names never imply a connection');
+assert(renderFleet(boards).includes('data-device="'+D+'"'),'Unconnected boards can still be opened');
+assert.equal(renderFleet([]),'','Do not crowd first-board onboarding');
+assert(renderFleet([device(A)]).includes('No cross-board routes have been reported'));
+for(const width of [320,800,1280]){
+ const drawing=layout(graph,width);
+ assert(drawing.links.every(e=>e.source.role<e.target.role&&e.value===1&&Number.isFinite(e.y0)));
+ assert.equal(drawing.nodes.filter(n=>n.originalId==='b'+A).length,2,'A relay board appears in both directions');
+}
+assert(trace(graph,'b'+A).nodes.has('b'+C));
+assert(trace(graph,'b'+A).nodes.has('b'+B));
+const offline=structuredClone(boards);offline[1].online=false;
+assert(fleetModel(offline).edges.filter(e=>e.to==='b'+B).every(e=>e.unavailable));
+const conflict=structuredClone(boards);conflict[1].status.remote_connections[0].state='Unavailable';
+assert.equal(fleetModel(conflict).nodes.find(n=>n.name==='commands').detail,'Unavailable');
+const cycles=[device(A,[route(B,'subscribe','a-b')]),device(B,[route(A,'subscribe','b-a')])];
+assert.equal(trace(fleetModel(cycles),'b'+A).edges.size,4,'Cross-board cycles terminate');
+assert.equal(layout(fleetModel(cycles)).links.length,4);
+const external=fleetModel([device(A,[route(B,'subscribe')])]);
+assert.equal(external.nodes.find(n=>n.id==='b'+B).board,undefined,'Unenrolled peers cannot open a nonexistent board');
+assert(external.nodes.find(n=>n.id==='b'+B).remote);
+assert(fleetModel([{device_id:A,name:'Unknown',status:null}]).incomplete);
+const escaped=renderFleet([{device_id:A,name:'<script>',online:false,status:{services:[],remote_connections:[]}}]);
+assert(escaped.includes('&lt;script&gt;'));assert(!escaped.includes('<script>'));
+console.log('Fleet map: route deduplication, direction, cycles, unknown and offline endpoints, complete board roster and safe labels passed.');

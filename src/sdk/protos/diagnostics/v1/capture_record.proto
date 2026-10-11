@@ -1,0 +1,20 @@
+syntax = "proto3";
+package micros.diagnostics.v1;
+import "nanopb.proto";
+message CaptureRecord {
+  uint32 run_id = 1;
+  uint32 first_index = 2;
+  uint32 total = 3;
+  uint64 monotonic_us = 4; // First sample's acquisition time, not transmit time.
+  message Sample {
+    uint32 index = 1;
+    uint32 sequence = 2; // Acquisition attempts, including invalid readings.
+    uint64 monotonic_us = 3;
+    uint32 pin = 4;
+    bool analog = 5;
+    uint32 value = 6; // Raw 12-bit ADC count or digital 0/1; usable only if error=0.
+    sint32 error = 7;
+    bool trigger = 8;
+  }
+  repeated Sample samples = 5 [(nanopb).max_count = 4];
+}

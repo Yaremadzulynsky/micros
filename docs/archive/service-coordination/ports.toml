@@ -1,0 +1,19 @@
+# Proposed syntax only: intentionally not a deployable micros.toml.
+[ports.target]
+kind = "state"
+direction = "input"
+schema = "light_target.proto"
+
+[ports.take_photo]
+kind = "action"
+direction = "executor"
+request_schema = "photo_request.proto"
+result_schema = "photo_result.proto"
+max_outstanding = 1
+restart_policy = "indeterminate"
+
+# Global bindings would resolve logical producer/consumer identities to local
+# ports or transport routes. Addresses never enter application protobufs.
+[replication]
+refresh_target_ms = 1000
+max_payload = 96

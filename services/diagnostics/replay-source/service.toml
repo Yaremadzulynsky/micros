@@ -1,0 +1,32 @@
+# Deployable diagnostic instrument. Configure its ports and limits in the application.
+
+[service]
+name = "diagnostic.replay-source"
+version = "1.0.0"
+
+[service.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[service.capabilities]
+gpio = []
+timers = 0
+
+[service.config_schema.arm_timeout_ms]
+type = "uint32"
+default = 60000
+min = 100
+max = 600000
+
+[service.config_schema.max_duration_ms]
+type = "uint32"
+default = 60000
+min = 1
+max = 60000
+
+[service.config_schema.max_lateness_ms]
+type = "uint32"
+default = 250
+min = 1
+max = 5000

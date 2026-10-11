@@ -1,0 +1,1656 @@
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (40) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (57) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (70) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (83) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (118) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (222) cpu_start: Pro cpu start user code
+I (222) cpu_start: cpu freq: 160000000 Hz
+I (224) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (246) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (289) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=346
+LED level=0 verified
+LATENCY_US=1832
+LED level=0 verified
+LATENCY_US=505
+LED level=0 verified
+LATENCY_US=1888
+LED level=1 verified
+LATENCY_US=1888
+LED level=1 verified
+LATENCY_US=1888
+LED level=1 verified
+LATENCY_US=1888
+LED level=1 verified
+LATENCY_US=1888
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=1 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=358 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=357 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=356 callbacks=8 stack_free=3320
+END STATUS
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=1 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=365 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=364 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=363 callbacks=8 stack_free=3320
+END STATUS
+LED level=1 verified
+LATENCY_US=1892
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=1 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=374 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=373 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=372 callbacks=9 stack_free=3320
+END STATUS
+LATENCY_US=496
+LED level=0 verified
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 1
+READY 1136
+FAULT reset boundary=1
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=347
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=7 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=6 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=5 callbacks=1 stack_free=3320
+END STATUS
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=13 callbacks=1 stack_free=3320
+END STATUS
+LATENCY_US=394
+LED level=0 verified
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 2
+READY 1136
+FAULT reset boundary=2
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=347
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=8 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=6 callbacks=1 stack_free=3320
+END STATUS
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=16 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=15 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=14 callbacks=1 stack_free=3320
+END STATUS
+LED level=0 verified
+LATENCY_US=1892
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 3
+READY 1136
+FAULT reset boundary=3
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=347
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=7 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=6 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=5 callbacks=1 stack_free=3320
+END STATUS
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=14 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=13 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=12 callbacks=1 stack_free=3320
+END STATUS
+LED level=0 verified
+LATENCY_US=1928
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 4
+READY 232
+FAULT reset boundary=4
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=347
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=8 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=6 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=5 callbacks=1 stack_free=3320
+END STATUS
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=13 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=12 callbacks=1 stack_free=3320
+END STATUS
+LATENCY_US=495
+LED level=0 verified
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 5
+READY 232
+FAULT reset boundary=5
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=347
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=7 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=6 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=5 callbacks=1 stack_free=3320
+END STATUS
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=14 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=13 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=12 callbacks=1 stack_free=3320
+END STATUS
+LED level=0 verified
+LATENCY_US=1892
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 6
+FAULT reset boundary=6
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=347
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=7 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=6 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=5 callbacks=1 stack_free=3320
+END STATUS
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=13 callbacks=1 stack_free=3320
+END STATUS
+LED level=0 verified
+LATENCY_US=514
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 7
+FAULT reset boundary=7
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=347
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=7 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=6 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=5 callbacks=1 stack_free=3320
+END STATUS
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=16 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=15 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=14 callbacks=1 stack_free=3320
+END STATUS
+LED level=0 verified
+LATENCY_US=514
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 8
+FAULT reset boundary=8
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=346
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=7 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=6 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=5 callbacks=1 stack_free=3320
+END STATUS
+ACTIVATION sequence=3 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=14 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=13 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=12 callbacks=1 stack_free=3320
+END STATUS
+LATENCY_US=1807
+LED level=0 verified
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 9
+FAULT reset boundary=9
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=1 trial=1
+LED level=0 verified
+LATENCY_US=340
+LED level=0 verified
+LATENCY_US=1392
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=49326
+HEALTH COMMITTED bank=1
+ACTIVATION sequence=6 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2507 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=2507 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=2505 callbacks=51 stack_free=3320
+END STATUS
+LATENCY_US=1808
+LED level=0 verified
+ACTIVATION sequence=6 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2516 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=2516 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=2514 callbacks=52 stack_free=3320
+END STATUS
+LATENCY_US=1772
+LED level=0 verified
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 10
+FAULT reset boundary=10
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=1
+LED level=0 verified
+LATENCY_US=340
+LED level=0 verified
+LATENCY_US=1392
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1374
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1374
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1380
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=49360
+HEALTH COMMITTED bank=0
+ACTIVATION sequence=10 good=0 previous=1 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2507 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=2507 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=2505 callbacks=51 stack_free=3320
+END STATUS
+LATENCY_US=1808
+LED level=0 verified
+ACTIVATION sequence=10 good=0 previous=1 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2516 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=2516 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=2514 callbacks=52 stack_free=3320
+END STATUS
+LATENCY_US=1772
+LED level=0 verified
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 11
+AUTOBOOT OK bank=1 trial=1
+FAULT reset boundary=11
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=1 trial=1
+LED level=0 verified
+LATENCY_US=340
+LED level=0 verified
+LATENCY_US=1392
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=49353
+HEALTH COMMITTED bank=1
+ACTIVATION sequence=14 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2507 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=2507 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=2505 callbacks=51 stack_free=3320
+END STATUS
+LATENCY_US=1808
+LED level=0 verified
+ACTIVATION sequence=14 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2516 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=2516 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=2514 callbacks=52 stack_free=3320
+END STATUS
+LED level=0 verified
+LATENCY_US=1893
+STOPPED OK
+READY 1136
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+FAULT ARMED 12
+AUTOBOOT OK bank=0 trial=1
+BOOT OK
+LATENCY_US=224
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1379
+LATENCY_US=1255
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=1379
+LATENCY_US=42495
+LED level=0 verified
+HEALTH COMMITTED bank=0
+FAULT reset boundary=12
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=347
+ACTIVATION sequence=17 good=0 previous=1 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=8 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=6 callbacks=1 stack_free=3320
+END STATUS
+ACTIVATION sequence=17 good=0 previous=1 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=13 callbacks=1 stack_free=3320
+END STATUS
+LED level=0 verified
+LATENCY_US=514
+STOPPED OK
+READY 188
+IMAGE OK
+READY 2440
+IMAGE OK
+READY 1292
+IMAGE OK
+READY 232
+CONFIG OK
+STOP service_result=-5
+AUTOBOOT REJECT
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+STOP service_result=-5
+AUTOBOOT REJECT
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 271414342, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:6384
+load:0x40078000,len:15916
+load:0x40080400,len:3920
+entry 0x40080644
+I (28) boot: ESP-IDF v5.5.2 2nd stage bootloader
+I (28) boot: compile time Sep  5 2026 16:40:00
+I (28) boot: Multicore bootloader
+I (29) boot: chip revision: v3.0
+I (32) boot.esp32: SPI Speed      : 40MHz
+I (36) boot.esp32: SPI Mode       : DIO
+I (39) boot.esp32: SPI Flash Size : 8MB
+I (43) boot: Enabling RNG early entropy source...
+I (48) boot: Partition Table:
+I (50) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00180000
+I (76) boot:  3 services         Unknown data     01 41 00190000 00400000
+I (82) boot:  4 activation       Unknown data     01 40 00590000 00002000
+I (89) boot: End of partition table
+I (92) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=092a0h ( 37536) map
+I (113) esp_image: segment 1: paddr=000192c8 vaddr=3ffb0000 size=0222ch (  8748) load
+I (116) esp_image: segment 2: paddr=0001b4fc vaddr=40080000 size=00404h (  1028) load
+I (117) esp_image: segment 3: paddr=0001b908 vaddr=40080410 size=04710h ( 18192) load
+I (132) esp_image: segment 4: paddr=00020020 vaddr=400d0020 size=18cc0h (101568) map
+I (167) esp_image: segment 5: paddr=00038ce8 vaddr=40084b20 size=10194h ( 65940) load
+I (193) esp_image: segment 6: paddr=00048e84 vaddr=50000000 size=00020h (    32) load
+I (203) boot: Loaded app from partition at offset 0x10000
+I (203) boot: Disabling RNG early entropy source...
+I (213) cpu_start: Multicore app
+I (221) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (221) cpu_start: Pro cpu start user code
+I (221) cpu_start: cpu freq: 160000000 Hz
+I (223) app_init: Application information:
+I (227) app_init: Project name:     micros_runtime
+I (232) app_init: App version:      0216a8a-dirty
+I (236) app_init: Compile time:     Sep  5 2026 16:56:36
+I (241) app_init: ELF file SHA256:  b954b31de...
+I (245) app_init: ESP-IDF:          v5.5.2
+I (249) efuse_init: Min chip rev:     v0.0
+I (253) efuse_init: Max chip rev:     v3.99
+I (257) efuse_init: Chip rev:         v3.0
+I (261) heap_init: Initializing. RAM available for dynamic allocation:
+I (267) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (272) heap_init: At 3FFB6B80 len 00029480 (165 KiB): DRAM
+I (278) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (283) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (288) heap_init: At 40094CB4 len 0000B34C (44 KiB): IRAM
+I (295) spi_flash: deteMICROS M6 ready abi=3 recovery=0
+ROLLBACK attempts exhausted
+AUTOBOOT OK bank=0 trial=0
+LED level=0 verified
+LATENCY_US=342
+ACTIVATION sequence=21 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=215596 baseline_heap=245988 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=7 callbacks=0 stack_free=3208
+SERVICE index=1 state=Running result=0 steps=6 callbacks=0 stack_free=3120
+SERVICE index=2 state=Running result=0 steps=5 callbacks=1 stack_free=3320
+END STATUS

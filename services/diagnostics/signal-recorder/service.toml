@@ -1,0 +1,62 @@
+# Deployable diagnostic instrument. Configure its ports and limits in the application.
+
+[service]
+name = "diagnostic.signal-recorder"
+version = "1.0.0"
+
+[service.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[service.capabilities]
+gpio = ["signal"]
+timers = 0
+
+[service.config_schema.run_id]
+type = "uint32"
+default = 1
+min = 1
+max = 4294967295
+
+[service.config_schema.sample_interval_ms]
+type = "uint32"
+default = 10
+min = 10
+max = 60000
+
+[service.config_schema.duration_ms]
+type = "uint32"
+default = 10000
+min = 10
+max = 60000
+
+[service.config_schema.analog]
+type = "uint32"
+default = 0
+min = 0
+max = 1
+
+[service.config_schema.trigger]
+type = "uint32"
+default = 1
+min = 0
+max = 4
+
+[service.config_schema.threshold]
+type = "uint32"
+default = 1
+min = 0
+max = 4095
+
+[service.config_schema.pre_samples]
+type = "uint32"
+default = 8
+min = 0
+max = 15
+
+[service.config_schema.post_samples]
+type = "uint32"
+default = 8
+min = 0
+max = 16

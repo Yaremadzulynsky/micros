@@ -1,0 +1,12 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+# Standalone sensor; no cross-device connections or network captures requested.
+[deployment]
+name = "DHT monitor"
+
+[management.server]
+url = ""
+
+[devices.sensor]
+id = "aabbccdd0003"
+board = "../boards/esp32-dht.toml"
+application = "../applications/dht-monitor.toml"

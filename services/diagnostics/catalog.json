@@ -1,0 +1,109 @@
+{
+  "format": 1,
+  "instruments": [
+    {
+      "name": "diagnostic.channel-probe",
+      "manifest": "channel-probe/service.toml",
+      "alias": "probe",
+      "mode": "observe_channel",
+      "skills": [
+        "micros-diagnose-missing-data"
+      ],
+      "ports": {
+        "subscriptions": {
+          "input": "selected ordinary channel schema"
+        },
+        "publications": {
+          "report": "src/sdk/protos/diagnostics/v1/probe_report.proto"
+        }
+      },
+      "resources": {
+        "gpio": 0,
+        "timers": 0,
+        "handles": 2
+      },
+      "limitations": [
+        "Probe receipt timing, not source timing",
+        "Loss notifications, not lost-message count",
+        "No coordination ports",
+        "Installation restarts the graph"
+      ]
+    },
+    {
+      "name": "diagnostic.signal-recorder",
+      "manifest": "signal-recorder/service.toml",
+      "alias": "recorder",
+      "mode": "acquire_owned_input",
+      "skills": [
+        "micros-diagnose-signal-quality"
+      ],
+      "ports": {
+        "publications": {
+          "records": "src/sdk/protos/diagnostics/v1/capture_record.proto",
+          "status": "src/sdk/protos/diagnostics/v1/capture_status.proto"
+        }
+      },
+      "resources": {
+        "gpio": 1,
+        "timers": 0,
+        "handles": 3
+      },
+      "limits": {
+        "retained_samples": 32,
+        "samples_per_batch": 4,
+        "minimum_interval_ms": 10
+      },
+      "limitations": [
+        "Exclusive input ownership",
+        "Polling may miss edges",
+        "ADC1 raw counts only",
+        "Installation restarts the graph"
+      ]
+    },
+    {
+      "name": "diagnostic.replay-source",
+      "manifest": "replay-source/service.toml",
+      "alias": "replay",
+      "mode": "controlled_input_intervention",
+      "skills": [
+        "micros-diagnose-with-replay"
+      ],
+      "ports": {
+        "subscriptions": {
+          "commands": "src/sdk/protos/diagnostics/v1/replay_command.proto"
+        },
+        "publications": {
+          "output": "selected ordinary channel schema",
+          "status": "src/sdk/protos/diagnostics/v1/replay_status.proto"
+        }
+      },
+      "resources": {
+        "gpio": 0,
+        "timers": 0,
+        "handles": 3
+      },
+      "limits": {
+        "frames": 16,
+        "encoded_frame_bytes": 48,
+        "runs_per_activation": 1
+      },
+      "limitations": [
+        "May actuate downstream services",
+        "Schema checked; domain semantics require review",
+        "No automatic command retries",
+        "Installation restarts the graph"
+      ]
+    }
+  ],
+  "schema_paths_relative_to": "repository root",
+  "manifest_paths_relative_to": "catalog directory",
+  "collection": {
+    "module": "micros_tooling.diagnostics.collect",
+    "requires": [
+      "updated operator stream endpoint",
+      "ESP32 IPC stream protocol 1",
+      "registered published-port metadata",
+      "network bridge bound to selected reports"
+    ]
+  }
+}

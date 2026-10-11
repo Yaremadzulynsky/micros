@@ -1,0 +1,15 @@
+[project]
+name = "deliberately hung trial"
+[board]
+profile = "arduino_mkr_wifi_1010"
+[services.hung]
+source = "."
+name = "test.hung"
+version = "1.0.0"
+enabled = true
+memory = { arena = "RAM", stack_bytes = 1024 }
+[services.hung.build]
+sources = ["service.c"]
+[services.hung.capabilities]
+gpio = []
+timers = 0
