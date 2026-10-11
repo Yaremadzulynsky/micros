@@ -49,7 +49,7 @@ and reference applications in [examples/](../../examples/README.md). They use th
 [public service SDK](../../src/sdk/README.md). The CLI and management server share
 [host tooling](../../src/micros_tooling/README.md); the
 [server](../../src/server/README.md) owns its browser console. Use the
-[repository map](../../README.md#repository-map) to find each component's source.
+[repository map](contributing.md#repository-map) to find each component's source.
 
 ## 02 · Follow a service lifetime {#follow-a-service-lifetime}
 

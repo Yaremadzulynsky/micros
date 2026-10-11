@@ -1,6 +1,6 @@
 # Contributing to Micros
 
-Start with the [repository map](README.md#repository-map) and [agent instructions](AGENTS.md).
+Start with the [repository map](https://docs.meetmicros.com/site/contributing/#repository-map) and [agent instructions](AGENTS.md).
 The [contributor guide](docs/site/contributing.md) is the authoritative source for
 setup, host tests, documentation checks and contribution expectations.
 

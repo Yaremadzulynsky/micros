@@ -1,7 +1,7 @@
 # Working in micros
 
 Run project commands from the repository root. Start with the
-[repository map](README.md#repository-map), the relevant folder's README and any
+[repository map](docs/site/contributing.md#repository-map), the relevant folder's README and any
 nested `AGENTS.md`. Use [contributor checks](docs/site/contributing.md) to validate changes.
 
 - Preserve unrelated changes, application-owned recipes and private `.micros/`

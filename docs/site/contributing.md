@@ -11,6 +11,24 @@ Reference · Contributor checks
 
 # Contributor checks
 
+## Repository map
+
+| Folder | Purpose |
+| --- | --- |
+| [src/](../../src/README.md) | Firmware, public SDK, CLI implementation and management server/console |
+| [services/](../../services/README.md) | Reusable, independently deployed diagnostics and tools |
+| [config/](../../config/README.md) | Chip capabilities and board metadata |
+| [examples/](../../examples/README.md) | Runnable examples and reference application services |
+| [tests/](../../tests/README.md) | Automated checks, test fixtures and explicit hardware tests |
+| [tools/](../../tools/README.md) | Build/release utilities, documentation support and agent skills |
+| [docs/](https://docs.meetmicros.com/) | System model, task guides and references |
+
+Application source and deployment declarations belong in the project created by
+`micros new`, outside this SDK checkout. The product website lives in the separate
+`micros-website` repository; the management server and console remain here.
+`build/` is disposable generated output. `.micros/` is private operational and
+recovery state: preserve it.
+
 ## Set up and test
 
 Install Git, CMake 3.24+, Ninja, C17/C++17 compilers and a Python version supported
@@ -52,7 +70,7 @@ Give each fact one authoritative home. Link to CLI help, validators, and working
 examples for exact contracts; avoid copying flag/schema catalogs. Keep the
 homepage's illustrative greenhouse distinct from executable examples. Historical
 [preview evidence](preview-evidence.md) stays dated rather than implying current
-coverage. Locate implementation ownership in the [repository map](../../README.md#repository-map).
+coverage. Locate implementation ownership in the [repository map](#repository-map).
 
 ## Submit a change
 

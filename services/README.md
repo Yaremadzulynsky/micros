@@ -17,4 +17,4 @@ resources and targets; placement here does not imply support on every board.
 Reference applications belong in [`examples/services/`](../examples/services/README.md),
 test-only code in `tests/fixtures/`, and resident management in
 `src/firmware/controller/`. Developer-owned services stay in the consuming
-application repository. See [repository map](../README.md#repository-map).
+application repository. See [repository map](https://docs.meetmicros.com/site/contributing/#repository-map).

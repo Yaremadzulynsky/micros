@@ -13,6 +13,6 @@ Anonymous composition scenarios are available in
 [`tests/fixtures/composition/`](../tests/fixtures/composition/README.md).
 
 Start an independent application with `./micros new ../my-application`.
-See [repository map](../README.md#repository-map).
+See [repository map](https://docs.meetmicros.com/site/contributing/#repository-map).
 
 - [Shell service](shell-service/README.md): raw protobuf commands and published status, inspectable through shell channel reads.
