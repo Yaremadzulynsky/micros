@@ -53,6 +53,20 @@ class ShellTests(unittest.TestCase):
         self.sleep = Mock()
         self.shell = Shell(self.client, output=self.output, sleep=self.sleep)
 
+    def test_watch_sleep_bounds_interrupt_latency_without_shortening_interval(self):
+        from micros_tooling.terminal.shell import interruptible_sleep
+        clock = [0.0]
+        def advance(seconds):
+            clock[0] += seconds
+        with patch('micros_tooling.terminal.shell.time.monotonic', side_effect=lambda: clock[0]), \
+             patch('micros_tooling.terminal.shell.time.sleep', side_effect=advance) as sleep:
+            interruptible_sleep(1.1)
+        self.assertAlmostEqual(clock[0], 1.1)
+        self.assertTrue(all(0 < call.args[0] <= .25 for call in sleep.call_args_list))
+        with patch('micros_tooling.terminal.shell.time.sleep', side_effect=KeyboardInterrupt):
+            with self.assertRaises(KeyboardInterrupt):
+                interruptible_sleep(10)
+
     def test_interactive_bad_input_and_ctrl_c_keep_prompt_alive(self):
         lines = iter(['nonsense', 'watch --count 2', 'services', 'exit'])
         self.sleep.side_effect = KeyboardInterrupt

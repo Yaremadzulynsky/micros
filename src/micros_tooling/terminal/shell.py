@@ -102,8 +102,20 @@ def options(command, args):
     return p.parse_args(args)
 
 
+def interruptible_sleep(seconds):
+    # A SIGINT received while rendering can remain pending until the next
+    # interpreter check. Bound each native sleep so watch returns promptly even
+    # when that signal did not interrupt the sleep syscall itself.
+    deadline = time.monotonic() + seconds
+    while True:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            return
+        time.sleep(min(remaining, 0.25))
+
+
 class Shell:
-    def __init__(self, client, *, output=None, sleep=time.sleep):
+    def __init__(self, client, *, output=None, sleep=interruptible_sleep):
         self.client = client
         self.output = output or sys.stdout
         self.sleep = sleep
