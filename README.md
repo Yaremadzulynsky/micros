@@ -8,9 +8,9 @@ The goal is computer-like visibility and control on small devices. Native servic
 are trusted code and share memory; Micros does not provide process isolation.
 
 [Documentation](https://docs.meetmicros.com/) ·
-[Quickstart](#install-and-start) ·
-[Write a service](docs/site/write-a-service.md) ·
-[Repository map](#repository-map)
+[Quickstart](https://docs.meetmicros.com/site/get-started/) ·
+[Write a service](https://docs.meetmicros.com/site/write-a-service/) ·
+[Architecture](https://docs.meetmicros.com/site/architecture/)
 
 ---
 
@@ -95,16 +95,16 @@ regenerate and test as you develop. Generated output goes under `build/`.
 | Run on | Start here |
 | --- | --- |
 | **Your computer** · macOS ARM64, Linux ARM64/x86-64 | [Deploy to the local runtime](https://docs.meetmicros.com/site/get-started/#deploy-host) |
-| **ESP32** | [Set up your board](docs/site/set-up-an-esp32.md), then [deploy your application](docs/site/deploy-an-application.md) |
-| **ESP8266 / MKR WiFi 1010** · experimental | [Choose a starter and deploy over USB](docs/site/experimental-usb.md) |
+| **ESP32** | [Set up your board](https://docs.meetmicros.com/site/set-up-an-esp32/), then [deploy your application](https://docs.meetmicros.com/site/deploy-an-application/) |
+| **ESP8266 / MKR WiFi 1010** · experimental | [Choose a starter and deploy over USB](https://docs.meetmicros.com/site/experimental-usb/) |
 
 For hardware deployment, replace the unit placeholder with your board's hardware
 ID and settings before deploying.
 
 The [full quickstart](https://docs.meetmicros.com/site/get-started/) covers setup
 options, SDK selection and deployment prerequisites. Continue with
-[Write a service](docs/site/write-a-service.md), or use
-[Contributing and SDK tests](CONTRIBUTING.md) to work on Micros itself.
+[Write a service](https://docs.meetmicros.com/site/write-a-service/), or use
+[Contributing and SDK tests](https://docs.meetmicros.com/site/contributing/) to work on Micros itself.
 
 ---
 
@@ -118,7 +118,7 @@ options, SDK selection and deployment prerequisites. Continue with
 | [examples/](examples/README.md) | Runnable examples and reference application services |
 | [tests/](tests/README.md) | Automated checks, test fixtures and explicit hardware tests |
 | [tools/](tools/README.md) | Build/release utilities, documentation support and agent skills |
-| [docs/](docs/index.md) | System model, task guides and references |
+| [docs/](https://docs.meetmicros.com/) | System model, task guides and references |
 
 Application source and deployment declarations belong in the project created by
 `micros new`, outside this SDK checkout. The product website lives in the separate
@@ -139,7 +139,7 @@ recovery state: preserve it.
 - Recovery checks runtime health, not sensor accuracy or actuator correctness.
 - Logs are bounded, volatile diagnostics, not a durable historical record.
 
-[Architecture](docs/site/architecture.md) · [Updates and recovery](docs/site/updates-and-recovery.md)
+[Architecture](https://docs.meetmicros.com/site/architecture/) · [Updates and recovery](https://docs.meetmicros.com/site/updates-and-recovery/)
 
 ---
 
