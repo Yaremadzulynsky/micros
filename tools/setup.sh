@@ -40,6 +40,8 @@ trap 'exit 129' HUP
 trap 'exit 130' INT
 trap 'exit 143' TERM
 supported_python() {
+    if [ "$system" = macos ] && [ "${apple_tools:-1}" = 0 ] &&
+       [ "$(command -v "$1" 2>/dev/null || true)" = /usr/bin/python3 ]; then return 1; fi
     "$1" -c 'import sys; sys.exit(not ((3, 10) <= sys.version_info[:2] < (3, 13)))' >/dev/null 2>&1
 }
 find_python() {
@@ -70,14 +72,20 @@ report() {
 }
 scan() {
     git_ok=0; py_ok=0; c_ok=0; cxx_ok=0; build_ok=0; ninja_ok=0; make_ok=0; env_ok=0
-    git --version >/dev/null 2>&1 && git_ok=1
+    apple_tools=1
+    if [ "$system" = macos ] && ! xcode-select -p >/dev/null 2>&1; then apple_tools=0; fi
+    # Apple's git/compiler shims can open an installer merely when executed.
+    # Keep --check passive on a fresh Mac; setup opens the installer explicitly.
+    if [ "$apple_tools" = 1 ]; then
+        git --version >/dev/null 2>&1 && git_ok=1
+        compiler_ok c && c_ok=1
+        compiler_ok cxx && cxx_ok=1
+        make --version >/dev/null 2>&1 && make_ok=1
+    fi
     find_python
     if [ -n "$python" ] && "$python" -c 'import venv, ensurepip' >/dev/null 2>&1; then py_ok=1; fi
-    compiler_ok c && c_ok=1
-    compiler_ok cxx && cxx_ok=1
     cmake_ok && build_ok=1
     ninja --version >/dev/null 2>&1 && ninja_ok=1
-    make --version >/dev/null 2>&1 && make_ok=1
     if supported_python "$ROOT/build/python/bin/python" &&
        PYTHONPATH="$ROOT/src" "$ROOT/build/python/bin/python" -c 'from pathlib import Path; from micros_tooling.sdk import check_dependencies; import sys; check_dependencies(Path(sys.argv[1]))' "$ROOT" > "$probe/dependencies.log" 2>&1 &&
        "$ROOT/build/python/bin/python" -m pip check >> "$probe/dependencies.log" 2>&1; then env_ok=1; fi

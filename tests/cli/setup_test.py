@@ -154,6 +154,12 @@ class SetupTests(unittest.TestCase):
         self.run_setup()
         self.assertIn(['brew', 'install', 'python@3.12'], self.commands())
 
+    def test_check_on_fresh_mac_does_not_launch_apple_tool_shims(self):
+        self.set_state(os='Darwin', compiler=False)
+        self.run_setup('--check', code=1)
+        self.assertFalse(any(c[0] in ('cc', 'c++', 'git', 'make') or '--install' in c
+                             for c in self.commands()))
+
     def test_apple_installer_requires_completion_before_success(self):
         self.set_state(os='Darwin', compiler=False)
         text = self.run_setup(code=1)
