@@ -116,6 +116,7 @@ def server_main(arguments):
     client_import.add_argument('directory', type=Path)
     setup = sub.add_parser('setup', help='create private TLS/operator credentials for a server hostname or IP')
     setup.add_argument('--host', required=True)
+    setup.add_argument('--port', type=int, default=8443, help='host HTTPS port (default: 8443)')
     sub.add_parser('console', help='open the web console with a one-time sign-in link')
     sub.add_parser('start', help='build and start the local Docker container')
     sub.add_parser('shutdown', help='stop the local container without deleting state')
@@ -175,6 +176,7 @@ def server_main(arguments):
         return
     if args.action == 'setup':
         require(not (state/'client.json').exists(), 'Server already configured; preserve its identity')
+        require(1 <= args.port <= 65535, 'Server port must be between 1 and 65535')
         try:
             address = ipaddress.ip_address(args.host)
             san = 'IP:'+args.host
@@ -193,8 +195,13 @@ def server_main(arguments):
             '-keyout',str(state/'prvtkey.pem'),'-out',str(state/'servercert.pem')], check=True,capture_output=True)
         (state/'prvtkey.pem').chmod(0o600)
         atomic_write(state/'admin.token', secrets.token_hex(32).encode())
-        atomic_write(state/'client.json', json.dumps(dict(url='https://'+args.host+':8443')).encode())
-        print('Server identity ready. Set [management.server].url to https://'+args.host+':8443')
+        host = '[' + args.host + ']' if ':' in args.host else args.host
+        url = f'https://{host}:{args.port}'
+        atomic_write(state/'client.json', json.dumps(dict(url=url)).encode())
+        import shlex
+        selection = ['--profile', args.profile] if args.profile else ['--state', str(state)]
+        print('Server identity ready at ' + url + '. Run ' +
+              shlex.join(['micros', 'server', *selection, 'start']) + ' to start the console.')
         return
     config = json.loads((state/'client.json').read_text())
     remote = RelayRemote(config['url'], state/'servercert.pem', state/'admin.token', getattr(args,'device_id',''),
@@ -228,7 +235,8 @@ def server_main(arguments):
         docker = shutil.which('docker') or '/Applications/Docker.app/Contents/Resources/bin/docker'
         command = [docker,'compose','-p',args.compose_project,'-f',str(ROOT/'src/server/compose.yaml')]
         command += ['up','--build','-d'] if args.action == 'start' else ['stop']
-        subprocess.run(command, env=dict(os.environ, MICROS_SERVER_STATE=str(state)),check=True)
+        subprocess.run(command, env=dict(os.environ, MICROS_SERVER_STATE=str(state),
+                                        MICROS_SERVER_PORT=str(urlsplit(config['url']).port or 443)),check=True)
         if args.action == 'start':
             import http.client
             import time
@@ -266,7 +274,7 @@ def server_main(arguments):
                 contact = datetime.fromtimestamp(device['last_seen'], timezone.utc).isoformat(timespec='seconds') if device['last_seen'] else 'never'
                 print(f"{device['name']:24} {device['device_id']} {'online' if device['online'] else 'offline':7} {len(observed.get('services', [])):<8} {contact}")
             if not roster['devices']:
-                print('No enrolled devices. Use micros server enroll DEVICE_ID --name NAME.')
+                print('No enrolled devices. Connect a board over USB and run micros enroll.')
     elif args.action == 'revoke':
         remote.raw('POST','/v1/revoke',json.dumps(dict(device_id=args.device_id)).encode())
         print('Revoked '+args.device_id)

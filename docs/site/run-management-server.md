@@ -49,10 +49,10 @@ micros server --profile lab start
 micros server use lab
 ```
 
-Named local servers use separate Docker Compose project names. Each still binds
-TCP 8443 by default: stop the other local instance or use separate bind addresses
-before starting another on the same host. Remote servers can run simultaneously
-on their own hosts. Creating a profile does not provision a remote machine.
+Named local servers use separate Docker Compose project names. Each binds TCP
+8443 by default; choose an unused port with `setup --host SERVER_LAN_IP --port 18443`
+when another server is running. The chosen port is saved and reused by start,
+clients and board enrollment. Remote servers can run simultaneously on their own hosts. Creating a profile does not provision a remote machine.
 
 Profiles live under `$XDG_CONFIG_HOME/micros/servers/NAME` (or
 `~/.config/micros/servers/NAME`). The name `default` refers to the original
@@ -148,7 +148,7 @@ unused project name and empty private client directory:
 ```sh
 export MICROS_CLIENT_DIR="$PWD/.micros/test-server"
 export MICROS_COMPOSE_PROJECT=micros-consumer-test
-micros server setup --host localhost
+micros server setup --host localhost --port 18443
 MICROS_SERVER_BIND=127.0.0.1 micros server start
 # When finished, with both variables still set:
 micros server shutdown
@@ -157,8 +157,8 @@ micros server shutdown
 `micros server --compose-project micros-consumer-test start` is the equivalent
 explicit option; pass the same name to `shutdown`. Names must start with a
 lowercase letter or digit and contain only lowercase letters, digits, `_` or `-`.
-Check `docker compose ls` and port 8443 first. Project isolation does not allow
-two servers to bind that same host port; leave an existing server untouched.
+Check `docker compose ls` and the chosen port first. Project isolation does not
+allow two servers to bind the same host port; leave an existing server untouched.
 
 ## 03 · Open the console {#open-the-console}
 
@@ -205,7 +205,7 @@ Preserve the server's state directory when moving it. See [private backups](cli.
 | Failure | Fix |
 | --- | --- |
 | Docker unavailable | Start Docker; check `docker info` permissions. |
-| Port 8443 occupied | Check the existing listener; the setup CLI has no port option. |
+| Port occupied | Check the existing listener; create the new server with `setup --port UNUSED_PORT`. |
 | Certificate error | Use the configured hostname and establish trust for its matching certificate. |
 | Laptop/board cannot connect | Check server address, port binding, firewall, and LAN reachability. |
 

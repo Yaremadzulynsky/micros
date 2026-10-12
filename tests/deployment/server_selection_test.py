@@ -195,6 +195,24 @@ class ServerSelectionTests(unittest.TestCase):
             self.assertEqual(selection.choose_server(self.workspace), client.profile_directory('lab'))
         self.assertEqual(run.call_args_list[1].args[0], ['--profile', 'lab', 'start'])
 
+    def test_custom_port_persists_and_controls_docker_binding(self):
+        directory = client.profile_directory('custom')
+        with patch('sys.stdout', io.StringIO()) as output:
+            server_main(['--profile', 'custom', 'setup', '--host', '127.0.0.1', '--port', '18443'])
+        self.assertIn('micros server --profile custom start', output.getvalue())
+        self.assertEqual(json.loads((directory / 'client.json').read_text())['url'], 'https://127.0.0.1:18443')
+        with patch('micros_tooling.fleet.server.RelayRemote'), \
+             patch('micros_tooling.fleet.server.subprocess.run') as run:
+            server_main(['--profile', 'custom', 'shutdown'])
+        self.assertEqual(run.call_args.kwargs['env']['MICROS_SERVER_PORT'], '18443')
+        self.assertEqual(run.call_args.kwargs['env']['MICROS_SERVER_STATE'], str(directory))
+
+    def test_invalid_port_is_rejected_before_creating_identity(self):
+        for port in ('0', '-1', '65536'):
+            with self.assertRaisesRegex(ValueError, 'Server port'):
+                server_main(['--profile', 'invalid', 'setup', '--host', 'localhost', '--port', port])
+            self.assertFalse(client.profile_directory('invalid').exists())
+
     def test_explicit_flag_cannot_silently_override_environment(self):
         self.profile('lab')
         os.environ['MICROS_SERVER'] = 'lab'
