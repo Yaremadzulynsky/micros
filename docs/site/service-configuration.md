@@ -232,8 +232,8 @@ cleanup for a manual service.
 ## Validate
 
 ```sh
-./micros generate --service services/hello
-./micros scaffold-service services/hello --preview
+./micros generate --service services/climate-sensor
+./micros scaffold-service services/climate-sensor --preview
 ./micros compose -d host
 ```
 

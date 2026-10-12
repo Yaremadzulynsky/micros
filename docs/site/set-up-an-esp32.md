@@ -87,14 +87,21 @@ Reset button before running the command. It is different from `--retry-flash`, w
 
 When enrollment succeeds inside a [starter project](get-started.md#create-your-project),
 it creates `units/HARDWARE_ID.toml` with the detected identity, board profile and
-ESP32 flash capacity, selecting the project's hello service. There is no placeholder
+ESP32 flash capacity, selecting the project's simulated climate services. There is no placeholder
 unit in a new project. Each additional board gets its own file referencing the same
 example. Existing units and service source are preserved. The command prints the
-next deployment commands; enrollment itself does not deploy a service.
+next deployment commands for your later edits. By default, enrollment also builds
+and installs a pristine SDK copy of the simulated climate starter through the
+server, and waits for all three services to confirm. This requires no external
+hardware. Use `--no-starter` to leave only device management running.
 
-Older untouched placeholders are migrated with a backup under `build/enrollment/`.
-Customized legacy placeholders are preserved and need manual migration. If you
-removed the hello example, enrollment leaves your service selection to you and
+The installed starter and deployment evidence are retained under `build/enrollment/`
+in your application, or the enrollment session's `build/` directory when enrolling
+outside a project. Application-owned edits are never run automatically during
+enrollment. If starter installation fails, the board remains enrolled: inspect
+status and use the printed deployment command, without erasing or re-enrolling.
+If you
+removed any of the starter services, enrollment leaves your service selection to you and
 prints the expected unit path. Review `board.profile` and application pins before
 adding hardware services; enrollment cannot identify peripherals. For a Feather V2
 with peripheral wiring, use `adafruit_feather_esp32_v2` and `flash_mb = 8`.
@@ -106,7 +113,7 @@ with peripheral wiring, use `adafruit_feather_esp32_v2` and `flash_mb = 8`.
 ./micros logs -d HARDWARE_ID --follow
 ```
 
-Hello should produce a greeting approximately once per second. Ctrl-C stops
+The status display logs simulated temperature, humidity and fan state once per second. Ctrl-C stops
 following logs without stopping the board. See [deployment](deploy-an-application.md)
 for updates and rollback.
 

@@ -1,20 +1,12 @@
 # Application tests
 
-Keep tests of your service behavior here. The SDK tests its runtime, ABI and
-built-in services; your project owns tests for your own application behavior.
+Run `./micros test -v` from the application root. `climate_test.py` compiles the
+real three services, generated lifecycle, IPC bindings and protobuf codecs.
+`flow.c` supplies a deterministic test clock and latest-value bus, with independent
+subscriber cursors. It verifies two full temperature cycles, fan hysteresis,
+matching sample output, skipped samples for a slow display, stale-data reporting,
+recovery, default/selected timer settings and resource cleanup.
 
-Before enrollment, run `./micros compose -d host`, `./micros generate` and `./micros test`. After enrollment
-creates your board unit, an offline configuration check is:
-
-```sh
-./micros compose -d HARDWARE_ID
-```
-
-Composition validates declarations and source paths. It does not execute services
-or establish that hardware works.
-
-`hello_test.py` compiles the real starter and generated lifecycle and checks default
-and selected intervals, greeting and cleanup with a host timer stub. Use
-`./micros test -v` for individual results or `./micros test -k NAME` to filter tests.
-Update its expected greeting when
-editing hello. This does not simulate real MCU timing or physical hardware.
+No board, operator credentials, external input or wall-clock delays are needed.
+The test bus is a fixture, not a replacement for the SDK runtime tests. Host tests
+and composition cannot establish that a physical deployment works.

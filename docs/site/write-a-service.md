@@ -15,39 +15,31 @@ Start with behavior you can observe, then add state and commands. Micros owns
 lifecycle plumbing; your service owns its behavior and declares what it needs.
 {: .arch-intro}
 
-## 01 · Change the heartbeat {#change-the-heartbeat}
+## 01 · Change the simulated climate application {#change-the-heartbeat}
 
-The project from [Quickstart](get-started.md) contains a working heartbeat in
-`services/hello/`. Its C code opens the declared `greeting` timer and writes
-`Hello world` to the log. It needs no GPIO or wiring and runs on the host or a board.
+The project from [Quickstart](get-started.md) has three services and two typed
+channels. `climate-sensor` calls a separate simulated sensor driver on a timer;
+`fan-controller` applies hysteresis; `status-display` logs readings and fan state.
+All input and output are simulated, with no GPIO or wiring.
 
-The [service reference](service-configuration.md) describes each field.
-The service's `config_schema` defines `interval_ms`, its default and bounds.
-Your `units/host.toml` or selected `units/<hardware-id>.toml` chooses the value:
+To change sampling, edit the existing `config.interval_ms` value under
+`[services.climate_sensor]` in your selected unit. The service's `config_schema`
+defines its default and bounds. Keep the display's `stale_after_ms` above the
+sample interval. To change policy, edit `on_millicelsius` and `off_millicelsius`
+under `[services.fan_controller]`, keeping off below on.
 
-```toml
-[services.hello]
-source = "../services/hello"
-contract = "service.toml"
-memory = { arena = "RAM", stack_bytes = 4096 }
-config = { interval_ms = 250 }
-```
+Run `./micros compose -d host` and `./micros test -v`. The tests compile the actual
+services, generated lifecycle and protobuf codecs with a deterministic test bus.
+`./micros host deploy` and `./micros host logs` show the complete application;
+finish with `./micros host stop`. For an enrolled board, use `./micros deploy -d ID`.
 
-Edit the existing table rather than adding a duplicate. Run `./micros compose`
-to validate a board unit, or `./micros host build` to compile `units/host.toml`.
-`./micros test -v` runs the real heartbeat with a deterministic timer stub: it
-checks the default and selected interval, output, and cleanup without waiting or
-using hardware. `./micros host deploy` and `./micros host logs` let you observe it.
-Stop the local application with `./micros host stop` when finished.
+Generated hooks decode settings, dispatch typed subscriptions and close resources.
+Service hooks must return in bounded time; see [Service API](service-api.md).
+The [service reference](service-configuration.md) describes the declarations.
 
-Generated hooks decode settings and close the timer after `hello_on_stop`.
-You do not write a service descriptor or duplicate resource cleanup. Hooks must
-return in bounded time; see [Service API](service-api.md).
-
-Once a version has been installed, change `version` in the service's `service.toml`
-before deploying different code or settings on the host—for example `1.1.0`
-to `1.1.1`. Host packages are immutable by name/version. Board releases use
-content hashes. See the [unit reference](unit-configuration.md).
+Host packages are immutable by name/version. Bump the changed service version
+before redeploying changed code or settings, for example `1.0.0` to `1.0.1`.
+Board releases use content hashes. See the [unit reference](unit-configuration.md).
 
 ## 02 · Add state and commands {#declare-the-counter}
 
@@ -118,8 +110,8 @@ For a declaration you already wrote, omit `--new`; scaffolding derives the hooks
 from that declaration and preserves existing implementation files. Generated
 interfaces live under `build/services/`, separate from application source.
 
-The next concept to learn is a publisher and subscriber on **one board**: a sensor
-publishes readings, and another service reacts to them through declared channels.
+The starter already connects publishers and subscribers on **one board**.
+Extend its messages or add a new subscriber to explore independent readers.
 Follow [Connect service ports](connect-service-ports.md) and choose real pin bindings only once your hardware
 is known. A blinking LED is an optional hardware exercise, since boards have
 different LED pins and some expose none; it is not a prerequisite for learning

@@ -1,3 +1,4 @@
+#include <micros/memory.h>
 #ifndef MICROS_SELECTIVE_DEPLOY_H
 #define MICROS_SELECTIVE_DEPLOY_H
 /* Native peers retain RAM, handles and identity. The only shared interruption
@@ -117,7 +118,7 @@ static int selective_begin(unsigned bank, const micros_device_graph_t *next)
         int changed = !valid || old_bytes != new_bytes || memcmp(before, after, old_bytes) ||
             memcmp(&old->services[i], &next->services[i], sizeof(old->services[i])) ||
             memcmp(&old->configurations[i], &next->configurations[i], sizeof(old->configurations[i]));
-        free(before); free(after);
+        micros_management_free(before); micros_management_free(after);
         if (!valid) return -1;
         if (changed) selective.changed |= 1u << i;
     }

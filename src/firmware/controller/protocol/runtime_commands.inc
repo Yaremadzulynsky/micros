@@ -1,3 +1,4 @@
+#include <micros/memory.h>
 #include "../../kernel/support/integer.h"
 /* Low-level lifecycle commands are available on every platform. The deployment
  * controller and interactive tooling use the same runtime and admission rules. */
@@ -35,7 +36,7 @@ else if (!strncmp(line, "LOAD ", 5)) {
     if (!fields) { printf("{\"result\":-1}\n");return 1; }
     *fields++=0;
     size_t path_bytes=strlen(encoded)/2+1;
-    char *path=malloc(path_bytes);
+    char *path=micros_management_allocate(path_bytes);
     if (!path) { printf("{\"result\":-5}\n");return 1; }
     if (sscanf(fields, "%u %u %u %u %u", &handles, &timers, &gpio,
                &publishes, &subscribes) == 5 &&
@@ -58,7 +59,7 @@ else if (!strncmp(line, "LOAD ", 5)) {
             }
         }
     }
-    free(path);
+    micros_management_free(path);
 } else if (!strncmp(line, "CONFIGURE ", 10)) {
     char encoded[MICROS_CONFIG_MAX_BYTES * 2 + 1];
     uint8_t data[MICROS_CONFIG_MAX_BYTES];
@@ -139,9 +140,9 @@ static __attribute__((noinline)) int runtime_command(char *input)
     }
     static uint32_t publish_masks[MICROS_RUNTIME_SERVICE_CAPACITY];
     size_t length=strlen(input);
-    char *line=malloc(length+2);
+    char *line=micros_management_allocate(length+2);
     if (!line) { printf("{\"result\":-5}\n");return 1; }
     memcpy(line,input,length);line[length]='\n';line[length+1]=0;
     int handled=runtime_command_body(line,publish_masks);
-    free(line);return handled;
+    micros_management_free(line);return handled;
 }

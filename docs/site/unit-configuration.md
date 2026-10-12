@@ -9,22 +9,39 @@ services, settings, wiring and resource budgets for one target. The same service
 can run on several targets with different unit settings.
 
 `micros new` creates the host unit. Successful `micros enroll` adds a physical
-board unit containing the detected identity, board definition and hello service.
+board unit containing the detected identity, board definition and simulated climate services.
 Keep that detected hardware information; enrollment cannot detect your peripherals.
 
 ## Complete host example
 
-This works with the hello service supplied by `micros new`:
+This selects the three-service starter supplied by `micros new`:
 
 ```toml
+# Self-contained local application: no device identity or hardware required.
 [project]
-name = "My host application"
+name = "Simulated climate"
 
-[services.hello]
-source = "../services/hello"
+[services.climate_sensor]
+source = "../services/climate-sensor"
 contract = "service.toml"
 memory = { arena = "RAM", stack_bytes = 4096 }
-config = { interval_ms = 250 }
+config = { interval_ms = 1000 }
+
+[services.fan_controller]
+source = "../services/fan-controller"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 4096 }
+config = { on_millicelsius = 28000, off_millicelsius = 24000 }
+
+[services.status_display]
+source = "../services/status-display"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 4096 }
+config = { stale_after_ms = 5000 }
+
+[channels.climate_reading]
+
+[channels.fan_status]
 ```
 
 ```sh
@@ -69,7 +86,9 @@ the same target.
 Do not copy `version`, `build`, `capabilities` or `config_schema` from the contract
 into this table. Those belong to the service and cannot be overridden here.
 
-To select hello twice, give both instances distinct deployed names:
+For a service with no ports, such as the SDK
+[`hello-service` example](../../examples/hello-service/README.md), distinct deployed
+names allow two instances (copy that example into `services/hello/` first):
 
 ```toml
 [services.fast]

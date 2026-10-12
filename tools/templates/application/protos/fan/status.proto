@@ -1,0 +1,9 @@
+syntax = "proto3";
+package example.fan;
+
+// A simulated actuator decision tied to one climate sample, not a physical fan.
+message Status {
+  uint32 reading_sequence = 1;
+  uint32 sampled_ms = 2;
+  bool enabled = 3;
+}

@@ -93,7 +93,7 @@ and `./micros` select its project and validate `micros.lock`. The local launcher
 also works when the SDK is not on PATH. Use `micros sdk COMMAND` to bypass project
 defaults deliberately. Set `MICROS_SDK` to override the link with a matching checkout.
 
-Generation should report hello's interfaces without contacting a board. New
+Generation should report all three services' interfaces without contacting a board. New
 projects contain `units/host.toml`; enrollment adds a unit for the actual board. `new` refuses
 to overwrite an existing directory. `micros init` provisions a board, not a project.
 
@@ -103,8 +103,11 @@ my-application/
   micros
   micros.lock
   units/host.toml
-  services/hello/service.toml
-  services/hello/src/service.c
+  services/climate-sensor/       # Calls the simulated sensor driver
+  services/fan-controller/       # Applies temperature hysteresis
+  services/status-display/       # Logs readings and simulated fan state
+  protos/climate/                # Reading protobuf and interface
+  protos/fan/                    # Fan status protobuf and interface
   tests/
 ```
 
@@ -117,10 +120,10 @@ rejects a different revision; pulling a newer SDK does not silently update an
 existing project's lock. Keep the matching checkout available and upgrade
 projects deliberately. The lock does not capture uncommitted SDK changes.
 
-Edit your application's `services/hello/`, not the SDK example. Generated files
+Edit your application's `services/`, not the SDK example. Generated files
 belong under `build/`.
 
-## 03 · Run hello's host test {#run-hello}
+## 03 · Test the simulated climate application {#run-hello}
 
 With a C17 compiler installed, run from your application directory:
 
@@ -128,12 +131,13 @@ With a C17 compiler installed, run from your application directory:
 ./micros test
 ```
 
-The starter is a hook-based heartbeat. Its `service.toml` declares a named timer
-and a bounded `interval_ms` setting; `units/host.toml` and the board unit choose the
-interval. Its C source contains behavior while Micros generates the lifecycle.
-The host test compiles that real code against a deterministic timer stub and
-checks default/selected intervals, greeting and cleanup. `./micros test -v` shows
-individual results; `-k NAME` filters them. This is not a physical board test.
+The starter has three hook-based services: a climate sensor calls a deterministic
+simulated driver, a fan controller applies a temperature policy, and a status
+display logs both typed channels. No external input or hardware is required.
+The test compiles the real services and protobuf codecs with a deterministic
+clock and test bus, checking the repeating cycle, hysteresis, freshness and cleanup.
+`./micros test -v` shows individual results; `-k NAME` filters them. This is not a
+physical board test. The generated README explains the flow and first changes.
 See [contributor checks](contributing.md) for the full SDK host suite.
 
 ### Deploy a persistent local application {#deploy-host}
@@ -188,9 +192,11 @@ SDK revision. No package or release wheel has yet been published.
 
 [Set up a board](set-up-an-esp32.md). After successful enrollment,
 `units/<hardware-id>.toml` contains the detected identity, board profile, flash
-capacity and the hello example. Each additional enrolled board gets its own unit;
-existing units and service code are preserved. Run `./micros compose -d HARDWARE_ID`
-to validate the new unit offline, then deploy it with the command printed by enrollment.
+capacity and the simulated climate application. Each additional enrolled board gets its own unit;
+existing units and service code are preserved. Enrollment installs the SDK's
+simulated climate starter and confirms all three services through the server.
+Use `--no-starter` for a management-only board. Run `./micros compose -d HARDWARE_ID`
+to validate your unit offline, then `./micros deploy -d HARDWARE_ID` for later edits.
 Review the profile and wiring before adding hardware services: enrollment cannot
 identify attached peripherals. For example, a Feather V2 uses
 `adafruit_feather_esp32_v2` and `flash_mb = 8`.

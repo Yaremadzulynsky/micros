@@ -568,3 +568,11 @@ void *micros_controller_transfer_allocate(size_t bytes)
 void micros_controller_yield(void) { vTaskDelay(1); }
 
 void micros_controller_bootloader(void) {}
+
+/* This backend owns task stack allocation; caller-owned stacks are unsupported. */
+micros_platform_task_t *micros_platform_task_create_with_stack(void *(*entry)(void *),
+    void *argument, size_t bytes, void *stack)
+{
+    (void)entry; (void)argument; (void)bytes; (void)stack;
+    return NULL;
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+package example.climate;
+
+// Simulated values. sampled_ms is the publisher's monotonic clock, modulo 2^32.
+message Reading {
+  uint32 sequence = 1;
+  uint32 sampled_ms = 2;
+  sint32 temperature_millicelsius = 3;
+  uint32 humidity_permille = 4;
+}

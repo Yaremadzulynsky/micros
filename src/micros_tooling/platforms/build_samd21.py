@@ -113,13 +113,23 @@ def main():
             (source / name).write_text(prefix + '#include "' + str(path) + '"\n')
     includes = [ROOT / path for path in ("src/firmware/platforms/samd21", "src/firmware/kernel/support", "src/firmware/controller/include", "src/sdk/abi/include", "src/firmware/contracts/include", "src/firmware/kernel/runtime", "src/firmware/kernel/ipc", "src/firmware/kernel/loader", "src/firmware/kernel/deployment", "src/firmware/kernel/hash", "src/firmware/platforms/samd21/src/support")]
     includes += [freertos / "include", freertos / "portable/GCC/ARM_CM0"]
-    common = " ".join('"-I' + str(path) + '"' for path in includes) + " -DMICROS_RUNTIME_GPIO_CAPACITY=4 -fstack-usage"
+    common = " ".join('"-I' + str(path) + '"' for path in includes) + " -DMICROS_RUNTIME_GPIO_CAPACITY=4 -DMICROS_RUNTIME_HANDLE_CAPACITY=16u -DMICROS_STATIC_MEMORY=1 -fstack-usage"
     common += "".join(" -DMICROS_REQUIRE_" + capability.upper() + "=1"
                       for capability in args.require_capability)
     core = Path.home() / 'Library/Arduino15/packages/arduino/hardware/samd/1.8.13'
     if not core.is_dir(): core=Path.home()/'.arduino15/packages/arduino/hardware/samd/1.8.13'
     variant=output/'variant'
     shutil.copytree(core/'variants/mkrwifi1010',variant,dirs_exist_ok=True)
+    # Micros uses USB CDC and SPI to NINA. It exposes no hardware-UART ABI.
+    # The stock variant otherwise retains two unused Uarts and 1 KiB of rings
+    # through their interrupt vectors, even with section garbage collection.
+    variant_source = variant / 'variant.cpp'
+    variant_text = variant_source.read_text()
+    uart_start = variant_text.index('// Serial1\nUart Serial1(')
+    uart_tail = variant_text[uart_start:]
+    if uart_tail.count('Uart Serial') != 2 or not uart_tail.rstrip().endswith('}'):
+        raise ValueError('Unexpected pinned MKR UART variant source')
+    variant_source.write_text(variant_text[:uart_start])
     script=variant/'linker_scripts/gcc/flash_with_bootloader.ld'
     text=script.read_text().replace('0x00000000+0x2000, LENGTH = 0x00040000-0x2000',
         f'0x{0x4000+args.base_slot*0x14000:08x}, LENGTH = 0x14000')

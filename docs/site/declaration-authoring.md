@@ -15,8 +15,8 @@ Field references: [Service definitions](service-configuration.md) ·
 
 | I want to… | Edit | Reference |
 | --- | --- | --- |
-| Change hello's interval on this host or board | `units/host.toml` or `units/<hardware-id>.toml` → `services.hello.config` | [Unit settings](unit-configuration.md#settings) |
-| Change the interval's default or allowed range | `services/hello/service.toml` → `service.config_schema.interval_ms` | [Service settings](service-configuration.md#settings) |
+| Change the sample interval on this host or board | `units/host.toml` or `units/<hardware-id>.toml` → `services.climate_sensor.config` | [Unit settings](unit-configuration.md#settings) |
+| Change the interval's default or allowed range | `services/climate-sensor/service.toml` → `service.config_schema.interval_ms` | [Service settings](service-configuration.md#settings) |
 | Add C/C++ source files or compiler definitions | `service.toml` → `service.build` | [Build options](service-configuration.md#build) |
 | Declare a timer, pin role, or command | `service.toml` | [Service reference](service-configuration.md) |
 | Choose a physical pin, select a service, or expose a command | Board unit | [Unit reference](unit-configuration.md) |
@@ -27,7 +27,7 @@ A generated project starts with:
 
 ```text
 my-application/
-  services/hello/
+  services/climate-sensor/
     service.toml              requirements, build inputs, setting defaults
     src/service.c             behavior
   units/
@@ -36,12 +36,13 @@ my-application/
   micros.lock                 pinned SDK revision
 ```
 
-You need no interface files for hello. Add them when services exchange messages.
+The starter also includes fan-controller and status-display services, with shared
+protobuf contracts under `protos/climate/` and `protos/fan/`.
 Each physical board has its own complete unit and deploys independently.
 
 ## One setting, from declaration to behavior {#settings-and-reusable-types}
 
-In `services/hello/service.toml`, define what values are valid:
+In `services/climate-sensor/service.toml`, define what values are valid:
 
 ```toml
 [service.config_schema.interval_ms]
@@ -54,14 +55,16 @@ max = 60000
 In `units/host.toml`, select this host instance's value:
 
 ```toml
-[services.hello]
-source = "../services/hello"
+[services.climate_sensor]
+source = "../services/climate-sensor"
 contract = "service.toml"
 memory = { arena = "RAM", stack_bytes = 4096 }
 config = { interval_ms = 250 }
+
+[channels.climate_reading]
 ```
 
-The generated C context provides `ctx->config.interval_ms`. Hello uses it when
+The generated C context provides `ctx->config.interval_ms`. The climate service uses it when
 opening its timer. Omitting `config.interval_ms` selects `1000`; choosing `50`
 fails validation before deployment. A setting does not implement behavior by
 itself, and editing TOML does not change an already-running service.
@@ -74,15 +77,15 @@ project format, without alternative migration syntax.
 
 | Written in | Example | Resolved from |
 | --- | --- | --- |
-| Unit `source` | `../services/hello` | Directory containing the unit: `units/` |
+| Unit `source` | `../services/climate-sensor` | Directory containing the unit: `units/` |
 | Unit `contract` | `service.toml` | The selected `source` directory |
 | Service `build.sources` | `src/service.c` | Service source directory |
 | Service `types` | `types.toml` | Directory containing `service.toml`; must stay inside it |
 | Service port `interface` | `../../protos/reading/interface.toml` | Directory containing `service.toml` |
 | Interface `schema` | `reading.proto` | Directory containing `interface.toml` |
 
-`hello` in `[services.hello]` is the unit's **instance alias**. `example.hello` in
-`[service].name` is its **deployed service name**. `hello` in `[service.build].api`
+`climate_sensor` in `[services.climate_sensor]` is the unit's **instance alias**. `example.climate-sensor` in
+`[service].name` is its **deployed service name**. `climate` in `[service.build].api`
 is the **generated C prefix**. They serve different purposes; see
 [multiple instances](unit-configuration.md#instances) before selecting one service twice.
 
@@ -113,7 +116,7 @@ See [interface fields](interface-configuration.md) for the reference and
 Run from the application root:
 
 ```sh
-./micros generate --service services/hello  # Validate and generate service APIs
+./micros generate --service services/climate-sensor  # Validate and generate service APIs
 ./micros compose -d host                   # Validate the complete host unit
 ./micros compose -d HARDWARE_ID            # Validate one enrolled board unit
 ./micros test -k settings                  # Run the starter's behavior test
@@ -152,7 +155,7 @@ budgets; see [unit memory](unit-configuration.md#memory).
 | Channel has no enabled service port | Remove the unused channel or enable a service with a matching port name. |
 | Pin requirements do not match | Assign every declared role exactly once; inspect `./micros pins -d HARDWARE_ID --all`. |
 | A new command is unavailable remotely | Add its handler, select it in `expose_commands`, and deploy the changed unit. |
-| Generated C mentions a missing callback | Implement the new hook shown by `./micros scaffold-service services/hello --preview`. Generation does not write application behavior. |
+| Generated C mentions a missing callback | Implement the new hook shown by `./micros scaffold-service services/climate-sensor --preview`. Generation does not write application behavior. |
 
 The field references are checked against the [service parser](../../src/micros_tooling/config/declarations.py),
 [unit loader](../../src/micros_tooling/config/configuration.py), and

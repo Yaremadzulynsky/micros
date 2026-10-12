@@ -46,6 +46,9 @@ class EnrollmentTest(unittest.TestCase):
         self.workspace = Workspace(self.root / 'workspace')
         self.remote = Mock()
         self.remote.raw.return_value = b'{}'
+        starter = patch('micros_tooling.deployment.enrollment_starter.install', return_value=dict(confirmed=True))
+        self.starter = starter.start()
+        self.addCleanup(starter.stop)
 
     def test_second_board_gets_own_unit_and_existing_edits_are_preserved(self):
         from micros_tooling.config.scaffold import create, bind_starter
@@ -53,15 +56,15 @@ class EnrollmentTest(unittest.TestCase):
         root = create(self.root / 'multiple-boards')
         host = root / 'units/host.toml'
         original_host = host.read_bytes()
-        source = root / 'services/hello/src/service.c'
+        source = root / 'services/climate-sensor/src/service.c'
         source.write_text(source.read_text() + '\n/* Application-owned edit. */\n')
         original_source = source.read_bytes()
         first = bind_starter(root, 'aabbccddeeff', 'esp32', 8)
         first.write_text(first.read_text().replace('interval_ms = 1000', 'interval_ms = 250'))
         original_unit = first.read_bytes()
         second = bind_starter(root, 'aabbccddee00', 'samd21')
-        self.assertEqual(read_toml(second)['services']['hello']['memory']['stack_bytes'], 1024)
-        self.assertEqual(len(load_project(second)['services']), 1)
+        self.assertEqual(read_toml(second)['services']['climate_sensor']['memory']['stack_bytes'], 1024)
+        self.assertEqual(len(load_project(second)['services']), 3)
         self.assertEqual(bind_starter(root, 'aabbccddeeff', 'esp32', 4), first)
         self.assertEqual(first.read_bytes(), original_unit)
         self.assertEqual(source.read_bytes(), original_source)
@@ -75,7 +78,7 @@ class EnrollmentTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 bind_starter(root, device, 'esp32', capacity)
         self.assertEqual(sorted(p.name for p in (root / 'units').glob('*.toml')), ['host.toml'])
-        (root / 'services/hello/service.toml').unlink()
+        (root / 'services/climate-sensor/service.toml').unlink()
         self.assertIsNone(bind_starter(root, 'aabbccddeeff', 'esp32', 4))
         self.assertEqual(sorted(p.name for p in (root / 'units').glob('*.toml')), ['host.toml'])
 
@@ -90,14 +93,27 @@ class EnrollmentTest(unittest.TestCase):
             install.side_effect = ValueError('Wi-Fi not confirmed')
             with self.assertRaisesRegex(ValueError, 'Wi-Fi not confirmed'):
                 e.enroll(args())
+            self.starter.assert_not_called()
             self.assertEqual(sorted(p.name for p in (root / 'units').glob('*.toml')), ['host.toml'])
             install.side_effect = None
             install.return_value = dict(online=True, device_id=BOARD['device_id'], platform='esp32', flash_mb=8, message='Board online.')
             result = e.enroll(args())
         unit = Path(result['project_unit'])
         self.assertEqual(unit.name, BOARD['device_id'] + '.toml')
-        self.assertEqual(load_project(unit)['services'][0]['name'], 'example.hello')
+        self.assertEqual(load_project(unit)['services'][0]['name'], 'example.climate-sensor')
         self.assertIn('micros deploy -d ' + BOARD['device_id'], result['next_steps'])
+        self.starter.assert_called_once_with(result, root)
+        self.assertTrue(result['starter']['confirmed'])
+
+    def test_management_only_enrollment_skips_starter(self):
+        from contextlib import nullcontext
+        with patch('micros_tooling.deployment.server_selection.enrollment_server', return_value=nullcontext()), \
+             patch.object(e, '_enroll', return_value=dict(online=True, device_id=BOARD['device_id'], platform='esp8266', message='Online.')), \
+             patch('micros_tooling.storage.client.application_root', return_value=None):
+            result = e.enroll(args(no_starter=True))
+        self.assertTrue(result['online'])
+        self.assertNotIn('starter', result)
+        self.starter.assert_not_called()
 
     def test_starter_binding_uses_detected_identity_and_capacity(self):
         from micros_tooling.config.scaffold import create, bind_starter
@@ -111,7 +127,7 @@ class EnrollmentTest(unittest.TestCase):
                 self.assertEqual(read_toml(destination)['board']['flash_mb'], 8)
             self.assertFalse((root / 'units/000000000000.toml').exists())
             self.assertFalse((root / 'build/enrollment').exists())
-            self.assertEqual(len(load_project(destination)['services']), 1)
+            self.assertEqual(len(load_project(destination)['services']), 3)
             self.assertEqual(bind_starter(root, BOARD['device_id'], platform, capacity), destination)
 
     def test_existing_mismatched_unit_is_not_overwritten(self):
@@ -706,6 +722,62 @@ class EnrollmentTest(unittest.TestCase):
             with self.assertRaisesRegex(PackageError, 'download failed'):
                 e.prepare(board, args(), self.root, self.root)
         onboard.assert_not_called()
+
+
+class EnrollmentStarterTest(unittest.TestCase):
+    def test_installs_pristine_graph_for_each_platform_and_preserves_authored_source(self):
+        from micros_tooling.deployment import enrollment_starter as starter
+        from micros_tooling.config.configuration import load_project
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'services/custom.c'
+            source.parent.mkdir()
+            source.write_text('application-owned peripheral code')
+            for platform in ('samd21', 'esp8266', 'esp32'):
+                result = dict(online=True, device_id=BOARD['device_id'], platform=platform, flash_mb=4)
+                def deploy(command, **kwargs):
+                    unit = Path(command[command.index('--project') + 1])
+                    recipe = load_project(unit)
+                    self.assertEqual([s['name'] for s in recipe['services']],
+                                     ['example.climate-sensor', 'example.fan-controller', 'example.status-display'])
+                    self.assertIn('--via', command)
+                    self.assertEqual(command[command.index('--via') + 1], 'relay')
+                    self.assertEqual(command[command.index('-d') + 1], BOARD['device_id'])
+                    self.assertNotIn('MICROS_APPLICATION_ROOT', kwargs['env'])
+                    status = dict(identity=dict(device_id=BOARD['device_id'], base_sha256='ab' * 32),
+                                  activation=dict(pending=0, good_sha256='cd' * 32),
+                                  services=[dict(state='Running', result=0)] * 3)
+                    json.dump(dict(status=status) if platform == 'esp32' else status, kwargs['stdout'])
+                    return subprocess.CompletedProcess(command, 0)
+                import subprocess
+                with patch.object(starter, 'run', side_effect=deploy) as run:
+                    installed = starter.install(result, root)
+                self.assertTrue(installed['confirmed'])
+                self.assertEqual(installed['graph_sha256'], 'cd' * 32)
+                run.assert_called_once()
+            self.assertEqual(source.read_text(), 'application-owned peripheral code')
+
+    def test_failed_or_uncertain_install_preserves_evidence_without_retry(self):
+        from micros_tooling.deployment import enrollment_starter as starter
+        import subprocess
+        with tempfile.TemporaryDirectory() as directory:
+            result = dict(device_id=BOARD['device_id'], platform='esp8266', flash_mb=4, session=directory)
+            for outcome in ('rejected', 'pending', 'wrong_identity', 'interrupted'):
+                def deploy(command, **kwargs):
+                    kwargs['stderr'].write('preserved diagnostics')
+                    if outcome == 'interrupted':
+                        raise KeyboardInterrupt()
+                    status = dict(identity=dict(device_id='aabbccddeeff' if outcome == 'wrong_identity' else BOARD['device_id']),
+                                  activation=dict(pending=1 if outcome == 'pending' else 0),
+                                  services=[dict(state='Running', result=0)] * 3)
+                    json.dump(status, kwargs['stdout'])
+                    return subprocess.CompletedProcess(command, 1 if outcome == 'rejected' else 0)
+                with patch.object(starter, 'run', side_effect=deploy) as run:
+                    with self.assertRaisesRegex(PackageError, 'is enrolled.*Starter installation did not complete') as caught:
+                        starter.install(result)
+                run.assert_called_once()
+                self.assertIn('Inspect first: micros status -d', str(caught.exception))
+            self.assertEqual(len(list((Path(directory) / 'build').glob('starter-*/deployment.log'))), 4)
 
 
 if __name__ == '__main__':

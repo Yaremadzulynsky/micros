@@ -301,6 +301,25 @@ static void test_cycles(const char *directory)
     puts("PASS 20 independent reloads, zeroed state, legal transitions, handle exhaustion and "
          "callback quiescence");
 }
+static void test_timer_independent_of_step_cadence(const char *directory)
+{
+    micros_runtime_config_t config = micros_runtime_default_config();
+    config.step_interval_us = UINT64_C(100000);
+    config.work_timeout_us = TEST_WORK_US;
+    micros_runtime_t *runtime = micros_runtime_create(&config);
+    assert(runtime);
+    micros_instance_t instance;
+    assert(!micros_runtime_load(runtime, fixture_path(directory, "NORMAL"), 2, &instance));
+    assert(!micros_runtime_start(runtime, instance));
+    micros_service_status_t status = wait_progress(runtime, instance, 0, 20);
+    assert(status.state == MICROS_STATE_RUNNING && !status.result);
+    /* A 1 ms timer must not become a 100 ms timer when background polling slows. */
+    assert(status.completed_callbacks > status.completed_steps);
+    assert(!micros_runtime_stop(runtime, instance));
+    assert(!micros_runtime_unload(runtime, instance));
+    assert(!micros_runtime_destroy(runtime));
+    puts("PASS timer deadlines independent of background step cadence");
+}
 static void test_concurrent_services(const char *directory)
 {
     micros_runtime_config_t config = micros_runtime_default_config();
@@ -550,6 +569,7 @@ int main(int argc, char **argv)
     test_admission(argv[1]);
     test_ownership(argv[1]);
     test_cycles(argv[1]);
+    test_timer_independent_of_step_cadence(argv[1]);
     test_concurrent_services(argv[1]);
     test_cleanup(argv[1]);
     return 0;

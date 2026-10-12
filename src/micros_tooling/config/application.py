@@ -74,7 +74,7 @@ def main(args, root, dispatch):
   ./micros devices                        live management roster
   ./micros erase                          remove from console and erase firmware and settings
   ./micros discover                       identify connected micros controllers over USB
-  ./micros enroll                         detect, flash, join Wi-Fi and verify console enrollment
+  ./micros enroll                         enroll a board and install the simulated climate starter
   ./micros shell -d feather               interactive inspection and service commands
   ./micros status -d feather
   ./micros restart INDEX -d feather       restart one service by its status index

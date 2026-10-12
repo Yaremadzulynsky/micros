@@ -38,15 +38,16 @@ class ExternalApplicationTests(unittest.TestCase):
         run = self.run_cli(self.app / "micros", "compose", "--json")
         self.assertEqual(run.returncode, 0, run.stderr)
         recipe = json.loads(run.stdout)
-        self.assertEqual(Path(recipe['services'][0]['sources'][0]), self.app/'services/hello/src/service.c')
+        self.assertEqual(Path(recipe['services'][0]['sources'][0]), self.app/'services/climate-sensor/src/service.c')
         run = self.run_cli(self.app/'micros', 'generate', '--json')
         self.assertEqual(run.returncode, 0, run.stderr)
-        self.assertEqual(len(json.loads(run.stdout)['services']), 1)
-        generated = self.app/'build/services/hello/generated'
-        self.assertTrue((generated/'hello_ipc.c').is_file())
-        for source in (self.app/'services/hello/src/service.c', generated/'hello_ipc.c'):
+        self.assertEqual(len(json.loads(run.stdout)['services']), 3)
+        generated = self.app/'build/services/climate-sensor/generated'
+        self.assertTrue((generated/'climate_ipc.c').is_file())
+        for source in (self.app/'services/climate-sensor/src/service.c', generated/'climate_ipc.c'):
             compiled = subprocess.run(['cc', '-std=c17', '-Wall', '-Wextra', '-Werror', '-ffreestanding',
-                '-I', str(ROOT/'src/sdk/abi/include'), '-I', str(generated), '-c', str(source),
+                '-I', str(ROOT/'src/sdk/abi/include'), '-I', str(ROOT/'src/sdk/abi/internal'),
+                '-I', str(ROOT/'src/third_party/nanopb'), '-I', str(generated), '-c', str(source),
                 '-o', str(self.app/'build'/(source.stem+'.o'))], capture_output=True, text=True)
             self.assertEqual(compiled.returncode, 0, compiled.stderr)
         self.assertFalse((self.app/'.micros').exists())
@@ -57,10 +58,10 @@ class ExternalApplicationTests(unittest.TestCase):
         run = self.run_cli(self.app/'micros', 'generate', '--project', unit, '--json')
         self.assertEqual(run.returncode, 0, run.stderr)
         self.assertTrue(all(Path(path).is_relative_to(self.app/'build') for path in json.loads(run.stdout)['headers']))
-        self.assertFalse((self.app/'services/hello/generated').exists())
+        self.assertFalse((self.app/'services/climate-sensor/generated').exists())
 
     def test_existing_project_is_preserved(self):
-        source = self.app / "services/hello/src/service.c"
+        source = self.app / "services/climate-sensor/src/service.c"
         source.write_text("developer edits\n")
         run = self.run_cli(ROOT / "micros", "new", self.app)
         self.assertNotEqual(run.returncode, 0)

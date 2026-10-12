@@ -245,9 +245,18 @@ static esp_http_client_handle_t open(const Settings &current, const char *path,
   if (result)
     esp_http_client_set_header(client, "X-Micros-Result", "200");
   stage = "tls_connect";
-  if (esp_http_client_open(client, bytes) != ESP_OK ||
-      (bytes && esp_http_client_write(client, response_text, bytes) != bytes)) {
+  esp_err_t opened = esp_http_client_open(client, bytes);
+  if (opened != ESP_OK) {
+    printf("micros relay open failed: %d\n", (int)opened);
     disconnect_tls();
+    stage = "tls_open_failed";
+    return NULL;
+  }
+  int written = bytes ? esp_http_client_write(client, response_text, bytes) : 0;
+  if (written != bytes) {
+    printf("micros relay write incomplete: %d/%d\n", written, bytes);
+    disconnect_tls();
+    stage = "request_write_failed";
     return NULL;
   }
   return client;
@@ -480,9 +489,13 @@ void embedded_network_start() {
   snprintf(mac, sizeof(mac), "%02x%02x%02x%02x%02x%02x", address[0], address[1],
            address[2], address[3], address[4], address[5]);
   esp_wifi_start();
-  request_ready = xSemaphoreCreateBinary();
-  response_ready = xSemaphoreCreateBinary();
-  xTaskCreate(run, "relay", 6144, NULL, 1, &worker);
+  static StaticSemaphore_t request_semaphore, response_semaphore;
+  static StaticTask_t relay_tcb;
+  alignas(16) static StackType_t relay_stack[6144 / sizeof(StackType_t)];
+  request_ready = xSemaphoreCreateBinaryStatic(&request_semaphore);
+  response_ready = xSemaphoreCreateBinaryStatic(&response_semaphore);
+  worker = xTaskCreateStatic(run, "relay", 6144 / sizeof(StackType_t), NULL, 1,
+                            relay_stack, &relay_tcb);
 }
 
 #include <micros/transport.h>

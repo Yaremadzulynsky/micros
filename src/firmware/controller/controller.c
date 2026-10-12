@@ -1,3 +1,4 @@
+#include <micros/memory.h>
 #include "../kernel/support/integer.h"
 #include <micros/platform.h>
 #include <micros/capabilities.h>
@@ -49,7 +50,7 @@ static micros_activation_record_t deployment_previous;
 static int deployment_stopped;
 
 static struct { unsigned bank,slot;size_t total,written;int active;micros_device_graph_t *graph; } transfer;
-static void transfer_abort(void) { free(transfer.graph);memset(&transfer,0,sizeof(transfer)); }
+static void transfer_abort(void) { micros_management_free(transfer.graph);memset(&transfer,0,sizeof(transfer)); }
 static int prepared_bank=-1;
 static int prepare_store(unsigned bank) {
  if(prepared_bank==(int)bank)return 1;
@@ -89,7 +90,10 @@ static int valid_graph(const micros_device_graph_t *graph)
             micros_crc32((const void *)graph, offsetof(micros_device_graph_t, checksum)))
         return 0;
     uint32_t channel_mask = 0, publishers = 0, subscribers = 0, slots = 0, gpio_claims = 0, imported_latest = 0;
-    size_t arena = 0, stacks = 0;
+    size_t arena = 0, stacks = 0, channels = 0, handles = 0;
+#ifdef MICROS_STATIC_MEMORY
+    size_t static_bytes = 0;
+#endif
     for (unsigned index = 0; index < MICROS_GRAPH_CHANNELS; ++index) {
         const micros_graph_channel_t *channel = &graph->channels[index];
         if (index >= graph->channel_count) {
@@ -107,6 +111,10 @@ static int valid_graph(const micros_device_graph_t *graph)
         if (channel_mask & bit)
             return 0;
         channel_mask |= bit;
+        channels += (size_t)channel->depth * channel->payload_bytes;
+#ifdef MICROS_STATIC_MEMORY
+        static_bytes += micros_memory_cost((size_t)channel->depth * channel->payload_bytes);
+#endif
     }
     for (unsigned index = 0; index < MICROS_BOARD_IMAGE_SLOTS; ++index) {
         const micros_graph_service_t *service = &graph->services[index];
@@ -145,13 +153,24 @@ static int valid_graph(const micros_device_graph_t *graph)
         subscribers |= service->subscribe_mask;
         arena += service->arena_bytes;
         stacks += service->stack_bytes;
+        handles += service->handles;
+#ifdef MICROS_STATIC_MEMORY
+        static_bytes += micros_memory_cost(micros_platform_stack_bytes(service->stack_bytes));
+        static_bytes += micros_memory_cost(service->arena_bytes ? service->arena_bytes : 1);
+        if (configuration->bytes) static_bytes += micros_memory_cost(configuration->bytes);
+#endif
     }
     /* Generated coordination ports can subscribe to an imported latest channel.
      * Authenticated package admission checks its explicit kind and schema. */
     for (unsigned i=0;i<graph->channel_count;++i)
         if (graph->channels[i].policy==MICROS_CHANNEL_LATEST)
             imported_latest |= 1u << (graph->channels[i].key-1);
-    return !(subscribers & ~publishers & ~imported_latest) && arena <= MICROS_CONTROLLER_ARENA_BYTES && stacks <= MICROS_CONTROLLER_STACK_BYTES;
+#ifdef MICROS_STATIC_MEMORY
+    if (static_bytes > MICROS_APPLICATION_POOL_BYTES) return 0;
+#endif
+    return !(subscribers & ~publishers & ~imported_latest) &&
+        arena <= MICROS_CONTROLLER_ARENA_BYTES && stacks <= MICROS_CONTROLLER_STACK_BYTES &&
+        channels <= MICROS_CONTROLLER_CHANNEL_BYTES && handles <= MICROS_RUNTIME_HANDLE_CAPACITY;
 }
 static int load_graph(unsigned bank, micros_device_graph_t *graph)
 {
@@ -183,12 +202,15 @@ static int stop_graph(void)
 }
 static int boot_graph(unsigned bank)
 {
-    micros_device_graph_t *graph=malloc(sizeof(*graph));
+    micros_device_graph_t *graph=micros_management_allocate(sizeof(*graph));
     if(!graph)return 0;
     if (!load_graph(bank, graph) || !stop_graph())
-        { free(graph);return 0; }
-    if (!micros_board_apply_gpio(graph)) { free(graph);return 0; }
+        { micros_management_free(graph);return 0; }
+    if (!micros_board_apply_gpio(graph)) { micros_management_free(graph);return 0; }
     micros_runtime_config_t config = micros_runtime_default_config();
+#ifdef MICROS_CONTROLLER_STEP_INTERVAL_US
+    config.step_interval_us = MICROS_CONTROLLER_STEP_INTERVAL_US;
+#endif
     config.image_bytes =
         MICROS_BOARD_IMAGE_SLOTS * (MICROS_BOARD_CODE_BYTES + MICROS_BOARD_DATA_BYTES);
     config.arena_bytes = MICROS_CONTROLLER_ARENA_BYTES;
@@ -200,7 +222,7 @@ static int boot_graph(unsigned bank)
         config.platform_stack_bytes += micros_platform_stack_bytes(graph->services[i].stack_bytes);
     runtime = micros_runtime_create(&config);
     if (!runtime)
-        { free(graph);return 0; }
+        { micros_management_free(graph);return 0; }
     for (unsigned index = 0; index < graph->channel_count; ++index) {
         micros_graph_channel_t *channel = &graph->channels[index];
         if (micros_runtime_channel_create(runtime, channel->key, channel->policy, channel->depth,
@@ -229,16 +251,16 @@ static int boot_graph(unsigned bank)
         publish_masks[index] = graph->services[index].publish_mask;
     /* Admission copies configuration and policy. Release the staging graph
      * before allocating service task stacks, which otherwise doubles peak RAM. */
-    free(graph);
+    micros_management_free(graph);
     graph = NULL;
     if (micros_application_start(runtime, instances, publish_masks, instance_count,
                                   config.lifecycle_timeout_us)) goto fail;
     running_bank = bank;
-    free(graph);return 1;
+    micros_management_free(graph);return 1;
 fail:
     recover_if_needed();
     stop_graph();
-    free(graph);return 0;
+    micros_management_free(graph);return 0;
 }
 /** @brief Validate complete bank identity before any independently loaded hook runs. */
 static int bank_matches(unsigned bank, const uint8_t *expected)
@@ -354,7 +376,7 @@ static void poll_health(void)
 }
 static __attribute__((noinline)) int prepare_activation(unsigned bank)
 {
-    micros_device_graph_t *graph=malloc(sizeof(*graph));
+    micros_device_graph_t *graph=micros_management_allocate(sizeof(*graph));
     if (!graph) return 0;
     int result=0;
     if (!load_graph(bank, graph)) goto done;
@@ -368,7 +390,7 @@ static __attribute__((noinline)) int prepare_activation(unsigned bank)
     }
     result=1;
 done:
-    free(graph);
+    micros_management_free(graph);
     return result;
 }
 
@@ -718,7 +740,7 @@ static void management_request(micros_management_request_t *request)
             if(okay) {
                 transfer.bank=request->bank;transfer.slot=request->slot;transfer.total=total;
                 transfer.written=0;transfer.active=1;
-                if(graph_operation) { transfer.graph=malloc(sizeof(*transfer.graph));okay=transfer.graph!=NULL; }
+                if(graph_operation) { transfer.graph=micros_management_allocate(sizeof(*transfer.graph));okay=transfer.graph!=NULL; }
                 if(!okay)transfer_abort();
             }
         } else if(operation==1 && transfer.active && !!transfer.graph==graph_operation &&
@@ -774,7 +796,7 @@ static void management_request(micros_management_request_t *request)
         }
     } else if (request->operation == MICROS_MANAGEMENT_GRAPH) {
         okay = request->body_bytes == sizeof(micros_device_graph_t);
-        micros_device_graph_t *graph=okay?malloc(sizeof(*graph)):NULL;
+        micros_device_graph_t *graph=okay?micros_management_allocate(sizeof(*graph)):NULL;
         okay=graph!=NULL;
         if (okay) {
             memcpy(graph,request->body,sizeof(*graph));
@@ -783,7 +805,7 @@ static void management_request(micros_management_request_t *request)
                 okay=micros_storage_write_graph(request->bank,graph);live_flash_resume();
             }
         }
-        free(graph);
+        micros_management_free(graph);
     } else if (request->operation == MICROS_MANAGEMENT_ACTIVATE) {
         uint8_t actual_hash[MICROS_ACTIVATION_HASH_BYTES];
         okay = request->body_bytes == sizeof(actual_hash) &&
@@ -936,20 +958,20 @@ static __attribute__((noinline)) void physical_command(char *command,int overflo
                        micros_board_validate_bytes(image, bytes, slot) == MICROS_OK;
             if (okay)
                 okay = prepare_store(bank) && micros_storage_write_image(bank, slot, image, bytes);
-            free(image);
+            micros_management_free(image);
             printf("IMAGE %s\n", okay ? "OK" : "REJECT");
         } else if (sscanf(command, "CONFIG %u %u", &bank, &bytes) == 2) {
             if (runtime || bank >= MICROS_GRAPH_BANKS || bytes != sizeof(micros_device_graph_t)) {
                 printf("REJECT graph length/state\n");
                 return;
             }
-            micros_device_graph_t *graph=malloc(sizeof(*graph));
+            micros_device_graph_t *graph=micros_management_allocate(sizeof(*graph));
             if(!graph) { printf("REJECT staging capacity\n");return; }
             printf("READY %u\n", bytes);
             fflush(stdout);
             int okay=read_exact(graph,sizeof(*graph)) && graph->bank==bank && valid_graph(graph);
             if(okay)okay=micros_storage_write_graph(bank,graph);
-            free(graph);
+            micros_management_free(graph);
             printf("CONFIG %s\n", okay ? "OK" : "REJECT");
         } else if (sscanf(command, "BOOT %u", &bank) == 1) {
             int okay = activate_bank(bank);

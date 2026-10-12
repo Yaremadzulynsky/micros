@@ -55,3 +55,11 @@ int micros_board_validate_image(const char *path,unsigned slot) { return 0; }
 int micros_board_validate_bytes(const void *data,size_t size,unsigned slot) { return 0; }
 
 void micros_controller_bootloader(void) {}
+
+/* This backend owns task stack allocation; caller-owned stacks are unsupported. */
+micros_platform_task_t *micros_platform_task_create_with_stack(void *(*entry)(void *),
+    void *argument, size_t bytes, void *stack)
+{
+    (void)entry; (void)argument; (void)bytes; (void)stack;
+    return NULL;
+}

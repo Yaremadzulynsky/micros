@@ -77,8 +77,17 @@ hash, configuration and resource budgets before activation.
 | Handles / timers per service | 8 / 8 |
 | Configuration per service | 256 bytes |
 
-The MKR has 32 KiB SRAM, so these are admission ceilings rather than ESP-sized
-capacity. Allocation can still fail; inspect service status and stack watermarks.
+The MKR has 32 KiB SRAM. The individual ceilings above also share a 3840-byte
+static application pool: service stacks, arenas, configuration, channel payloads
+and optional coordination records must fit together, including alignment and
+allocation headers. The CLI rejects an oversized application before deployment;
+the controller also checks the aggregate before stopping the current graph.
+There are 16 handle slots across all services. Runtime bookkeeping, RTOS objects,
+a 768-byte supervisor stack, a 3584-byte controller stack, a 2560-byte networking
+stack, and 2240 bytes of management staging are separately reserved. No service
+allocation falls back to the library heap. The stock variant's unused hardware
+UART objects are omitted; USB CDC and SPI networking are retained.
+Inspect stack watermarks under the actual workload.
 `heap_headroom` is growth space above the libc heap break, not total reusable free
 memory. An additional 2 KiB is reserved for the interrupt/main stack.
 

@@ -316,6 +316,22 @@ def admission_plan(packages, target=NATIVE_HOST_TARGET):
         limits.update(image_bytes=4 * 0x3c00, arena_bytes=1024, requested_stack_bytes=4096, host_stack_bytes=4096, channel_bytes=512)
     if target == 6:
         limits.update(image_bytes=4 * 0x7c00, arena_bytes=4096, requested_stack_bytes=12288, host_stack_bytes=12288, channel_bytes=1024)
+    if target in (5, 6):
+        # Match the fixed application arena, including headers and alignment.
+        # Runtime/RTOS metadata, management storage and library headroom are
+        # separately reserved in the base, never borrowed by application state.
+        def pool_cost(size):
+            return ((size + 15) // 16) * 16 + 16
+        totals['static_pool_bytes'] = sum(
+            pool_cost(max(512, service['memory']['stack_bytes'])) +
+            pool_cost(max(1, service['memory']['arena_bytes'])) +
+            (pool_cost(len(service['config']) // 2) if service['config'] else 0)
+            for service in services)
+        totals['static_pool_bytes'] += sum(
+            pool_cost(entry['layout']['depth'] * entry['layout']['max_payload']) +
+            (pool_cost(224) if entry['kind'] else 0) for entry in channel_table.values())
+        limits['static_pool_bytes'] = 3840 if target == 5 else 8192
+        if target == 5: limits['handles'] = 16
     for resource, used in totals.items():
         require(used <= limits[resource], f'{resource}: need {used}, limit {limits[resource]}')
     from micros_tooling.commands.metadata import bind as bind_commands

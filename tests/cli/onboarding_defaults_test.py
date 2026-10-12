@@ -91,17 +91,17 @@ class OnboardingDefaultsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             for platform,profile,stack in [('esp32','esp32_d0wd_v3_no_controls',4096),
                                            ('samd21','arduino_mkr_wifi_1010',1024),
-                                           ('esp8266','esp8266_4mb',4096)]:
+                                           ('esp8266','esp8266_4mb',1536)]:
                 app=create(Path(directory)/platform,platform)
                 self.assertEqual(sorted(p.name for p in (app / 'units').glob('*.toml')), ['host.toml'])
                 path=bind_starter(app,'aabbccddeeff',platform,4 if platform!='samd21' else None)
                 unit=read_toml(path)
                 self.assertEqual(unit['board']['profile'],profile)
-                self.assertEqual(unit['services']['hello']['memory']['stack_bytes'],stack)
+                self.assertEqual(unit['services']['climate_sensor']['memory']['stack_bytes'],stack)
                 self.assertEqual('flash_mb' in unit['board'],platform=='esp32')
                 result=subprocess.run([str(app/'micros'),'compose'],env=dict(os.environ,MICROS_SDK=str(ROOT)),capture_output=True,text=True)
                 self.assertEqual(result.returncode,0,result.stderr)
-                self.assertIn('example.hello',result.stdout)
+                self.assertIn('example.climate-sensor',result.stdout)
 
     def run_server(self,action,options=(),environment=None):
         with tempfile.TemporaryDirectory() as directory:
