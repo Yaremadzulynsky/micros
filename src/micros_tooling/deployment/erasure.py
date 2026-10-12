@@ -13,8 +13,8 @@ from micros_tooling.storage.workspace import Workspace
 def add_parser(commands):
     parser = commands.add_parser('erase', help='remove a controller from the console and erase its firmware and settings')
     parser.add_argument('--port', help='USB serial interface; otherwise choose a connected controller')
-    parser.add_argument('--yes', action='store_true', help='confirm destruction without a prompt; requires --port')
-    parser.add_argument('--json', action='store_true', help='machine-readable result; requires --yes and --port')
+    parser.add_argument('--yes', action='store_true', help='optional; erasure proceeds after controller selection without confirmation')
+    parser.add_argument('--json', action='store_true', help='machine-readable result; use --port to select a controller')
 
 
 def flash_command(board, port):
@@ -30,7 +30,6 @@ def invalidate_enrollment(state, session):
 
 
 def erase(args):
-    require(not args.yes or args.port, '--yes requires an explicit --port for erasure.')
     port = e.choose_port(args)
     from micros_tooling.deployment.samd_enrollment import is_mkr, read_identity
     mkr = is_mkr(port)
@@ -62,10 +61,6 @@ def erase(args):
     e.progress(f'Erase {name}: firmware, applications, Wi-Fi and board credentials will be cleared; no flash backup will be made. Console history will be retained.')
     if mkr:
         e.progress('The Arduino USB bootloader is retained for re-enrollment.')
-    if not args.yes:
-        require(e.interactive(args), 'Erasure requires confirmation. Use --port PORT --yes without a terminal.')
-        answer = input(f'Type {board["device_id"]} to remove this controller from the console and erase its firmware and settings: ').strip()
-        require(answer == board['device_id'], 'Erasure cancelled; flash and console enrollment were not changed.')
     state = Workspace(operator / 'onboarding' / board['device_id'])
     # SAMD enrollment is initially keyed by USB location, before its NINA MAC
     # is available. Invalidate every matching receipt, including prior ports.

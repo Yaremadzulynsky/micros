@@ -83,7 +83,7 @@ silent ESP devices. It does not write flash.
 
 **`./micros erase` revokes enrollment on the configured console and clears firmware,
 applications, Wi-Fi settings, and credentials. It makes no flash backup.** The
-interactive flow asks for the hardware ID. Console access is required even if the
+flow proceeds after controller selection without a second confirmation. Console access is required even if the
 controller is not in its roster; unverified removal stops erasure. A failed erase
 after revocation leaves the controller revoked. Factory ROM bootloaders remain;
 the MKR flow also preserves its Arduino USB bootloader.

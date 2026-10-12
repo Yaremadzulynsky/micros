@@ -72,29 +72,29 @@ class ErasureTest(unittest.TestCase):
             er.erase(self.args)
         self.assertFalse(any('erase_flash' in c for c in self.events))
 
-    def test_cancellation_has_no_mutations(self):
-        self.args.yes = False
-        with patch.object(er.e, 'interactive', return_value=True), patch('builtins.input', return_value='no'):
-            with self.assertRaisesRegex(PackageError, 'cancelled'):
+    def test_controller_selection_cancellation_has_no_mutations(self):
+        with patch.object(er.e, 'choose_port', side_effect=KeyboardInterrupt):
+            with self.assertRaises(KeyboardInterrupt):
                 er.erase(self.args)
         self.tool.assert_not_called()
-        self.assertEqual(self.remote.raw.call_count, 1)
-
-    def test_yes_requires_selected_port(self):
-        self.args.port = None
-        with self.assertRaisesRegex(PackageError, 'explicit --port'):
-            er.erase(self.args)
         self.remote.raw.assert_not_called()
 
-    def test_confirmed_esp_erase_does_not_repeat_rom_probe(self):
+    def test_esp32_erase_requires_no_confirmation(self):
+        self.args.yes = False
+        board = dict(BOARD, platform='esp32', chip='ESP32')
+        with patch.object(er.e, 'probe', return_value=board), patch('builtins.input', side_effect=AssertionError('unexpected confirmation')):
+            self.assertTrue(er.erase(self.args)['erased'])
+        self.assertIn('esp32', self.events[0])
+
+    def test_esp8266_erase_without_confirmation_does_not_repeat_rom_probe(self):
         self.args.yes = False
         with patch.object(er.e, 'probe', side_effect=[BOARD]) as probe, \
              patch.object(er.e, 'interactive', return_value=True), \
-             patch('builtins.input', return_value=BOARD['device_id']) as confirm:
+             patch('builtins.input', side_effect=AssertionError('unexpected confirmation')) as confirm:
             result = er.erase(self.args)
         self.assertTrue(result['erased'])
         probe.assert_called_once_with('/fake')
-        confirm.assert_called_once()
+        confirm.assert_not_called()
         self.assertEqual(sum('erase_flash' in c for c in self.events), 1)
 
     def test_resumed_erase_rejects_changed_initial_identity(self):
@@ -188,6 +188,13 @@ class SamdErasureTest(unittest.TestCase):
         self.assertEqual(self.mocks['erase'].call_args.args[:2], ('/mkr', 'serial'))
         archived = Workspace(Path(result['session']) / self.usb.root.name)
         self.assertTrue(archived.read('previous-enrollment.json')['confirmed'])
+
+    def test_samd_erase_requires_no_confirmation(self):
+        self.args.yes = False
+        self.args.json = False
+        with patch('builtins.input', side_effect=AssertionError('unexpected confirmation')):
+            self.assertTrue(er.erase(self.args)['erased'])
+        self.mocks['erase'].assert_called_once()
 
     def test_console_failure_stops_before_erase(self):
         self.remote.raw.side_effect = [b'{"devices":[]}', TimeoutError('offline')]
