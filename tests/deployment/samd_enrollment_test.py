@@ -48,6 +48,48 @@ class SamdEnrollmentTest(unittest.TestCase):
     def enroll(self, roster=None):
         return s.enroll_mkr(self.args, '/mkr', self.root, Workspace(self.root), self.remote, roster or [])
 
+    def state(self):
+        return Workspace(self.root / 'onboarding' / ('mkr-usb-' + digest(b'usb-1')[:24]))
+
+    def test_rebuild_archives_failed_attempt_and_prepares_new_artifacts(self):
+        self.mocks['probe'].return_value = dict(state='unidentified')
+        self.mocks['flash'].side_effect = PackageError('invalid RPC frame')
+        with self.assertRaisesRegex(PackageError, 'invalid RPC frame'):
+            self.enroll()
+        previous = self.state().read('enrollment.json')
+        self.mocks['flash'].side_effect = None
+        self.args.rebuild_base = True
+        self.assertTrue(self.enroll()['online'])
+        self.assertEqual(self.mocks['prepare'].call_count, 2)
+        sessions = [call.args[0] for call in self.mocks['prepare'].call_args_list]
+        self.assertNotEqual(*sessions)
+        archives = list((self.state().root / 'enrollment-history').glob('*.json'))
+        self.assertEqual(len(archives), 1)
+        self.assertEqual(self.state().read(archives[0].relative_to(self.state().root)), previous)
+        self.assertTrue(Path(previous['firmware']).is_file())
+
+    def test_retry_keeps_saved_firmware(self):
+        self.mocks['probe'].return_value = dict(state='unidentified')
+        self.mocks['flash'].side_effect = PackageError('invalid RPC frame')
+        with self.assertRaises(PackageError):
+            self.enroll()
+        self.mocks['flash'].side_effect = None
+        self.args.retry_flash = True
+        self.assertTrue(self.enroll()['online'])
+        self.assertEqual(self.mocks['prepare'].call_count, 1)
+
+    def test_rebuild_rejects_confirmed_and_missing_attempts(self):
+        self.args.rebuild_base = True
+        with self.assertRaisesRegex(PackageError, 'unfinished enrollment'):
+            self.enroll()
+        self.mocks['flash'].assert_not_called()
+        self.args.rebuild_base = False
+        self.enroll()
+        self.args.rebuild_base = True
+        with self.assertRaisesRegex(PackageError, 'unfinished enrollment'):
+            self.enroll()
+        self.assertEqual(self.mocks['flash'].call_count, 1)
+
     def test_installs_without_backup_and_uses_reenumerated_port(self):
         result = self.enroll()
         self.assertTrue(result['online'])

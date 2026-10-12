@@ -110,6 +110,12 @@ def enroll_mkr(args, port, operator, workspace, remote, roster):
         require(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_. -]{0,79}', name), 'Invalid board name.')
         require(not any(d['name'] == name for d in roster), 'That name belongs to an enrolled controller.')
         require(not args.name or args.name == name, 'This pending enrollment has a different name.')
+        if getattr(args, 'rebuild_base', False):
+            require(receipt and not receipt.get('confirmed'),
+                    '--rebuild-base requires an unfinished enrollment; confirmed controllers must use the normal update workflow.')
+            state.write(Path('enrollment-history') / (secrets.token_hex(8) + '.json'), receipt)
+            receipt = dict(name=name, **({'board': receipt['board']} if receipt.get('board') else {}))
+            e.progress('Preserved the previous enrollment attempt; preparing a new base from this SDK.')
         receipt['name'] = name
         def save():
             state.write('enrollment.json', receipt)

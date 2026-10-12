@@ -11,7 +11,7 @@ import tempfile
 import time
 import serial
 from serial.tools import list_ports
-from micros_tooling.storage.packages import require
+from micros_tooling.storage.packages import PackageError, require
 from micros_tooling.storage.store import atomic_write
 
 
@@ -62,6 +62,12 @@ def enter_bootloader(device, executable):
                 require(reply['result'] == 0 or reply.get('message') == 'unknown command',
                         'MKR rejected bootloader entry: ' + str(reply))
                 legacy = reply['result'] != 0
+            except PackageError as error:
+                raise PackageError(
+                    'MKR firmware could not enter the USB bootloader. Double-press the board Reset button, '
+                    'then rerun enrollment with --rebuild-base to replace an unfinished enrollment with '
+                    'firmware from this SDK, or --retry-flash to retry the saved image. '
+                    f'Original error: {error}') from error
             except (TimeoutError, json.JSONDecodeError):
                 legacy = True  # A stock Arduino sketch has no micros protocol.
             if legacy:

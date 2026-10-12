@@ -77,10 +77,11 @@ requesting that retry. A board with a matching unfinished local enrollment remai
 command finished. Its installed firmware is retained. Confirmed enrollments use
 the normal deployment/update flow.
 
-If an **unfinished ESP8266 enrollment needs a firmware fix**, first select the
+If an **unfinished ESP8266 or MKR enrollment needs a firmware fix**, first select the
 corrected SDK revision, then run `./micros enroll --rebuild-base`. This explicitly
 builds and flashes a new base, archives the previous attempt, and retains the
-enrollment token. It is different from `--retry-flash`, which retries saved images.
+enrollment credentials. If MKR firmware rejects bootloader entry, double-press its
+Reset button before running the command. It is different from `--retry-flash`, which retries saved images.
 
 ## 03 · Select the application {#select-the-application}
 

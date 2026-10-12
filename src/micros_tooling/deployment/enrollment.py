@@ -34,7 +34,7 @@ def add_parser(commands):
     p.add_argument('--relay-credentials', type=Path, help='existing enrollment directory when recovering private state')
     p.add_argument('--yes', action='store_true', help=argparse.SUPPRESS)
     p.add_argument('--retry-flash', action='store_true', help='explicitly retry an interrupted flash after inspecting its saved log')
-    p.add_argument('--rebuild-base', action='store_true', help='archive an unfinished ESP8266 enrollment and rebuild firmware after an SDK fix')
+    p.add_argument('--rebuild-base', action='store_true', help='archive an unfinished ESP8266 or MKR enrollment and rebuild firmware after an SDK fix')
     p.add_argument('--json', action='store_true', help='machine-readable result; no interactive prompts')
     return p
 
@@ -495,11 +495,10 @@ def _enroll(args):
     port = choose_port(args, roster=None if args.detect else roster)
     from micros_tooling.deployment.samd_enrollment import is_mkr, enroll_mkr
     if is_mkr(port):
-        require(not getattr(args, 'rebuild_base', False), '--rebuild-base currently supports ESP8266 enrollment only.')
         return enroll_mkr(args, port, operator, workspace, remote, roster)
     board = probe(port)
     require(not getattr(args, 'rebuild_base', False) or board['platform'] == 'esp8266',
-            '--rebuild-base currently supports ESP8266 enrollment only.')
+            '--rebuild-base supports ESP8266 and MKR enrollment only.')
     progress(f'Detected {board["chip"]}, {board["flash_mb"]} MiB flash, ID {board["device_id"]}.')
     if args.detect:
         return dict(**board, port=port, message=f'{board["chip"]} · {board["flash_mb"]} MiB · {board["device_id"]} · {port}')
