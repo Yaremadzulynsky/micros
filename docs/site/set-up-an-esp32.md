@@ -62,7 +62,12 @@ by the tool; it contains credentials and exact build artifacts.
 For interruption, rerun enrollment. If a flash result is uncertain, the tool
 checks saved images and may require `--retry-flash`; inspect its saved log before
 requesting that retry. Already enrolled controllers are rejected by this wizard;
-use normal deployment to change their application.
+use the normal deployment/update flow for those controllers.
+
+If an **unfinished ESP8266 enrollment needs a firmware fix**, first select the
+corrected SDK revision, then run `./micros enroll --rebuild-base`. This explicitly
+builds and flashes a new base, archives the previous attempt, and retains the
+enrollment token. It is different from `--retry-flash`, which retries saved images.
 
 ## 03 · Select the application {#select-the-application}
 

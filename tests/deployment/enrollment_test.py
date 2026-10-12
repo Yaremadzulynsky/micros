@@ -238,6 +238,62 @@ class EnrollmentTest(unittest.TestCase):
         prepare.assert_not_called()
         install.assert_not_called()
 
+    def test_rebuild_failed_enrollment_preserves_token_and_previous_evidence(self):
+        self.remote.raw.return_value = b'{"devices":[]}'
+        def installed(board, port, session, receipt, save, **kw):
+            receipt['flashed'] = True
+            save()
+        session = self.operator / 'onboarding' / BOARD['device_id']
+        state = Workspace(session)
+        with patch.object(e, 'choose_port', return_value='port'), patch.object(e, 'probe', return_value=BOARD), \
+             patch('micros_tooling.fleet.server.configured_remote', return_value=self.remote), \
+             patch.object(e, 'prepare', side_effect=[dict(files=[{}], base_sha256='ab' * 32),
+                                                   dict(files=[{}], base_sha256='cd' * 32)]) as prepare, \
+             patch.object(e, 'install', side_effect=installed) as install, \
+             patch.object(e, 'connect_wifi', side_effect=[PackageError('invalid RPC frame'), None]), \
+             patch.object(e, 'verify_console'):
+            with self.assertRaisesRegex(PackageError, 'invalid RPC frame'):
+                e.enroll(args(name='desk'))
+            old = state.read('enrollment.json')
+            artifact = session / 'previous-build-evidence'
+            artifact.write_bytes(b'preserved')
+            token = self.operator / 'enrollments' / BOARD['device_id'] / 'relay.token'
+            saved_token = token.read_bytes()
+            result = e.enroll(args(rebuild_base=True))
+        self.assertTrue(result['online'])
+        self.assertEqual(result['base_sha256'], 'cd' * 32)
+        self.assertEqual(token.read_bytes(), saved_token)
+        self.assertEqual(artifact.read_bytes(), b'preserved')
+        archives = list((session / 'enrollment-history').glob('*.json'))
+        self.assertEqual(len(archives), 1)
+        self.assertEqual(json.loads(archives[0].read_text()), old)
+        self.assertEqual(prepare.call_count, 2)
+        self.assertEqual(install.call_count, 2)
+        self.assertEqual(prepare.call_args.args[2].parent, (session / 'rebuilds').resolve())
+
+    def test_rebuild_rejects_confirmed_receipt_without_replacing_it(self):
+        self.remote.raw.return_value = b'{"devices":[]}'
+        state = Workspace(self.operator / 'onboarding' / BOARD['device_id'])
+        receipt = dict(board=BOARD, name='desk', confirmed=True, flashed=True)
+        state.write('enrollment.json', receipt)
+        with patch.object(e, 'choose_port', return_value='port'), patch.object(e, 'probe', return_value=BOARD), \
+             patch('micros_tooling.fleet.server.configured_remote', return_value=self.remote), \
+             patch.object(e, 'prepare') as prepare, patch.object(e, 'install') as install:
+            with self.assertRaisesRegex(PackageError, 'unfinished enrollment'):
+                e.enroll(args(rebuild_base=True))
+        self.assertEqual(state.read('enrollment.json'), receipt)
+        self.assertFalse((state.root / 'enrollment-history').exists())
+        prepare.assert_not_called()
+        install.assert_not_called()
+
+    def test_rebuild_conflicts_fail_before_server_or_usb_access(self):
+        for option in (dict(detect=True), dict(retry_flash=True), dict(firmware=Path('/unused'))):
+            with patch('micros_tooling.fleet.server.configured_remote') as remote, patch.object(e, 'choose_port') as usb:
+                with self.assertRaisesRegex(PackageError, 'without --firmware'):
+                    e.enroll(args(rebuild_base=True, **option))
+                remote.assert_not_called()
+                usb.assert_not_called()
+
     def test_offline_roster_never_counts_as_confirmation(self):
         self.remote.raw.return_value = json.dumps(dict(devices=[dict(device_id=BOARD['device_id'], online=False)])).encode()
         with self.assertRaisesRegex(PackageError, 'has not confirmed'):

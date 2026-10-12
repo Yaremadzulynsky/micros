@@ -1,4 +1,7 @@
 include("${CMAKE_CURRENT_LIST_DIR}/../../../../contracts/requirements.cmake")
+if(CONFIG_NEWLIB_NANO_FORMAT)
+    message(FATAL_ERROR "Micros RPC and telemetry require 64-bit printf/scanf. Disable CONFIG_NEWLIB_NANO_FORMAT in this build's sdkconfig, or use a fresh build directory.")
+endif()
 set(MICROS_ENTRY_SOURCE "main.cpp")
 if(MICROS_TEST_HUNG_BASE)
     set(MICROS_ENTRY_SOURCE "../../../../../../tests/esp8266/hung_main.cpp")

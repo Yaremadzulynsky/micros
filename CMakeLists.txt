@@ -378,6 +378,7 @@ if((APPLE AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64") OR
     add_test(NAME enrollment_progress COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/deployment/progress_test.py")
     add_test(NAME esp8266_synchronization COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/esp8266/synchronization_test.py")
     add_test(NAME esp8266_tls_setup COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/esp8266/tls_setup_test.py")
+    add_test(NAME esp8266_libc_configuration COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/esp8266/configuration_test.py")
     add_test(NAME esp8266_base_poll COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/esp8266/base_poll_test.py")
     add_test(NAME esp8266_base_retry COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/esp8266/base_ota_retry_test.py")
     add_test(NAME esp8266_download COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/esp8266/download_test.py")
