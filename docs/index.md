@@ -5,7 +5,6 @@ hide:
   - toc
 ---
 
-<p><strong>Start with the current SDK:</strong> <a href="site/get-started/#install-cli">Follow the Quickstart</a> to install the tools and create your first application. <a href="site/preview-evidence/">Historical preview evidence and limits</a> remain available for reference.</p>
 
 <div class="visual-storyboard">
 
