@@ -20,8 +20,10 @@ not deploy your application.
 
 First [start the server and console](run-management-server.md) using an address
 the board can reach. A board cannot use the server computer's `localhost`.
-Use a 2.4 GHz Wi-Fi network. For an original ESP32 with 4 or 8 MiB flash, install
-the tools from the SDK checkout:
+Use a 2.4 GHz Wi-Fi network. Enrollment automatically installs the pinned build
+tools for an original ESP32 with 4 or 8 MiB flash, including repairing incomplete
+tool installations. The first run needs internet access and can take several
+minutes. To install them ahead of time from the SDK checkout:
 
 ```sh
 ./micros setup --esp32

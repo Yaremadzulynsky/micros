@@ -61,9 +61,10 @@ one explicitly; an invalid override or an incompatible existing `build/python`
 is reported and preserved. Linux repositories must provide a supported Python.
 Setup does not upgrade the OS or change your shell startup files.
 
-Board toolchains, flashing tools, Docker and contributor-only tools such as
-Node.js are separate. Use `./micros setup --esp32` to also install the pinned
-ESP32 SDK; see the target guide for other boards.
+Board toolchains, Docker and contributor-only tools such as Node.js are separate.
+Enrollment installs missing ESP32 and ESP8266 build tools automatically. Use
+`./micros setup --esp32` to install the pinned ESP32 SDK ahead of time; see the
+target guide for other boards.
 
 The two `export` lines apply to the current terminal. To keep them for new
 terminals, add those same lines to your shell's startup file (for example

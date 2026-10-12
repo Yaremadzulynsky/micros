@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Host tooling and management server for the Micros repository"
 requires-python = ">=3.10,<3.13"
 dependencies = [
-    "packaging>=24,<27", "protobuf==4.25.8", "pyserial==3.5", "pyelftools==0.32",
+    "packaging>=24,<27", "protobuf==4.25.8", "pyserial==3.5", "pyelftools==0.32", "esptool==4.11.0",
     "tomli==2.2.1", "nanopb==0.4.9.1", "grpcio-tools==1.62.3",
     "gnureadline==8.3.3; sys_platform == 'darwin'",
 ]

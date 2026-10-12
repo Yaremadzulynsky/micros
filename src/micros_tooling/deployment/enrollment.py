@@ -94,6 +94,9 @@ def choose_port(args, roster=None):
 
 
 def esptool():
+    import importlib.util
+    if importlib.util.find_spec('esptool') is not None:
+        return [sys.executable, '-m', 'esptool']
     executable = shutil.which('esptool.py') or shutil.which('esptool')
     if executable:
         return [executable]
@@ -167,7 +170,11 @@ def credentials(operator, workspace, remote, board, name, roster, explicit=None)
 def prepare(board, args, session, relay, remote=None):
     if board['platform'] == 'esp32':
         require(not args.firmware, '--firmware is currently for ESP8266; ESP32 enrollment builds its private console-enabled base.')
-        require((ROOT / 'build/toolchains/esp-idf-v5.5.2/export.sh').is_file(), 'ESP32 build tools are missing. Run micros setup --esp32, then rerun enroll.')
+        from micros_tooling.platforms.esp32.bootstrap import ready
+        if not ready():
+            progress('Installing the pinned ESP32 build tools (first-time setup or repair)…')
+            run_tool([sys.executable, '-m', 'micros_tooling.platforms.esp32.bootstrap'],
+                     session / 'setup.log', timeout=1800)
         from micros_tooling.deployment.onboarding import onboard
         unit = session / (board['device_id'] + '.toml')
         atomic_write(unit, (f'[unit]\ndevice_id = "{board["device_id"]}"\n[board]\nprofile = "esp32_enrollment"\nflash_mb = {board["flash_mb"]}\nrecovery_button = ""\n[services]\n').encode())

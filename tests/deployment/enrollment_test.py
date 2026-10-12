@@ -127,6 +127,29 @@ class EnrollmentTest(unittest.TestCase):
         self.assertEqual(calls[1][calls[1].index('--relay-ca') + 1], str(self.root / 'relay-ca.pem'))
         self.assertEqual(len(result['files']), 4)
 
+    def test_esp32_readiness_requires_pinned_checkout_and_activation(self):
+        from micros_tooling.platforms.esp32 import bootstrap
+        sdk = self.root / 'idf'
+        with patch.object(bootstrap, 'SDK', sdk):
+            self.assertFalse(bootstrap.ready())
+            sdk.mkdir()
+            (sdk / 'export.sh').touch()
+            with patch.object(bootstrap.subprocess, 'check_output', return_value='wrong revision'), \
+                 patch.object(bootstrap.subprocess, 'run') as activate:
+                self.assertFalse(bootstrap.ready())
+                activate.assert_not_called()
+            with patch.object(bootstrap.subprocess, 'check_output', return_value=bootstrap.SDK_REVISION), \
+                 patch.object(bootstrap.subprocess, 'run') as activate:
+                activate.return_value.returncode = 1
+                self.assertFalse(bootstrap.ready())
+                activate.return_value.returncode = 0
+                self.assertTrue(bootstrap.ready())
+
+    def test_usb_probe_prefers_current_sdk_esptool(self):
+        with patch('importlib.util.find_spec', return_value=object()), \
+             patch.object(e.shutil, 'which', return_value='/unrelated/esptool'):
+            self.assertEqual(e.esptool(), [sys.executable, '-m', 'esptool'])
+
     def test_interrupted_success_is_verified_without_second_write(self):
         receipt = self.prepared()
         receipt['flash_started'] = True
@@ -480,9 +503,27 @@ class EnrollmentTest(unittest.TestCase):
         export = self.root / 'build/toolchains/esp-idf-v5.5.2/export.sh'
         export.parent.mkdir(parents=True)
         export.touch()
-        with patch('micros_tooling.deployment.onboarding.onboard', side_effect=onboard):
-            prepared = e.prepare(board, args(), self.root, self.root)
-        self.assertEqual(prepared['base_sha256'], digest(b'elf'))
+        for available in (True, False):
+            with self.subTest(available=available), \
+                 patch('micros_tooling.platforms.esp32.bootstrap.ready', return_value=available), \
+                 patch.object(e, 'run_tool') as install, \
+                 patch('micros_tooling.deployment.onboarding.onboard', side_effect=onboard):
+                prepared = e.prepare(board, args(), self.root / str(available), self.root)
+            self.assertEqual(prepared['base_sha256'], digest(b'elf'))
+            if available:
+                install.assert_not_called()
+            else:
+                self.assertIn('micros_tooling.platforms.esp32.bootstrap', install.call_args.args[0])
+                self.assertEqual(install.call_args.args[1], self.root / str(available) / 'setup.log')
+
+    def test_esp32_setup_failure_prevents_building_and_flashing(self):
+        board = dict(BOARD, platform='esp32')
+        with patch('micros_tooling.platforms.esp32.bootstrap.ready', return_value=False), \
+             patch.object(e, 'run_tool', side_effect=PackageError('download failed; see setup.log')), \
+             patch('micros_tooling.deployment.onboarding.onboard') as onboard:
+            with self.assertRaisesRegex(PackageError, 'download failed'):
+                e.prepare(board, args(), self.root, self.root)
+        onboard.assert_not_called()
 
 
 if __name__ == '__main__':

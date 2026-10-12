@@ -2,6 +2,7 @@
 protobuf==4.25.8
 # Serial/ELF utilities used by independent ESP32 service tooling.
 pyserial==3.5
+esptool==4.11.0
 pyelftools==0.32
 # Human-authored project/service configuration on Python 3.10.
 tomli==2.2.1
