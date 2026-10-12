@@ -13,14 +13,14 @@ instructions can be added here.
 - Application service code belongs in `services/`. The framework, CLI, firmware
   and management console belong to the SDK dependency; do not edit that dependency
   as a side effect of application work.
-- `host.toml` selects the local host application. Successful enrollment creates
+- `units/host.toml` selects the local host application. Successful enrollment creates
   `units/<hardware-id>.toml`, the complete configuration for one physical board.
   Do not invent a placeholder board identity. Boards deploy independently.
 - Use native service declarations: `config_schema` defines types, defaults and
   bounds; application `config` selects values. Keep generated output in `build/`.
-- Before enrollment, use `./micros generate` and `./micros test`. Once a unit
-  exists, validate it with `./micros compose -d HARDWARE_ID`. Multiple units require
-  an explicit target. Compilation and host tests are not hardware verification.
+- Use `./micros compose -d host`, `./micros generate` and `./micros test` before
+  enrollment. Validate a board with `./micros compose -d HARDWARE_ID`. Multiple
+  boards require an explicit target. Compilation and host tests are not hardware verification.
 - Preserve authored units, service code, `micros.lock`, private `.micros/` state
   and recovery history. Operator credentials belong in user-level configuration,
   never tracked source. `.sdk` is an ignored local dependency link.

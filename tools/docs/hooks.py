@@ -35,6 +35,10 @@ def check_local_links(path, root):
                 continue
             base = root if parsed.path.startswith('/') else path.parent
             target = (base / unquote(parsed.path).lstrip('/')).resolve()
+            # Generated applications create this SDK link at scaffold time.
+            template_sdk = (root / 'tools/templates/application/.sdk').resolve()
+            if path.is_relative_to(root / 'tools/templates/application') and target.is_relative_to(template_sdk):
+                target = (root / target.relative_to(template_sdk)).resolve()
             try:
                 target.relative_to(root.resolve())
             except ValueError:

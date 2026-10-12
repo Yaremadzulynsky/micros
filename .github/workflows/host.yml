@@ -34,7 +34,9 @@ jobs:
           cd "$RUNNER_TEMP/first-app"
           export MICROS_SDK="$GITHUB_WORKSPACE"
           ./micros generate
-          test ! -d units
+          test -f units/host.toml
+          test ! -f units/000000000000.toml
+          ./micros compose -d host
           ./micros test
       - uses: actions/upload-artifact@v4
         if: always()

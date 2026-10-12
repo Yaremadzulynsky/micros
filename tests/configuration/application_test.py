@@ -10,6 +10,31 @@ from micros_tooling.config.repository import ROOT
 
 
 class UnitSelectionTest(unittest.TestCase):
+    def test_host_is_local_and_does_not_change_board_selection(self):
+        import contextlib
+        import io
+        from micros_tooling.config.scaffold import create, bind_starter
+        with tempfile.TemporaryDirectory() as temporary:
+            root = create(Path(temporary) / 'application')
+            def compose(*args):
+                with contextlib.redirect_stdout(io.StringIO()) as output:
+                    project.main(['compose', '--json', *args], root, Mock())
+                return json.loads(output.getvalue())
+            with patch('micros_tooling.fleet.server.configured_remote') as server:
+                self.assertIsNone(compose()['board'])
+                first = bind_starter(root, 'aabbccddeeff', 'esp32', 4)
+                self.assertEqual(project.select_unit(root=root), first)
+                self.assertIsNotNone(compose()['board'])
+                self.assertIsNone(compose('-d', 'host')['board'])
+                bind_starter(root, 'aabbccddee00', 'esp8266', 4)
+                self.assertIsNone(compose('-d', 'host')['board'])
+                with self.assertRaisesRegex(ValueError, 'Select -d'):
+                    compose()
+                for command in ('pins', 'build', 'deploy', 'plan'):
+                    with self.assertRaisesRegex(ValueError, 'host is local'):
+                        project.main([command, '-d', 'host'], root, Mock())
+                server.assert_not_called()
+
     def test_explicit_selection_with_multiple_boards(self):
         directory = ROOT / 'build/tests'
         directory.mkdir(parents=True, exist_ok=True)

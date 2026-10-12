@@ -7,6 +7,7 @@ import tempfile
 import time
 
 from micros_tooling.host import daemon
+from micros_tooling.config.layout import host_directory
 from micros_tooling.host.activation import read_record, stage
 from micros_tooling.storage.store import Store
 from micros_tooling.storage.packages import require
@@ -41,7 +42,7 @@ def main(arguments):
     sub = parser.add_subparsers(dest='action', required=True)
     for action in ('build', 'deploy', 'status', 'logs', 'stop', 'boot'):
         cmd = sub.add_parser(action)
-        cmd.add_argument('--project', type=Path, default=Path('host.toml'))
+        cmd.add_argument('--project', type=Path, default=Path('units/host.toml'))
         cmd.add_argument('--store', type=Path, help='persistent store; default: project/.micros/host')
         cmd.add_argument('--json', action='store_true', help='print structured output')
         if action in ('build', 'deploy'):
@@ -50,7 +51,8 @@ def main(arguments):
             cmd.add_argument('--runtime', type=Path, help='existing micros-control; otherwise build the SDK host runtime')
     args = parser.parse_args(arguments)
     project = args.project.resolve()
-    store = None if args.action == 'build' else Store(args.store or project.parent/'.micros/host')
+    directory = host_directory(project)
+    store = None if args.action == 'build' else Store(args.store or directory/'.micros/host')
     if args.action == 'logs':
         value = daemon.logs(store)
         if not value:
@@ -68,7 +70,7 @@ def main(arguments):
         from micros_tooling.host.build import build, runtime_binary
         runtime = args.runtime.resolve() if args.runtime else runtime_binary()
         if args.action in ('build', 'deploy'):
-            packages = build(project, args.output or project.parent/'build/host-packages', runtime)
+            packages = build(project, args.output or directory/'build/host-packages', runtime)
             if args.action == 'build':
                 value = dict(packages=list(map(str, packages)))
             else:

@@ -14,6 +14,19 @@ class DocumentationLinks(unittest.TestCase):
     def test_current_entry_points(self):
         hooks.check_entry_points()
 
+    def test_application_template_sdk_links_are_checked_against_framework(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            template = root / 'tools/templates/application'
+            template.mkdir(parents=True)
+            guide = template / 'AGENTS.md'
+            guide.write_text('[Framework](.sdk/AGENTS.md)\n')
+            (root / 'AGENTS.md').touch()
+            hooks.check_local_links(guide, root)
+            guide.write_text('[Missing workflow](.sdk/tools/skills/missing/SKILL.md)\n')
+            with self.assertRaisesRegex(ValueError, 'Missing repository link'):
+                hooks.check_local_links(guide, root)
+
     def test_source_move_breaks_navigation_until_link_is_updated(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

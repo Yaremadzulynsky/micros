@@ -3,6 +3,7 @@
 `micros new` links this project to its SDK through the ignored `.sdk` link. From this directory:
 
 ```sh
+./micros compose -d host          # Validate the local host configuration
 ./micros generate                 # Every local service; no board needed
 ./micros generate --json          # Same operation, structured output
 ./micros test                     # Application tests under tests/
@@ -13,7 +14,8 @@ pinned SDK's instructions through `.sdk/AGENTS.md`. Add project-specific guidanc
 there as your application grows.
 
 `micros.lock` pins the SDK revision. `services/hello/service.toml` owns the reusable
-implementation. New projects have no board unit or placeholder hardware ID.
+implementation. `units/host.toml` is ready to run locally from the start.
+New projects have no board unit or placeholder hardware ID.
 Run `./micros enroll` to choose or create a server, install the board tools,
 flash the board, and connect Wi-Fi. After the board is verified online,
 enrollment creates `units/<hardware-id>.toml` with its detected board profile,
@@ -30,9 +32,9 @@ Then run the commands printed by enrollment:
 ./micros logs -d HARDWARE_ID --follow  # Expect Hello world
 ```
 
-You can generate, test and run `host.toml` before enrolling any board.
+You can generate, test and run `units/host.toml` before enrolling any board.
 
-Start by changing `config.interval_ms` under `[services.hello]` in `host.toml`
+Start by changing `config.interval_ms` under `[services.hello]` in `units/host.toml`
 or your unit file. The heartbeat's `config_schema` defines the default and bounds;
 its hook-based C code logs on a timer, and Micros handles lifecycle cleanup.
 Run `./micros test -v`, then `./micros host deploy` and `./micros host logs` to
@@ -46,9 +48,7 @@ in your application before building/deploying. See the
 `./micros scaffold-service services/my-service --new` creates an empty hook service.
 
 Review application wiring in the new unit before deploying hardware services.
-Enrollment detects the chip and flash, not attached peripherals. Older untouched
-placeholder units are migrated with a backup under `build/enrollment/`; customized
-legacy placeholders are preserved for you to migrate deliberately.
+Enrollment detects the chip and flash, not attached peripherals.
 
 New services declare local types, `config_schema` types/defaults/bounds, typed `pins`, timer-name
 lists, interface references and commands. Units select `config` values, assign
@@ -64,5 +64,7 @@ or `./micros scaffold-service services/NAME --preview --base HEAD` to review sem
 changes and only the new or changed hooks. Commit source declarations and behavior,
 not generated interfaces. Device credentials remain in the user-level micros client.
 
-Each board deploys independently. Select `-d HARDWARE_ID` when multiple unit files
-exist. Offline composition and host tests do not verify physical hardware.
+Each board deploys independently. `./micros compose` selects the host before
+enrollment, then the sole board. Select `-d HARDWARE_ID` when multiple boards
+exist; `-d host` always validates the local host. Offline composition and host
+tests do not verify physical hardware.

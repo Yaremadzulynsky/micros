@@ -369,7 +369,7 @@ def main():
         else:
             print("Implement TODOs before deployment; GPIO/channel bindings still belong to the selected unit.")
         if args.new:
-            print('Select this service in host.toml or units/<hardware-id>.toml before building it.')
+            print('Select this service in units/host.toml or units/<hardware-id>.toml before building it.')
         return
     if args.command == "scaffold-commands":
         from micros_tooling.commands.generate import scaffold

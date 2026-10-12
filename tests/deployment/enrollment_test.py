@@ -47,20 +47,12 @@ class EnrollmentTest(unittest.TestCase):
         self.remote = Mock()
         self.remote.raw.return_value = b'{}'
 
-    def legacy_unit(self, root):
-        from micros_tooling.config.scaffold import starter_unit
-        from micros_tooling.config.composition import toml
-        unit = starter_unit('esp32')
-        unit['unit'] = {'device_id': '000000000000'}
-        path = root / 'units/000000000000.toml'
-        path.parent.mkdir()
-        path.write_text(toml(unit))
-        return path
-
     def test_second_board_gets_own_unit_and_existing_edits_are_preserved(self):
         from micros_tooling.config.scaffold import create, bind_starter
         from micros_tooling.config.configuration import read_toml, load_project
         root = create(self.root / 'multiple-boards')
+        host = root / 'units/host.toml'
+        original_host = host.read_bytes()
         source = root / 'services/hello/src/service.c'
         source.write_text(source.read_text() + '\n/* Application-owned edit. */\n')
         original_source = source.read_bytes()
@@ -73,7 +65,8 @@ class EnrollmentTest(unittest.TestCase):
         self.assertEqual(bind_starter(root, 'aabbccddeeff', 'esp32', 4), first)
         self.assertEqual(first.read_bytes(), original_unit)
         self.assertEqual(source.read_bytes(), original_source)
-        self.assertEqual(len(list((root / 'units').glob('*.toml'))), 2)
+        self.assertEqual(host.read_bytes(), original_host)
+        self.assertEqual(len(list((root / 'units').glob('*.toml'))), 3)
 
     def test_invalid_identity_capacity_and_removed_example_do_not_create_unit(self):
         from micros_tooling.config.scaffold import create, bind_starter
@@ -81,10 +74,10 @@ class EnrollmentTest(unittest.TestCase):
         for device, capacity in [('000000000000', 4), ('bad', 4), ('aabbccddeeff', 16)]:
             with self.assertRaises(ValueError):
                 bind_starter(root, device, 'esp32', capacity)
-        self.assertFalse((root / 'units').exists())
+        self.assertEqual(sorted(p.name for p in (root / 'units').glob('*.toml')), ['host.toml'])
         (root / 'services/hello/service.toml').unlink()
         self.assertIsNone(bind_starter(root, 'aabbccddeeff', 'esp32', 4))
-        self.assertFalse((root / 'units').exists())
+        self.assertEqual(sorted(p.name for p in (root / 'units').glob('*.toml')), ['host.toml'])
 
     def test_unit_created_only_after_successful_enrollment(self):
         from contextlib import nullcontext
@@ -97,7 +90,7 @@ class EnrollmentTest(unittest.TestCase):
             install.side_effect = ValueError('Wi-Fi not confirmed')
             with self.assertRaisesRegex(ValueError, 'Wi-Fi not confirmed'):
                 e.enroll(args())
-            self.assertFalse((root / 'units').exists())
+            self.assertEqual(sorted(p.name for p in (root / 'units').glob('*.toml')), ['host.toml'])
             install.side_effect = None
             install.return_value = dict(online=True, device_id=BOARD['device_id'], platform='esp32', flash_mb=8, message='Board online.')
             result = e.enroll(args())
@@ -111,7 +104,7 @@ class EnrollmentTest(unittest.TestCase):
         from micros_tooling.config.configuration import read_toml, load_project
         for platform, capacity in (('esp32', 8), ('esp8266', 4), ('samd21', None)):
             root = create(self.root / ('app-' + platform), platform)
-            self.assertFalse((root / 'units').exists())
+            self.assertEqual(sorted(p.name for p in (root / 'units').glob('*.toml')), ['host.toml'])
             destination = bind_starter(root, BOARD['device_id'], platform, capacity)
             self.assertEqual(read_toml(destination)['unit']['device_id'], BOARD['device_id'])
             if platform == 'esp32':
@@ -121,33 +114,14 @@ class EnrollmentTest(unittest.TestCase):
             self.assertEqual(len(load_project(destination)['services']), 1)
             self.assertEqual(bind_starter(root, BOARD['device_id'], platform, capacity), destination)
 
-    def test_starter_binding_preserves_custom_and_mismatched_units(self):
+    def test_existing_mismatched_unit_is_not_overwritten(self):
         from micros_tooling.config.scaffold import create, bind_starter
-        for change in ('custom', 'platform', 'multiple'):
-            root = create(self.root / ('app-' + change))
-            placeholder = self.legacy_unit(root)
-            if change == 'custom':
-                placeholder.write_text(placeholder.read_text().replace('stack_bytes = 4096', 'stack_bytes = 8192'))
-            if change == 'multiple':
-                (root / 'units/aabbccddeeff.toml').write_text(placeholder.read_text().replace('000000000000', 'aabbccddeeff'))
-            before = {p.name: p.read_bytes() for p in (root / 'units').glob('*.toml')}
-            self.assertIsNone(bind_starter(root, BOARD['device_id'], 'esp8266' if change == 'platform' else 'esp32', 4))
-            self.assertEqual({p.name: p.read_bytes() for p in (root / 'units').glob('*.toml')}, before)
-
-    def test_binding_accepts_previous_starter_without_explicit_settings(self):
-        from micros_tooling.config.scaffold import create, bind_starter
-        from micros_tooling.config.configuration import read_toml
-        from micros_tooling.config.composition import toml
-        root = create(self.root / 'previous-starter')
-        placeholder = self.legacy_unit(root)
-        unit = read_toml(placeholder)
-        del unit['services']['hello']['config']
-        placeholder.write_text(toml(unit))
-        before = placeholder.read_bytes()
-        path = bind_starter(root, BOARD['device_id'], 'esp32', 4)
-        self.assertIsNotNone(path)
-        self.assertNotIn('config', read_toml(path)['services']['hello'])
-        self.assertEqual((root / 'build/enrollment/000000000000.toml.before').read_bytes(), before)
+        root = create(self.root / 'mismatched-unit')
+        unit = root / 'units/aabbccddeeff.toml'
+        unit.write_text('[unit]\ndevice_id = "aabbccddee00"\n')
+        original = unit.read_bytes()
+        self.assertIsNone(bind_starter(root, 'aabbccddeeff', 'esp32', 4))
+        self.assertEqual(unit.read_bytes(), original)
 
     def test_project_write_failure_does_not_undo_successful_enrollment(self):
         from contextlib import nullcontext

@@ -62,7 +62,7 @@ micros new my-mkr-application --platform samd21
 micros new my-esp8266-application --platform esp8266
 ```
 
-New projects contain the example service and `host.toml`, without a placeholder
+New projects contain the example service and `units/host.toml`, without a placeholder
 board unit. Successful `./micros enroll` creates the real unit automatically,
 selecting `arduino_mkr_wifi_1010` or `esp8266_4mb` from the detected board. It omits
 ESP32-only `flash_mb` and gives hello a 1024-byte worker stack on MKR or 4096 bytes

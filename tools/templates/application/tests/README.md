@@ -3,7 +3,7 @@
 Keep tests of your service behavior here. The SDK tests its runtime, ABI and
 built-in services; your project owns tests for your own application behavior.
 
-Before enrollment, run `./micros generate` and `./micros test`. After enrollment
+Before enrollment, run `./micros compose -d host`, `./micros generate` and `./micros test`. After enrollment
 creates your board unit, an offline configuration check is:
 
 ```sh

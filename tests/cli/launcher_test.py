@@ -50,7 +50,7 @@ class LauncherTests(unittest.TestCase):
             for platform in ('esp32', 'samd21', 'esp8266'):
                 app = self.directory / f'{platform}-{index}'
                 self.invoke(route, ['new', str(app), '--platform', platform], self.app)
-                self.assertFalse((app / 'units').exists())
+                self.assertEqual(sorted(p.name for p in (app / 'units').glob('*.toml')), ['host.toml'])
                 bind_starter(app, 'aabbccddeeff', platform, 4 if platform != 'samd21' else None)
                 result = self.invoke([str(app / 'micros')], ['compose', '--json'], self.directory)
                 self.assertEqual(json.loads(result.stdout)['services'][0]['name'], 'example.hello')
@@ -120,9 +120,11 @@ class LauncherTests(unittest.TestCase):
         self.assertFalse((cache / 'build/python').exists())
 
     def test_starter_lifecycle_and_existing_destination(self):
-        self.assertFalse((self.app / 'units').exists())
+        self.assertEqual(sorted(p.name for p in (self.app / 'units').glob('*.toml')), ['host.toml'])
         for route in self.routes:
-            for command in ('compose', 'pins', 'deploy'):
+            self.invoke(route, ['compose', '-d', 'host'], self.app)
+            self.invoke(route, ['compose'], self.app)
+            for command in ('pins', 'deploy'):
                 result = self.invoke(route, [command], self.app, code=1)
                 self.assertIn('Run ./micros enroll', result.stderr)
         self.invoke(self.routes[0], ['test'], self.app)

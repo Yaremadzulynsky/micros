@@ -27,7 +27,7 @@ class ExternalApplicationTests(unittest.TestCase):
         self.env.pop("MICROS_APPLICATION_ROOT", None)
         result = self.run_cli(ROOT / "micros", "new", self.app)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertFalse((self.app/'units').exists())
+        self.assertEqual(sorted(p.name for p in (self.app / 'units').glob('*.toml')), ['host.toml'])
         bind_starter(self.app, 'aabbccddeeff', 'esp32', 4)
 
     def run_cli(self, launcher, *args):

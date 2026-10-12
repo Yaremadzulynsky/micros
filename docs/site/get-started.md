@@ -94,7 +94,7 @@ also works when the SDK is not on PATH. Use `micros sdk COMMAND` to bypass proje
 defaults deliberately. Set `MICROS_SDK` to override the link with a matching checkout.
 
 Generation should report hello's interfaces without contacting a board. New
-projects contain no unit files; enrollment creates one for the actual board. `new` refuses
+projects contain `units/host.toml`; enrollment adds a unit for the actual board. `new` refuses
 to overwrite an existing directory. `micros init` provisions a board, not a project.
 
 ```text
@@ -102,7 +102,7 @@ my-application/
   AGENTS.md
   micros
   micros.lock
-  host.toml
+  units/host.toml
   services/hello/service.toml
   services/hello/src/service.c
   tests/
@@ -129,7 +129,7 @@ With a C17 compiler installed, run from your application directory:
 ```
 
 The starter is a hook-based heartbeat. Its `service.toml` declares a named timer
-and a bounded `interval_ms` setting; `host.toml` and the board unit choose the
+and a bounded `interval_ms` setting; `units/host.toml` and the board unit choose the
 interval. Its C source contains behavior while Micros generates the lifecycle.
 The host test compiles that real code against a deterministic timer stub and
 checks default/selected intervals, greeting and cleanup. `./micros test -v` shows
@@ -149,12 +149,17 @@ application directory:
 ./micros host boot
 ```
 
-`host.toml` selects local services using the same contracts and configuration as
+`units/host.toml` selects local services using the same contracts and configuration as
 a board application, without a hardware ID or board definition. The first deploy
 builds the SDK's native runtime and your services. `host build` only produces
 packages under `build/host-packages`. Installed packages and activation records
 live in `.micros/host`; keep that directory to retain recovery state. Existing
-projects can copy the SDK's `tools/templates/application/host.toml` starter.
+projects can copy the SDK's `tools/templates/application/units/host.toml` starter
+into their `units/` directory.
+
+Use `./micros compose -d host` to validate the host configuration offline.
+With no board enrolled, `./micros compose` selects the host. With one board, it
+selects that board; multiple boards require an explicit `-d HARDWARE_ID`.
 
 The controller continues after the command exits. `stop` shuts down this local
 graph; `boot` reconstructs its confirmed selection. This does not install an OS

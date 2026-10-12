@@ -320,7 +320,8 @@ def _load_project(path, overlay=None, board=None):
             from micros_tooling.config.service_contract import validate_service_contract
             validate_service_contract(path, alias, selection, contract_path, contract, resolved_gpio, channel_definitions, board)
             # Isolate bindings for multiple instances and units sharing source code.
-            project_directory = path.parent.parent if "unit" in root else path.parent
+            from micros_tooling.config.layout import host_directory
+            project_directory = path.parent.parent if "unit" in root else host_directory(path)
             generated_directory = project_directory / "build" / "units" / path.stem / "services" / alias
         service["capabilities"] = dict(capabilities)
         service["capabilities"]["gpio"] = [resource["line"] for resource in resolved_gpio]

@@ -29,7 +29,7 @@ def new(path, example=None):
         staging = Path(temporary) / destination.name
         staging.mkdir()
         (staging / 'service.toml').write_text(toml(declaration,
-            comment='Service-owned behavior and settings. Select this service in host.toml or a unit file.'))
+            comment='Service-owned behavior and settings. Select this service in units/host.toml or a unit file.'))
         created = create(staging)
         if example == 'counter':
             from micros_tooling.config.repository import ROOT

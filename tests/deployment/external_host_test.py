@@ -100,6 +100,11 @@ class ExternalHostTests(unittest.TestCase):
                 self.assertIn('Hello world', call('logs').stdout)
                 self.assertTrue(json.loads(call('status').stdout)['running'])
                 self.assertFalse((app/'build/build').exists())
+                self.assertEqual(Path(deployed['store']), (app/'.micros/host').resolve())
+                self.assertTrue((app/'build/host-packages').is_dir())
+                self.assertTrue((app/'build/units/host/services/hello/generated').is_dir())
+                self.assertFalse((app/'units/build').exists())
+                self.assertFalse((app/'units/.micros').exists())
                 call('deploy', '--runtime', RUNTIME)  # Identical packages remain installable.
                 source = app/'services/hello/src/service.c'
                 original = source.read_text()
@@ -130,7 +135,7 @@ class ExternalHostTests(unittest.TestCase):
                 call('stop'); call('boot', '--runtime', RUNTIME)
                 self.assertEqual(json.loads(call('status').stdout)['active'], status['active'])
                 # An invalid selection must not interrupt that running graph.
-                project = app/'host.toml'
+                project = app/'units/host.toml'
                 project.write_text(project.read_text().replace('arena = "RAM"', 'arena = "PSRAM"'))
                 call('deploy', '--runtime', RUNTIME, ok=False)
                 self.assertEqual(json.loads(call('status').stdout)['active'], status['active'])

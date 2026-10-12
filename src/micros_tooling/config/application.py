@@ -8,10 +8,14 @@ import subprocess
 import sys
 
 from micros_tooling.config.configuration import load_project, unit_identity
+from micros_tooling.config.layout import board_units
 from micros_tooling.dispatch import CommandParser
 
 def select_unit(requested=None, *, root, state=None):
-    paths = sorted((root / "units").glob("*.toml"))
+    if requested == 'host':
+        raise ValueError('host is local; use ./micros host build or ./micros host deploy, '
+                         'or ./micros compose -d host to validate its configuration.')
+    paths = board_units(root)
     units = {unit_identity(path): path for path in paths}
     if None in units or len(units) != len(paths):
         raise ValueError("Each unit must declare its unique hardware identity")
@@ -48,7 +52,7 @@ def main(args, root, dispatch):
     if not args or args == ["--help"]:
         print("""micros application — one complete units/<hardware-id>.toml per board
 
-  ./micros compose [-d HARDWARE_ID] [--json]
+  ./micros compose [-d host|HARDWARE_ID] [--json]
                                         offline validation and resolved recipe
   ./micros generate --service services/NAME
                                         generate board-independent service interfaces
@@ -61,7 +65,7 @@ def main(args, root, dispatch):
                                         create command handler stubs once
   ./micros pins [-d HARDWARE_ID] [--pin N | --all | --json]
                                         service connections and unused pins
-  ./micros host deploy                   build and activate host.toml locally
+  ./micros host deploy                   build and activate units/host.toml locally
   ./micros host status|logs|stop|boot     manage the local native application
   ./micros test [-v] [-k NAME]            offline host tests; optionally filter by name
   ./micros plan -d feather [--json]       preview changes and deployment impact
@@ -77,7 +81,8 @@ def main(args, root, dispatch):
   ./micros logs -d feather
   ./micros sdk COMMAND ...                explicit SDK passthrough
 
-The sole unit can be selected automatically; multiple units require -d.
+Compose defaults to host before enrollment, then the sole board; multiple boards require -d.
+Use compose -d host to validate the local host at any time.
 Device names resolve through the server; hardware IDs work directly.
 Communication between boards is optional and is not configured by this launcher.
 """)
@@ -108,7 +113,7 @@ Communication between boards is optional and is not configured by this launcher.
     if args[0] == "host":
         from micros_tooling.host.cli import main as host_main
         if not any(a == "--project" or a.startswith("--project=") for a in args) and len(args) > 1 and args[1] != "--help":
-            args += ["--project", str(root / "host.toml")]
+            args += ["--project", str(root / 'units/host.toml')]
         host_main(args[1:])
         return 0
     command = args[0]
@@ -121,7 +126,7 @@ Communication between boards is optional and is not configured by this launcher.
         local = command in ('compose', 'pins')
         parser = CommandParser(prog='micros ' + command, add_help=local, allow_abbrev=False,
                                description='Inspect the selected project unit offline' if local else None)
-        parser.add_argument("-d", "--device", help='hardware ID; optional when the project has one unit')
+        parser.add_argument("-d", "--device", help='hardware ID (or host for compose); optional with one board')
         if command == "pins":
             view = parser.add_mutually_exclusive_group()
             view.add_argument("--pin", type=int)
@@ -136,7 +141,11 @@ Communication between boards is optional and is not configured by this launcher.
             options, rest = parser.parse_known_args(args[1:])
         if "--help" in rest and command not in ("compose", "pins"):
             return dispatch([command, "--help"])
-        path = select_unit(options.device, root=root)
+        if command == 'compose' and (options.device == 'host' or
+                (options.device is None and not board_units(root) and (root / 'units/host.toml').is_file())):
+            path = root / 'units/host.toml'
+        else:
+            path = select_unit(options.device, root=root)
         if command == "pins":
             from micros_tooling.config.chips import unit_pin_listing, format_pins
             report = unit_pin_listing(path)

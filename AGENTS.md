@@ -11,6 +11,10 @@ nested `AGENTS.md`. Use [contributor checks](docs/site/contributing.md) to valid
 - Keep application code in consuming projects. Follow the folder ownership map;
   diagnostic packages live in `services/diagnostics/`, reusable host code in
   `src/micros_tooling/`, and operational workflows in `tools/skills/`.
+- Prefer a simpler current design over backward compatibility. Do not add compatibility
+  fallbacks or migration code unless explicitly requested.
+- During rapid iteration, run focused checks for the changed developer flow. Reserve
+  broad suites for changes that justify them or an explicit request.
 - Report relevant checks and distinguish host/build verification from hardware results.
   Give each maintained explanation one home; link to contracts and working examples.
 

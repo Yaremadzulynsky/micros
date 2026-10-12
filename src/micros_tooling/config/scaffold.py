@@ -33,32 +33,15 @@ def bind_starter(root, device_id, platform, flash_mb=None):
     destination = root / 'units' / (device_id + '.toml')
     if destination.is_file():
         return destination if read_toml(destination).get('unit', {}).get('device_id') == device_id else None
-    placeholder = root / 'units/000000000000.toml'
-    unit = starter_unit(platform)
-    if placeholder.exists():
-        # Migrate old, untouched starters, but never discard authored settings.
-        if sorted((root / 'units').glob('*.toml')) != [placeholder]:
-            return None
-        previous = read_toml(placeholder)
-        unit['unit'] = {'device_id': '000000000000'}
-        if 'config' not in previous.get('services', {}).get('hello', {}):
-            unit['services']['hello'].pop('config', None)
-        if previous != unit:
-            return None
-        unit = previous
-    elif not (root / 'services/hello/service.toml').is_file():
+    if not (root / 'services/hello/service.toml').is_file():
         # A developer may deliberately remove the example. Do not restore it.
         return None
+    unit = starter_unit(platform)
     unit['unit'] = {'device_id': device_id}
     if platform == 'esp32':
         require(flash_mb in (4, 8), 'Unsupported detected ESP32 flash capacity')
         unit['board']['flash_mb'] = flash_mb
-    backup = root / 'build/enrollment/000000000000.toml.before'
-    if placeholder.exists() and not backup.exists():
-        atomic_write(backup, placeholder.read_bytes())
     atomic_write(destination, toml(unit, comment="Board application configuration. Edit this file to configure this board.").encode())
-    if placeholder.exists():
-        placeholder.unlink()
     return destination
 
 

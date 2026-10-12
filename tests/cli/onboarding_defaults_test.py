@@ -93,7 +93,7 @@ class OnboardingDefaultsTest(unittest.TestCase):
                                            ('samd21','arduino_mkr_wifi_1010',1024),
                                            ('esp8266','esp8266_4mb',4096)]:
                 app=create(Path(directory)/platform,platform)
-                self.assertFalse((app/'units').exists())
+                self.assertEqual(sorted(p.name for p in (app / 'units').glob('*.toml')), ['host.toml'])
                 path=bind_starter(app,'aabbccddeeff',platform,4 if platform!='samd21' else None)
                 unit=read_toml(path)
                 self.assertEqual(unit['board']['profile'],profile)

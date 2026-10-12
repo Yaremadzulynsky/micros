@@ -22,7 +22,7 @@ The project from [Quickstart](get-started.md) contains a working heartbeat in
 `Hello world` to the log. It needs no GPIO or wiring and runs on the host or a board.
 
 The service's `config_schema` defines `interval_ms`, its default and bounds.
-Your `host.toml` or selected `units/<hardware-id>.toml` chooses the value:
+Your `units/host.toml` or selected `units/<hardware-id>.toml` chooses the value:
 
 ```toml
 [services.hello]
@@ -33,7 +33,7 @@ config = { interval_ms = 250 }
 ```
 
 Edit the existing table rather than adding a duplicate. Run `./micros compose`
-to validate a board unit, or `./micros host build` to compile `host.toml`.
+to validate a board unit, or `./micros host build` to compile `units/host.toml`.
 `./micros test -v` runs the real heartbeat with a deterministic timer stub: it
 checks the default and selected interval, output, and cleanup without waiting or
 using hardware. `./micros host deploy` and `./micros host logs` let you observe it.
@@ -88,7 +88,7 @@ expose_commands = ["read", "increment", "reset"]
 ```
 
 Run `./micros compose` to validate. To build it locally, add the same selection to
-`host.toml` with `source = "services/counter"`, then run `./micros host build`.
+`units/host.toml` with `source = "../services/counter"`, then run `./micros host build`.
 Host build/deployment checks do not prove physical board behavior.
 
 Command exposure adds a transport bridge and consumes service/channel resources;
