@@ -62,14 +62,14 @@ micros new my-mkr-application --platform samd21
 micros new my-esp8266-application --platform esp8266
 ```
 
-New projects contain the example service and `units/host.toml`, without a placeholder
+New projects contain the three simulated climate services and `units/host.toml`, without a placeholder
 board unit. Successful `./micros enroll` creates the real unit automatically,
 selecting `arduino_mkr_wifi_1010` or `esp8266_4mb` from the detected board. It omits
-ESP32-only `flash_mb` and gives hello a 1024-byte worker stack on MKR or 4096 bytes
+ESP32-only `flash_mb` and gives each service a 1024-byte worker stack on MKR or 1536 bytes
 on ESP8266. The `new --platform` flag remains accepted for compatibility.
 
-If you used the manual USB provisioning steps above without enrollment, create
-`units/HARDWARE_ID.toml` yourself, using the observed twelve-digit hardware ID:
+If you used manual USB provisioning without enrollment, copy `units/host.toml`
+to `units/HARDWARE_ID.toml`, retain all three services and both channels, and add:
 
 ```toml
 [unit]
@@ -77,19 +77,11 @@ device_id = "HARDWARE_ID"
 
 [board]
 profile = "arduino_mkr_wifi_1010" # Use esp8266_4mb for ESP8266.
-
-[services.hello]
-source = "../services/hello"
-contract = "service.toml"
-memory = { arena = "RAM", stack_bytes = 1024 } # Use 4096 for ESP8266.
-config = { interval_ms = 1000 }
 ```
 
-Size stacks for each real service and inspect runtime headroom.
-
-If converting an existing ESP32 starter instead, replace its board section with
-`profile = "arduino_mkr_wifi_1010"` or `profile = "esp8266_4mb"`, remove
-`flash_mb`, and set hello's `memory.stack_bytes` to 1024 for MKR.
+Use the observed twelve-digit hardware ID. Set each service's `memory.stack_bytes`
+to 1024 on MKR or 1536 on ESP8266. Size stacks for changed behavior and inspect
+runtime headroom. There is no external sensor, fan or display to wire.
 
 From the application directory, with `MICROS_SDK` still exported:
 
@@ -101,8 +93,8 @@ From the application directory, with `MICROS_SDK` still exported:
 ./micros logs -d HARDWARE_ID --via usb --port PORT
 ```
 
-Expect `example.hello` running, no pending trial, and repeated `Hello world`
-lines. A successful upload alone is not successful activation. If activation
+Expect all three services running, no pending trial, and `Simulated climate`
+lines with fan ON/OFF transitions. A successful upload alone is not successful activation. If activation
 fails, inspect status and logs before another write. USB serial opening may
 reset ESP8266, so compare observations within the same boot when testing timing.
 For network enrollment, return to [Set up a board](set-up-an-esp32.md).

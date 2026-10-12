@@ -12,12 +12,17 @@ static micros_result_t api_coord_open(micros_context_t *ctx, uint32_t key, uint3
     if (!ch) { micros_platform_unlock(r->sync); api_ipc_close(ctx,*handle); return MICROS_ERROR_STALE_HANDLE; }
     micros_coord_channel_t *c=r->coordination[p->channel_slot];
     if (ch->policy!=MICROS_CHANNEL_LATEST || ch->payload_bytes>MICROS_COORD_PAYLOAD ||
-        (c->kind && c->kind!=kind)) rc=MICROS_ERROR_INVALID_ARGUMENT;
+        (c && c->kind && c->kind!=kind)) rc=MICROS_ERROR_INVALID_ARGUMENT;
     for (unsigned i=0; !rc && i<MICROS_RUNTIME_HANDLE_CAPACITY; ++i) {
         resource_slot_t *other=&r->resources[i];
         if (other!=p && other->owner && other->kind==p->kind && other->channel_slot==p->channel_slot &&
             other->channel_generation==p->channel_generation &&
             (access==MICROS_IPC_PUBLISH || kind==MICROS_COORD_ACTION)) rc=MICROS_ERROR_STATE;
+    }
+    if (!rc && !c) {
+        c = micros_memory_allocate(sizeof(*c));
+        if (!c) rc = MICROS_ERROR_CAPACITY;
+        else { memset(c, 0, sizeof(*c)); r->coordination[p->channel_slot] = c; }
     }
     if (!rc) { c->kind=kind; if (!c->epoch) c->epoch=micros_platform_now_us()+key; p->next_sequence=1; p->line=kind; }
     micros_platform_unlock(r->sync);
@@ -95,7 +100,7 @@ micros_result_t micros_runtime_coord_exchange(micros_runtime_t *r,uint32_t key,
     for(unsigned slot=0;slot<MICROS_CHANNEL_CAPACITY;++slot) {
         if(!r->channels[slot].key || r->channels[slot].key!=key)continue;
         micros_coord_channel_t *c=r->coordination[slot];
-        if(!c->role || r->usage.reboot_required)break;
+        if(!c || !c->role || r->usage.reboot_required)break;
         rc=MICROS_OK;
         if(bytes) {
             if(bytes<48 || bytes>112 || memcmp(input,"MCO1",4) || input[4]!=c->kind || input[5] ||
@@ -123,6 +128,7 @@ micros_result_t micros_runtime_coord_bind(micros_runtime_t *r,uint32_t key,uint3
     for(unsigned slot=0;slot<MICROS_CHANNEL_CAPACITY;++slot) {
         if(!r->channels[slot].key || r->channels[slot].key!=key)continue;
         micros_coord_channel_t *c=r->coordination[slot];
+        if (!c) break;
         if (!epoch && role==1) epoch=c->epoch;
         if(c->kind!=kind || (c->role && (c->role!=role || c->epoch!=epoch)))break;
         int count=0,invalid=0;
@@ -143,6 +149,6 @@ uint64_t micros_runtime_coord_identity(micros_runtime_t *r,uint32_t key) {
     if (!r) return 0;
     uint64_t epoch=0;micros_platform_lock(r->sync);
     for(unsigned slot=0;slot<MICROS_CHANNEL_CAPACITY;++slot)
-        if(key && r->channels[slot].key==key)epoch=r->coordination[slot]->epoch;
+        if(key && r->channels[slot].key==key && r->coordination[slot])epoch=r->coordination[slot]->epoch;
     micros_platform_unlock(r->sync);return epoch;
 }

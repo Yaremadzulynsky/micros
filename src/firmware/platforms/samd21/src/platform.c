@@ -20,6 +20,8 @@ struct micros_platform_sync
 {
     SemaphoreHandle_t mutex;
     waiter_t *waiters;
+    StaticSemaphore_t storage;
+    int owned;
 };
 struct micros_platform_task
 {
@@ -27,6 +29,9 @@ struct micros_platform_task
     SemaphoreHandle_t done;
     void *(*entry)(void *);
     void *argument;
+    StaticTask_t task_storage;
+    StaticSemaphore_t done_storage;
+    int owned;
 };
 struct micros_platform_gpio
 {
@@ -39,18 +44,29 @@ struct micros_platform_image
 };
 static uint32_t loaded_slots;
 
+#define MICROS_MEMORY_PANIC micros_samd21_panic
+#include "../../../kernel/support/static_memory.inc"
+static micros_platform_gpio_t static_gpio;
+static int gpio_owned;
+static micros_platform_sync_t static_sync;
+static micros_platform_task_t static_tasks[5];
+static micros_platform_image_t static_images[4];
+static _Alignas(16) StackType_t supervisor_stack[MICROS_CONTROLLER_SUPERVISOR_STACK / sizeof(StackType_t)];
+
 micros_platform_gpio_t *micros_platform_gpio_create(uint32_t lines)
 {
     if (lines != 4)
         return NULL;
-    micros_platform_gpio_t *gpio = calloc(1, sizeof(*gpio));
+    if (gpio_owned) return NULL;
+    gpio_owned = 1;
+    micros_platform_gpio_t *gpio = &static_gpio;
     if (gpio)
     {
         gpio->lines = lines;
     }
     return gpio;
 }
-void micros_platform_gpio_destroy(micros_platform_gpio_t *gpio) { free(gpio); }
+void micros_platform_gpio_destroy(micros_platform_gpio_t *gpio) { gpio_owned = 0; (void)gpio; }
 micros_result_t micros_platform_gpio_read(micros_platform_gpio_t *gpio, uint32_t line,
                                           uint32_t *level)
 {
@@ -70,10 +86,13 @@ micros_result_t micros_platform_gpio_write(micros_platform_gpio_t *gpio, uint32_
 }
 micros_platform_sync_t *micros_platform_sync_create(void)
 {
-    micros_platform_sync_t *sync = calloc(1, sizeof(*sync));
-    if (sync && !(sync->mutex = xSemaphoreCreateMutex()))
+    if (static_sync.owned) return NULL;
+    micros_platform_sync_t *sync = &static_sync;
+    memset(sync, 0, sizeof(*sync));
+    sync->owned = 1;
+    if (sync && !(sync->mutex = xSemaphoreCreateMutexStatic(&sync->storage)))
     {
-        free(sync);
+        sync->owned = 0;
         return NULL;
     }
     return sync;
@@ -82,7 +101,7 @@ void micros_platform_sync_destroy(micros_platform_sync_t *sync)
 {
     configASSERT(!sync->waiters);
     vSemaphoreDelete(sync->mutex);
-    free(sync);
+    sync->owned = 0;
 }
 void micros_platform_lock(micros_platform_sync_t *sync)
 {
@@ -124,13 +143,12 @@ size_t micros_platform_stack_bytes(size_t bytes)
 }
 size_t micros_platform_task_metadata_bytes(void)
 {
-    return sizeof(micros_platform_task_t) + sizeof(StaticTask_t) + sizeof(StaticSemaphore_t);
+    return sizeof(micros_platform_task_t);
 }
 size_t micros_platform_metadata_bytes(uint32_t lines)
 {
     (void)lines;
-    return sizeof(micros_platform_gpio_t) + sizeof(micros_platform_sync_t) +
-           sizeof(StaticSemaphore_t);
+    return sizeof(micros_platform_gpio_t) + sizeof(micros_platform_sync_t);
 }
 static void run_task(void *argument)
 {
@@ -141,44 +159,50 @@ static void run_task(void *argument)
     vTaskSuspend(NULL);
     micros_samd21_panic();
 }
-static micros_platform_task_t *create_task(void *(*entry)(void *), void *argument, size_t bytes,
-                                           UBaseType_t priority)
+static micros_platform_task_t *create_task(void *(*entry)(void *), void *argument,
+    size_t bytes, UBaseType_t priority, void *stack, unsigned first, unsigned end)
 {
-    bytes = micros_platform_stack_bytes(bytes);
-    if (!entry || bytes > 8192)
-        return NULL;
-    micros_platform_task_t *task = calloc(1, sizeof(*task));
-    if (!task)
-        return NULL;
+    if (!entry || !stack || bytes != micros_platform_stack_bytes(bytes)) return NULL;
+    micros_platform_task_t *task = NULL;
+    for (unsigned i = first; i < end; ++i)
+        if (!static_tasks[i].owned) { task = &static_tasks[i]; break; }
+    if (!task) return NULL;
+    memset(task, 0, sizeof(*task));
+    task->owned = 1;
     task->entry = entry;
     task->argument = argument;
-    task->done = xSemaphoreCreateBinary();
-    if (!task->done || xTaskCreate(run_task, "micros", bytes / sizeof(StackType_t), task, priority,
-                                   &task->task) != pdPASS)
-    {
-        if (task->done)
-            vSemaphoreDelete(task->done);
-        free(task);
+    task->done = xSemaphoreCreateBinaryStatic(&task->done_storage);
+    task->task = xTaskCreateStatic(run_task, "micros", bytes / sizeof(StackType_t),
+        task, priority, stack, &task->task_storage);
+    if (!task->task) {
+        vSemaphoreDelete(task->done);
+        task->owned = 0;
         return NULL;
     }
     return task;
 }
-micros_platform_task_t *micros_platform_task_create(void *(*entry)(void *), void *argument,
-                                                    size_t bytes)
+micros_platform_task_t *micros_platform_task_create_with_stack(void *(*entry)(void *),
+    void *argument, size_t bytes, void *stack)
+{ return create_task(entry, argument, bytes, 1, stack, 0, 4); }
+micros_platform_task_t *micros_platform_task_create(void *(*entry)(void *),
+    void *argument, size_t bytes)
 {
-    return create_task(entry, argument, bytes, 1);
+    /* All service callers on static targets must reserve their stack at admission. */
+    (void)entry; (void)argument; (void)bytes;
+    return NULL;
 }
-micros_platform_task_t *micros_platform_supervisor_create(void *(*entry)(void *), void *argument,
-                                                          size_t bytes)
+micros_platform_task_t *micros_platform_supervisor_create(void *(*entry)(void *),
+    void *argument, size_t bytes)
 {
-    return create_task(entry, argument, bytes, 3);
+    if (bytes > sizeof(supervisor_stack)) return NULL;
+    return create_task(entry, argument, sizeof(supervisor_stack), 3, supervisor_stack, 4, 5);
 }
 void micros_platform_task_join(micros_platform_task_t *task)
 {
     xSemaphoreTake(task->done, portMAX_DELAY);
     vTaskDelete(task->task);
     vSemaphoreDelete(task->done);
-    free(task);
+    task->owned = 0;
 }
 size_t micros_platform_stack_free(micros_platform_task_t *task)
 {
@@ -188,7 +212,7 @@ void *micros_platform_arena_allocate(size_t alignment, size_t bytes, uint32_t pl
 {
     if (placement || !alignment || (alignment & (alignment - 1)) || alignment > 16)
         return NULL;
-    return memalign(alignment < sizeof(void *) ? sizeof(void *) : alignment, bytes);
+    return micros_memory_allocate(bytes);
 }
 void micros_platform_debug_to_stderr(void) {}
 micros_result_t micros_platform_debug(const uint8_t *bytes, uint32_t count)
@@ -210,7 +234,7 @@ micros_result_t micros_platform_image_open(const char *path, micros_platform_ima
         return MICROS_ERROR_INVALID_ARGUMENT;
     uint32_t address = embedded_image_address(bank, slot);
     const uint32_t *header = (const void *)(uintptr_t)address;
-    micros_platform_image_t *loaded = calloc(1, sizeof(*loaded));
+    micros_platform_image_t *loaded = &static_images[slot];
     if (!loaded)
         return MICROS_ERROR_CAPACITY;
     memset(micros_samd21_data[slot], 0, SAMD_DATA_BYTES);
@@ -228,10 +252,10 @@ void micros_platform_image_close(micros_platform_image_t *image)
 {
     loaded_slots &= ~(1u << image->slot);
     memset(micros_samd21_data[image->slot], 0, SAMD_DATA_BYTES);
-    free(image);
+    memset(image, 0, sizeof(*image));
 }
 
-void micros_platform_arena_free(void *arena) { free(arena); }
+void micros_platform_arena_free(void *arena) { micros_memory_free(arena); }
 
 /* This target's service ABI has no analog implementation. Builds requiring
  * analog GPIO are rejected by the capability contract before linking. */
@@ -261,7 +285,7 @@ int micros_controller_gpio_level(int pin) {
 }
 int micros_controller_recovery_pressed(int pin) { return micros_controller_gpio_level(pin)==0; }
 const uint8_t *micros_controller_base_hash(void) { static uint8_t hash[32];embedded_base_hash(hash);return hash; }
-void *micros_controller_transfer_allocate(size_t bytes) { return malloc(bytes); }
+void *micros_controller_transfer_allocate(size_t bytes) { return micros_management_allocate(bytes); }
 void micros_controller_yield(void) { embedded_idle();embedded_controller_wait(); }
 int micros_board_recovery_pin(void) { return -1; }
 int micros_board_validate_gpio(const micros_device_graph_t *graph) {
@@ -302,4 +326,11 @@ int micros_board_validate_image(const char *path,unsigned slot) {
  const uint32_t *header=(const void*)(uintptr_t)embedded_image_address(bank,slot);
  if(header[7]>EMBEDDED_SLOT_BYTES-64 || header[8]>EMBEDDED_SLOT_BYTES-64-header[7])return MICROS_ERROR_INVALID_ARGUMENT;
  return embedded_image_validate(bank,slot,64+header[7]+header[8])?MICROS_OK:MICROS_ERROR_INVALID_ARGUMENT;
+}
+
+void vApplicationGetIdleTaskMemory(StaticTask_t **tcb, StackType_t **stack, uint32_t *words)
+{
+    static StaticTask_t idle_tcb;
+    static StackType_t idle_stack[configMINIMAL_STACK_SIZE];
+    *tcb = &idle_tcb; *stack = idle_stack; *words = configMINIMAL_STACK_SIZE;
 }

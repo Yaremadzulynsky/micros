@@ -21,7 +21,7 @@ endif()
 register_component()
 # Host base validation needs this target marker even when runtime code inlines it.
 target_link_libraries(${COMPONENT_LIB} INTERFACE "-Wl,--undefined=embedded_profile")
-target_compile_definitions(${COMPONENT_LIB} PRIVATE MICROS_RUNTIME_GPIO_CAPACITY=4)
+target_compile_definitions(${COMPONENT_LIB} PRIVATE MICROS_RUNTIME_GPIO_CAPACITY=4 MICROS_STATIC_MEMORY=1)
 target_compile_options(${COMPONENT_LIB} PRIVATE -Wall -Wextra -Werror
     $<$<COMPILE_LANGUAGE:C>:-std=gnu17> $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++17>)
 

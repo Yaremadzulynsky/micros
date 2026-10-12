@@ -105,15 +105,18 @@ def main(args):
         with SerialRemote(port, profile.get('serial_number')) as remote:
             status = remote.status()
             require(status['base_sha256'] == info['hash'].hex(), 'Connected base differs from selected ELF')
-            wifi = remote.request('WIFI')
+            device_id = status['identity']['device_id']
             deadline = time.monotonic() + 5
-            while wifi.get('mac') == '000000000000' and time.monotonic() < deadline:
+            while device_id == '000000000000' and time.monotonic() < deadline:
                 time.sleep(.2)
-                wifi = remote.request('WIFI')
+                status = remote.status()
+                device_id = status['identity']['device_id']
+            require(re.fullmatch('[0-9a-f]{12}', device_id) and device_id != '000000000000',
+                    'MKR Wi-Fi identity is not ready; inspect status before pairing.')
             credentials = getattr(args, 'relay_credentials', None)
             if credentials:
                 from urllib.parse import urlsplit
-                require(credentials.name == wifi['mac'], 'Enrollment identity does not match this MKR')
+                require(credentials.name == device_id, 'Enrollment identity does not match this MKR')
                 origin = urlsplit(json.loads((credentials / 'server.json').read_text())['url'])
                 require(origin.scheme == 'https' and origin.hostname and origin.path in ('', '/')
                         and not origin.username and not origin.query and not origin.fragment, 'Invalid relay HTTPS origin')
@@ -128,7 +131,7 @@ def main(args):
                 shutil.copyfile(firmware, saved_firmware)
                 binary = firmware.with_suffix('.bin')
                 if binary.is_file(): shutil.copyfile(binary, saved_firmware.with_suffix('.bin'))
-            profile = dict(platform='samd21', device_id=wifi['mac'], serial_number=remote.serial_number, firmware=str(saved_firmware.resolve()),
+            profile = dict(platform='samd21', device_id=device_id, serial_number=remote.serial_number, firmware=str(saved_firmware.resolve()),
                            compiler_dir=str(compiler.resolve()), board=str(board.resolve()), project=str(Path(project).resolve()))
         path = profile_path(name)
         path.parent.mkdir(parents=True, exist_ok=True)

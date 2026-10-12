@@ -54,6 +54,22 @@ class RelayTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.registry.poll(DEVICE,BOOT,{'identity':{'device_id':'f'*12}})
 
+    def test_embedded_wire_limit_precedes_host_metadata_expansion(self):
+        from micros_tooling.platforms.embedded.telemetry import expand
+        wire = dict(STATUS, platform='esp8266', embedded_layout=1, layout_version=2,
+                    active=0, image_slots=[0,1,2,3], services=[{'state':'Running'}]*4,
+                    diagnostic='x'*1700)
+        self.assertLess(len(json.dumps(wire).encode()), 4096)
+        self.assertGreater(len(json.dumps(expand(wire)).encode()), 4096)
+        with patch('server.relay.POLL_SECONDS',0):
+            self.registry.poll(DEVICE, BOOT, wire)
+            stored = self.registry.devices()[0]
+            self.assertTrue(stored['online'])
+            self.assertEqual(len(stored['status']['services']),4)
+            self.assertEqual(stored['status']['flash']['total_bytes'],4194304)
+            with self.assertRaises(ValueError):
+                self.registry.poll(DEVICE,BOOT,dict(wire,diagnostic='x'*4096))
+
     def test_command_delivered_once_and_result_retries_are_idempotent(self):
         self.ready()
         results = []

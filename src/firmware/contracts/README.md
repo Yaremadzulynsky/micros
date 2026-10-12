@@ -12,6 +12,7 @@ is one shared controller, runtime and deployment format; no controller profile t
 | [update.h](include/micros/update.h) | `src/update.c` or `.cpp` | Base-image update and bootloader mechanisms |
 | [telemetry.h](include/micros/telemetry.h) | `src/telemetry.c` or `.cpp` | Typed hardware measurements; shared code formats them |
 | [capabilities.h](include/micros/capabilities.h) | `target_config.h` | Explicit support flags, target identity and controller resource budgets |
+| [memory.h](include/micros/memory.h) | `src/platform.c` on static targets; inline heap backend elsewhere | Separate bounded application and management allocations |
 
 ```text
 platforms/<name>/
@@ -66,11 +67,22 @@ while the relay owns that workspace. Poll telemetry releases its storage once
 sent; mutation replies remain available until acknowledged. This keeps status
 and recovery replies independent of application heap availability.
 
-Channel coordination records share the admitted channel's payload allocation;
-unused channels reserve no records. Service configuration is copied into a
-bounded allocation during admission and released on unload. The maximum channel
-and configuration sizes remain unchanged. The controller releases its temporary
-graph after admission, before allocating worker stacks.
+SAMD21 and ESP8266 reserve the runtime, task control blocks, semaphores and
+supervisor stack statically. Service stacks, arenas, immutable configuration,
+channel payloads and coordination records use a fixed application pool. Stacks
+are reserved during admission, before any service hook runs. Ordinary channels
+do not reserve coordination records. Blocks are aligned to 16 bytes, include a
+16-byte header and coalesce on release. Exhaustion returns a capacity error;
+there is no heap fallback. Host and ESP32 keep their existing allocation backend.
+
+Management staging uses a separate fixed pool on these small targets, so application
+admission cannot consume the memory needed to stop or replace an application.
+The controller validates aggregate application costs before stopping a running
+graph. The CLI also charges coordination records from package declarations.
+The seven platform operation contracts are supplemented by `memory.h`, which
+selects the allocation backend. Networking-library allocations remain separate;
+SAMD21's linker reserves at least 1 KiB for those and 2 KiB for the interrupt stack.
+Hardware measurements must establish that these allowances cover actual peaks.
 
 Target startup selects a controller-task stack separately from the total service
 stack budget. SAMD21 and ESP8266 expose its measured unused margin as

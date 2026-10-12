@@ -1,77 +1,92 @@
-# My board application
+# Simulated climate application
 
-`micros new` links this project to its SDK through the ignored `.sdk` link. From this directory:
+Three services and two typed, latest-value channels run on one host or board.
+Everything is simulated: no sensors, GPIO, buttons, fan, display or external input
+is required. The status display writes diagnostic logs.
 
-```sh
-./micros compose -d host          # Validate the local host configuration
-./micros generate                 # Every local service; no board needed
-./micros generate --json          # Same operation, structured output
-./micros test                     # Application tests under tests/
+```text
+climate-sensor ── climate_reading ──┬── fan-controller ── fan_status ──┐
+                                  └──────────────────────────────────┤
+                                                               status-display
 ```
 
-`AGENTS.md` gives coding agents this application's boundaries and links to the
-pinned SDK's instructions through `.sdk/AGENTS.md`. Add project-specific guidance
-there as your application grows.
+- `services/climate-sensor/` calls the separate `src/simulated_sensor.c` driver
+  every second. The deterministic temperature cycle is 20, 22, 24, 26, 28, 30,
+  28, 26, 24, 22 °C; simulated humidity varies from 45 to 50 percent.
+- `services/fan-controller/` subscribes to readings and applies hysteresis: on at
+  or above 28 °C, off at or below 24 °C, retaining its state between thresholds.
+  It publishes a simulated fan decision for every received sample.
+- `services/status-display/` independently subscribes to both channels. It logs
+  matching sample IDs and timestamps, and reports stale data after five seconds.
+  Latest channels can skip intermediate samples; the two reads are not atomic.
+- `protos/climate/` and `protos/fan/` own the protobuf messages and delivery policy.
+  Fixed-size integer fields keep messages bounded; no floating-point formatting
+  or strings are needed in the messages.
 
-For configuration fields, defaults and examples, start with the
-[configuration reference](https://docs.meetmicros.com/site/declaration-authoring/):
-[service definitions](https://docs.meetmicros.com/site/service-configuration/),
-[unit files](https://docs.meetmicros.com/site/unit-configuration/), and
-[shared interfaces](https://docs.meetmicros.com/site/interface-configuration/).
-The matching SDK source is available at `.sdk/docs/site/declaration-authoring.md`.
+## Run locally
 
-`micros.lock` pins the SDK revision. `services/hello/service.toml` owns the reusable
-implementation. `units/host.toml` is ready to run locally from the start.
-New projects have no board unit or placeholder hardware ID.
-Run `./micros enroll` to choose or create a server, install the board tools,
-flash the board, and connect Wi-Fi. After the board is verified online,
-enrollment creates `units/<hardware-id>.toml` with its detected board profile,
-ESP32 flash capacity, and the hello example service. Each additional board gets
-its own unit referencing the same project-owned example. Existing unit files and
-service code are preserved. Enrollment does not deploy application services.
-
-Then run the commands printed by enrollment:
+`micros new` creates `.sdk`, an ignored dependency link, and `micros.lock`, the
+exact SDK revision. Run commands from this application directory:
 
 ```sh
-./micros compose -d HARDWARE_ID       # Validate this board's unit offline
+./micros compose -d host
+./micros generate
+./micros test -v
+./micros host deploy
+./micros host logs
+./micros host stop
+```
+
+Expect lines such as:
+
+```text
+Simulated climate #5: temp=28000 mC humidity=490 permille fan=ON
+Simulated climate #8: temp=26000 mC humidity=480 permille fan=ON
+Simulated climate #9: temp=24000 mC humidity=470 permille fan=OFF
+```
+
+`28000 mC` is 28 °C; `490 permille` is 49% relative humidity. These are generated
+values and policy decisions, not physical measurements or actuator feedback.
+The tests compile the real services, generated lifecycle and protobuf codecs
+with a deterministic clock and test bus. They do not verify board hardware.
+
+## Deploy to a board
+
+Run `./micros enroll`. After confirming the board online, enrollment creates
+`units/<hardware-id>.toml` with the detected board and this three-service graph.
+It also installs the SDK's pristine simulated climate starter through the server
+and waits for confirmation. Existing units and service code are preserved; your
+edits are deployed only when you request an update. Use `--no-starter` for a
+management-only board. Then inspect the running example or deploy your changes:
+
+```sh
+./micros compose -d HARDWARE_ID
 ./micros deploy -d HARDWARE_ID --dry-run
 ./micros deploy -d HARDWARE_ID
-./micros logs -d HARDWARE_ID --follow  # Expect Hello world
+./micros logs -d HARDWARE_ID --follow
 ```
 
-You can generate, test and run `units/host.toml` before enrolling any board.
+Each board deploys independently. Select `-d HARDWARE_ID` when multiple boards
+exist. `-d host` selects the host configuration. Enrollment supplies target stack
+budgets; inspect live headroom when adding behavior. Credentials and recovery
+state remain outside tracked source.
 
-Start by changing `config.interval_ms` under `[services.hello]` in `units/host.toml`
-or your unit file. The heartbeat's `config_schema` defines the default and bounds;
-its hook-based C code logs on a timer, and Micros handles lifecycle cleanup.
-Run `./micros test -v`, then `./micros host deploy` and `./micros host logs` to
-observe it locally. Finish with `./micros host stop`.
+## First changes
 
-For a second working example, run
-`./micros scaffold-service services/counter --example counter`. It demonstrates
-per-instance state and typed `read`, `increment` and `reset` commands. Select it
-in your application before building/deploying. See the
-[service walkthrough](https://docs.meetmicros.com/site/write-a-service/).
-`./micros scaffold-service services/my-service --new` creates an empty hook service.
+Change `services.fan_controller.config.on_millicelsius` to `26000` in your unit,
+keeping `off_millicelsius` lower. Redeploy and observe the fan turn on earlier.
+Change `services.climate_sensor.config.interval_ms` to adjust sampling; set the
+status display's `stale_after_ms` above the interval. The service contracts own
+setting types, defaults and bounds; unit files select values.
 
-Review application wiring in the new unit before deploying hardware services.
-Enrollment detects the chip and flash, not attached peripherals.
+Host packages are immutable by name/version: bump the changed service's version
+before reinstalling changed code or settings on the host. Board releases use
+content hashes. Later, replace the simulated driver with a real hardware driver
+while retaining the message contract and downstream services.
 
-New services declare local types, `config_schema` types/defaults/bounds, typed `pins`, timer-name
-lists, interface references and commands. Units select `config` values, assign
-numeric `pins`, and explicitly declare channels with the same names as service
-ports. Shared interface files own delivery policy and protobuf definitions. Generated files live only under `build/`.
-
-For an existing contract, set `build.lifecycle = "hooks"`, declare `src/service.c` in
-`build.sources`, then run `./micros scaffold-service services/NAME` once. Implement
-the hooks and state; generation never overwrites application code.
-
-After declaration changes, use `./micros contract-diff services/NAME --base HEAD`
-or `./micros scaffold-service services/NAME --preview --base HEAD` to review semantic
-changes and only the new or changed hooks. Commit source declarations and behavior,
-not generated interfaces. Device credentials remain in the user-level micros client.
-
-Each board deploys independently. `./micros compose` selects the host before
-enrollment, then the sole board. Select `-d HARDWARE_ID` when multiple boards
-exist; `-d host` always validates the local host. Offline composition and host
-tests do not verify physical hardware.
+See the [configuration reference](https://docs.meetmicros.com/site/declaration-authoring/),
+[service declarations](https://docs.meetmicros.com/site/service-configuration/) and
+[typed channels](https://docs.meetmicros.com/site/connect-service-ports/).
+`AGENTS.md` links the matching SDK guidance. Generated output belongs under `build/`.
+Use `./micros scaffold-service services/my-service --new` for another service,
+or `--example counter` for a typed-command example.

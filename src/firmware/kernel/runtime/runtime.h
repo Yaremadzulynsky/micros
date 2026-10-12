@@ -11,8 +11,10 @@ extern "C" {
  * receive up to eight handles; a target may lower aggregate resource budgets. */
 #define MICROS_RUNTIME_SERVICE_CAPACITY 4u
 #define MICROS_RUNTIME_HANDLES_PER_SERVICE 8u
+#ifndef MICROS_RUNTIME_HANDLE_CAPACITY
 #define MICROS_RUNTIME_HANDLE_CAPACITY                                                             \
     (MICROS_RUNTIME_SERVICE_CAPACITY * MICROS_RUNTIME_HANDLES_PER_SERVICE)
+#endif
 #ifndef MICROS_RUNTIME_GPIO_CAPACITY
 #define MICROS_RUNTIME_GPIO_CAPACITY 4u /* Host default: four exclusive simulated digital lines.   \
                                          */

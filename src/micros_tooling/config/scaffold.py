@@ -18,7 +18,8 @@ def starter_unit(platform):
     if platform != 'esp32':
         unit['board'] = {'profile': target.board}
         if target.starter_stack:
-            unit['services']['hello']['memory']['stack_bytes'] = target.starter_stack
+            for service in unit['services'].values():
+                service['memory']['stack_bytes'] = target.starter_stack
     return unit
 
 
@@ -33,7 +34,8 @@ def bind_starter(root, device_id, platform, flash_mb=None):
     destination = root / 'units' / (device_id + '.toml')
     if destination.is_file():
         return destination if read_toml(destination).get('unit', {}).get('device_id') == device_id else None
-    if not (root / 'services/hello/service.toml').is_file():
+    if not all((root / 'services' / name / 'service.toml').is_file()
+               for name in ('climate-sensor', 'fan-controller', 'status-display')):
         # A developer may deliberately remove the example. Do not restore it.
         return None
     unit = starter_unit(platform)

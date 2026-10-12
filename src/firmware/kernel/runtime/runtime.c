@@ -4,6 +4,7 @@
 #include "image.h"
 #include "m1_limits.h"
 #include <micros/platform.h>
+#include <micros/memory.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -62,6 +63,9 @@ struct service_slot {
     size_t image_bytes;
     size_t arena_storage_bytes;
     size_t platform_stack_bytes;
+#ifdef MICROS_STATIC_MEMORY
+    void *stack_storage;
+#endif
     uint32_t handle_quota;
     micros_resource_policy_t policy;
     int policy_enabled;
@@ -77,6 +81,9 @@ struct service_slot {
 };
 /** @brief Fixed admission tables and coordination shared by every platform. */
 #include "../coordination/engine.h"
+#ifdef MICROS_STATIC_MEMORY
+_Static_assert(sizeof(micros_coord_channel_t) == 224, "Update the host static-memory admission cost");
+#endif
 struct micros_runtime {
     micros_runtime_config_t config;
     micros_runtime_usage_t usage;
@@ -92,6 +99,26 @@ struct micros_runtime {
     int shutdown;
     int paused;
 };
+
+#ifdef MICROS_STATIC_MEMORY
+/* One controller owns one runtime on these targets. A poisoned runtime is never
+ * reclaimed, so a stalled service cannot write into a replacement instance. */
+static micros_runtime_t static_runtime;
+static int static_runtime_owned;
+static micros_runtime_t *runtime_allocate(void) {
+    if (static_runtime_owned) return NULL;
+    static_runtime_owned = 1;
+    memset(&static_runtime, 0, sizeof(static_runtime));
+    return &static_runtime;
+}
+static void runtime_release(micros_runtime_t *runtime) {
+    (void)runtime;
+    static_runtime_owned = 0;
+}
+#else
+static micros_runtime_t *runtime_allocate(void) { return calloc(1, sizeof(micros_runtime_t)); }
+static void runtime_release(micros_runtime_t *runtime) { free(runtime); }
+#endif
 
 static uint64_t identity(uint32_t generation, size_t slot)
 {
@@ -196,7 +223,7 @@ static void release_resource(micros_runtime_t *runtime, service_slot_t *service,
         runtime->channels[resource->channel_slot].key &&
         runtime->channels[resource->channel_slot].generation == resource->channel_generation) {
         micros_coord_channel_t *c=runtime->coordination[resource->channel_slot];
-        if (c->result.status==MICROS_COORD_ACCEPTED)
+        if (c && c->result.status==MICROS_COORD_ACCEPTED)
             c->result.status=MICROS_COORD_INDETERMINATE;
     }
     if (resource->kind == RESOURCE_GPIO) {
@@ -411,7 +438,7 @@ static micros_result_t api_ipc_publish(micros_context_t *context, micros_handle_
         : context->service->stop_requested || context->service->state == MICROS_STATE_STOPPING
             ? MICROS_ERROR_STATE
             : MICROS_OK;
-    if (!result && runtime->coordination[resource->channel_slot]->kind) result=MICROS_ERROR_UNSUPPORTED;
+    if (!result && (runtime->coordination[resource->channel_slot] && runtime->coordination[resource->channel_slot]->kind)) result=MICROS_ERROR_UNSUPPORTED;
     if (!result) {
         result = micros_channel_publish(channel, payload, payload_bytes);
         if (!result) {
@@ -433,7 +460,7 @@ static micros_result_t api_ipc_read(micros_context_t *context, micros_handle_t h
     micros_result_t result = runtime->usage.reboot_required ? MICROS_ERROR_REBOOT_REQUIRED
                              : !channel                     ? MICROS_ERROR_STALE_HANDLE
                                                             : MICROS_OK;
-    if (!result && runtime->coordination[resource->channel_slot]->kind) result=MICROS_ERROR_UNSUPPORTED;
+    if (!result && (runtime->coordination[resource->channel_slot] && runtime->coordination[resource->channel_slot]->kind)) result=MICROS_ERROR_UNSUPPORTED;
     if (!result) {
         result = micros_channel_read(channel, &resource->next_sequence, output, capacity,
                                      output_bytes, info);
@@ -623,7 +650,7 @@ micros_runtime_t *micros_runtime_create(const micros_runtime_config_t *config)
         !config->work_timeout_us || config->work_timeout_us > maximum_policy_us ||
         !config->step_interval_us || config->step_interval_us > maximum_policy_us)
         return NULL;
-    micros_runtime_t *runtime = calloc(1, sizeof(*runtime));
+    micros_runtime_t *runtime = runtime_allocate();
     if (!runtime)
         return NULL;
     runtime->config = *config;
@@ -631,13 +658,13 @@ micros_runtime_t *micros_runtime_create(const micros_runtime_config_t *config)
         runtime->channels[slot].generation = 1;
     runtime->sync = micros_platform_sync_create();
     if (!runtime->sync) {
-        free(runtime);
+        runtime_release(runtime);
         return NULL;
     }
     runtime->gpio = micros_platform_gpio_create(MICROS_RUNTIME_GPIO_CAPACITY);
     if (!runtime->gpio) {
         micros_platform_sync_destroy(runtime->sync);
-        free(runtime);
+        runtime_release(runtime);
         return NULL;
     }
     for (size_t slot = 0; slot < MICROS_RUNTIME_SERVICE_CAPACITY; ++slot)
@@ -654,7 +681,7 @@ micros_runtime_t *micros_runtime_create(const micros_runtime_config_t *config)
     if (!runtime->supervisor) {
         micros_platform_gpio_destroy(runtime->gpio);
         micros_platform_sync_destroy(runtime->sync);
-        free(runtime);
+        runtime_release(runtime);
         return NULL;
     }
     return runtime;
@@ -674,11 +701,13 @@ micros_result_t micros_runtime_destroy(micros_runtime_t *runtime)
     micros_platform_unlock(runtime->sync);
     if (!result) {
         micros_platform_task_join(runtime->supervisor);
-        for (size_t slot = 0; slot < MICROS_CHANNEL_CAPACITY; ++slot)
+        for (size_t slot = 0; slot < MICROS_CHANNEL_CAPACITY; ++slot) {
             micros_platform_arena_free(runtime->channels[slot].payload);
+            micros_memory_free(runtime->coordination[slot]);
+        }
         micros_platform_gpio_destroy(runtime->gpio);
         micros_platform_sync_destroy(runtime->sync);
-        free(runtime);
+        runtime_release(runtime);
     }
     return result;
 }
@@ -742,6 +771,13 @@ micros_result_t micros_runtime_load(micros_runtime_t *runtime, const char *path,
     arena_storage_bytes = (arena_storage_bytes + alignment - 1) / alignment * alignment;
     if (!result && !(arena = micros_platform_arena_allocate(alignment, arena_storage_bytes, descriptor->reserved)))
         result = MICROS_ERROR_CAPACITY;
+#ifdef MICROS_STATIC_MEMORY
+    void *stack_storage = !result ? micros_memory_allocate(platform_stack_bytes) : NULL;
+    if (!result && !stack_storage) {
+        micros_platform_arena_free(arena);
+        result = MICROS_ERROR_CAPACITY;
+    }
+#endif
     if (result) {
         micros_platform_unlock(runtime->sync);
         micros_platform_image_close(image);
@@ -757,6 +793,9 @@ micros_result_t micros_runtime_load(micros_runtime_t *runtime, const char *path,
                                             &service->context, &runtime_api, arena, NULL, 0};
     service->image_bytes = image_bytes;
     service->platform_stack_bytes = platform_stack_bytes;
+#ifdef MICROS_STATIC_MEMORY
+    service->stack_storage = stack_storage;
+#endif
     service->arena_storage_bytes = arena_storage_bytes;
     runtime->usage.arena_storage_bytes += arena_storage_bytes;
     service->handle_quota = handle_quota;
@@ -783,7 +822,7 @@ micros_result_t micros_runtime_set_config(micros_runtime_t *runtime, micros_inst
     }
     /* Configuration is immutable once started. Reserve only the admitted
      * bytes, rather than four maximum-size records in every empty runtime. */
-    uint8_t *copy = bytes ? malloc(bytes) : NULL;
+    uint8_t *copy = bytes ? micros_memory_allocate(bytes) : NULL;
     if (bytes && !copy) {
         micros_platform_unlock(runtime->sync);
         return MICROS_ERROR_CAPACITY;
@@ -791,7 +830,7 @@ micros_result_t micros_runtime_set_config(micros_runtime_t *runtime, micros_inst
     if (bytes) memcpy(copy, data, bytes);
     runtime->usage.kernel_metadata_bytes -= service->args.config_bytes;
     runtime->usage.kernel_metadata_bytes += bytes;
-    free(service->config_data);
+    micros_memory_free(service->config_data);
     service->config_data = copy;
     service->args.config_data = copy;
     service->args.config_bytes = bytes;
@@ -832,8 +871,13 @@ micros_result_t micros_runtime_start(micros_runtime_t *runtime, micros_instance_
                                                                      : MICROS_OK;
     if (!result) {
         service->state = MICROS_STATE_INITIALIZING;
+#ifdef MICROS_STATIC_MEMORY
+        service->task = micros_platform_task_create_with_stack(service_worker, service,
+            service->platform_stack_bytes, service->stack_storage);
+#else
         service->task =
             micros_platform_task_create(service_worker, service, service->platform_stack_bytes);
+#endif
         if (!service->task) {
             service->state = MICROS_STATE_LOADED;
             result = MICROS_ERROR_CAPACITY;
@@ -922,6 +966,9 @@ micros_result_t micros_runtime_unload(micros_runtime_t *runtime, micros_instance
     micros_platform_image_t *image = service->image;
     void *arena = service->args.arena;
     uint8_t *configuration = service->config_data;
+#ifdef MICROS_STATIC_MEMORY
+    micros_memory_free(service->stack_storage);
+#endif
     runtime->usage.kernel_metadata_bytes -= service->args.config_bytes;
     uint32_t generation = service->generation;
     memset(service, 0, sizeof(*service));
@@ -930,7 +977,7 @@ micros_result_t micros_runtime_unload(micros_runtime_t *runtime, micros_instance
     else
         service->generation = generation + 1;
     micros_platform_unlock(runtime->sync);
-    free(configuration);
+    micros_memory_free(configuration);
     micros_platform_arena_free(arena);
     micros_platform_image_close(image);
     return MICROS_OK;
@@ -1050,19 +1097,17 @@ micros_result_t micros_runtime_channel_create(micros_runtime_t *runtime, uint32_
     if (!result &&
         (!available || !fits(runtime->usage.channel_bytes, bytes, runtime->config.channel_bytes)))
         result = MICROS_ERROR_CAPACITY;
-    /* Channel records are reserved only for admitted channels, in the same
-     * allocation as their payload. Empty runtimes pay only for slot pointers. */
+    /* Ordinary protobuf channels need only payload storage. Coordination state
+     * is charged to the bounded application pool when a coordination port opens. */
     const size_t alignment = _Alignof(micros_coord_channel_t);
     size_t payload_bytes_aligned = (bytes + alignment - 1) / alignment * alignment;
-    size_t storage_bytes = payload_bytes_aligned + sizeof(micros_coord_channel_t);
+    size_t storage_bytes = payload_bytes_aligned;
     uint8_t *payload = NULL;
     if (!result && !(payload = micros_platform_arena_allocate(alignment, storage_bytes, 0)))
         result = MICROS_ERROR_CAPACITY;
     if (!result) {
         available->payload = payload;
-        micros_coord_channel_t *coord = (void *)(payload + payload_bytes_aligned);
-        memset(coord, 0, sizeof(*coord));
-        runtime->coordination[available-runtime->channels] = coord;
+        runtime->coordination[available-runtime->channels] = NULL;
         runtime->channel_missed[available-runtime->channels] = 0;
         runtime->channel_last_us[available-runtime->channels] = 0;
         available->key = key;
@@ -1095,6 +1140,7 @@ micros_result_t micros_runtime_channel_destroy(micros_runtime_t *runtime, uint32
         uint32_t generation = channel->generation;
         micros_platform_arena_free(channel->payload);
         memset(channel, 0, sizeof(*channel));
+        micros_memory_free(runtime->coordination[slot]);
         runtime->coordination[slot] = NULL;
         channel->generation = generation == UINT32_MAX ? 0 : generation + 1;
         result = MICROS_OK;
@@ -1116,7 +1162,7 @@ micros_runtime_usage_t micros_runtime_usage(micros_runtime_t *runtime)
         if (channel->key) {
             const size_t alignment = _Alignof(micros_coord_channel_t);
             payload_storage += (bytes + alignment - 1) / alignment * alignment +
-                               sizeof(micros_coord_channel_t);
+                               (runtime->coordination[slot] ? sizeof(micros_coord_channel_t) : 0);
         }
     }
     usage.channel_storage_bytes = sizeof(runtime->channels) + payload_storage;
@@ -1183,7 +1229,7 @@ static micros_result_t console_port(micros_runtime_t *runtime, micros_instance_t
         resource_slot_t *port = &runtime->resources[i];
         if (port->owner != instance || port->kind != (write ? RESOURCE_PUBLISHER : RESOURCE_SUBSCRIBER)) continue;
         micros_channel_t *channel = resource_channel(runtime, port);
-        if (!channel || channel->key != key || runtime->coordination[port->channel_slot]->kind) continue;
+        if (!channel || channel->key != key || (runtime->coordination[port->channel_slot] && runtime->coordination[port->channel_slot]->kind)) continue;
         if (write) {
             result = micros_channel_publish(channel, input, input_bytes);
             if (!result) { runtime->channel_last_us[port->channel_slot] = micros_platform_now_us(); micros_platform_notify(runtime->sync); }

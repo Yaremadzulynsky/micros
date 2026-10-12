@@ -113,10 +113,14 @@ class Registry:
             if status.keys() - {'stream','status'}: raise ValueError('Invalid streaming poll')
             packet, status = status['stream'], status.get('status')
         if not re.fullmatch('[0-9a-f]{16}', boot): raise ValueError('Agent boot identity mismatch')
-        if status is not None and (not isinstance(status, dict) or len(json.dumps(status).encode()) > RESPONSE_LIMIT
+        if status is not None and (not isinstance(status, dict) or len(json.dumps(status, separators=(',', ':')).encode()) > RESPONSE_LIMIT
                 or not isinstance(status.get('identity'), dict) or status['identity'].get('device_id') != device):
             raise ValueError('Agent identity mismatch')
         if status is None and packet is None: raise ValueError('Missing agent status')
+        if status is not None:
+            # Validate the bounded wire report before adding host-only flash metadata.
+            from micros_tooling.platforms.embedded.telemetry import expand
+            status = expand(status)
         with self.changed:
             row = self.db.execute("SELECT boot,token_hash FROM devices WHERE id=?", (device,)).fetchone()
             if not row or not row[1]: raise ValueError('Device is not enrolled')
@@ -309,8 +313,7 @@ class Handler(BaseHTTPRequestHandler):
                 if len(body) > limit:
                     raise ValueError('Agent response too large')
                 if agent[2] == 'poll':
-                    from micros_tooling.platforms.embedded.telemetry import expand
-                    status = expand(json.loads(body))
+                    status = json.loads(body)
                     reply = self.server.registry.poll(agent[1], self.headers.get('X-Micros-Boot', ''), status)
                     return self.send(200 if reply else 204, reply)
                 code = int(self.headers.get('X-Micros-Result', '0'))

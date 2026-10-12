@@ -17,7 +17,7 @@ class Platform:
 PLATFORMS = (
     Platform('posix', (1, 3, 4)),
     Platform('esp32', (2,), 'adafruit_feather_esp32_v2'),
-    Platform('esp8266', (6,), 'esp8266_4mb', 'micros_tooling.platforms.esp8266.cli'),
+    Platform('esp8266', (6,), 'esp8266_4mb', 'micros_tooling.platforms.esp8266.cli', 1536),
     Platform('samd21', (5,), 'arduino_mkr_wifi_1010', 'micros_tooling.platforms.samd21.cli', 1024),
 )
 

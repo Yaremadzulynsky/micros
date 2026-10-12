@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 FIRMWARE = ROOT / 'src/firmware'
 CONTRACTS = FIRMWARE / 'contracts/include'
 FAKE = Path(__file__).parent / 'fake'
-HEADERS = {'platform.h', 'storage.h', 'transport.h', 'network.h', 'update.h', 'telemetry.h', 'capabilities.h'}
+HEADERS = {'platform.h', 'storage.h', 'transport.h', 'network.h', 'update.h', 'telemetry.h', 'capabilities.h', 'memory.h'}
 
 class PlatformContractTest(unittest.TestCase):
     def test_platform_layout_exposes_only_contract_implementations(self):

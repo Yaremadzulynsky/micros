@@ -426,10 +426,15 @@ void embedded_network_start(void)
     if (!save(settings))
         return;
     boot_sequence = settings.sequence;
-    request_ready = xSemaphoreCreateBinary();
-    response_ready = xSemaphoreCreateBinary();
-    if (request_ready && response_ready)
-        xTaskCreate(network_worker, "nina", 640, NULL, 0, &worker);
+    static StaticSemaphore_t request_semaphore, response_semaphore;
+    request_ready = xSemaphoreCreateBinaryStatic(&request_semaphore);
+    response_ready = xSemaphoreCreateBinaryStatic(&response_semaphore);
+    if (request_ready && response_ready) {
+        static StaticTask_t network_tcb;
+        static StackType_t network_stack[640];
+        worker = xTaskCreateStatic(network_worker, "nina", 640, NULL, 0,
+                                  network_stack, &network_tcb);
+    }
 }
 
 #include <micros/transport.h>

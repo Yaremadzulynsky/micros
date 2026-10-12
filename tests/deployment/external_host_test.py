@@ -95,22 +95,22 @@ class ExternalHostTests(unittest.TestCase):
                 return result
             try:
                 deployed = json.loads(call('deploy', '--runtime', RUNTIME).stdout)
-                self.assertEqual(deployed['active'], {'example.hello':'1.1.0'})
+                self.assertEqual(deployed['active'], {'example.climate-sensor':'1.0.0', 'example.fan-controller':'1.0.0', 'example.status-display':'1.0.0'})
                 self.assertEqual(deployed['active'], deployed['last_good'])
-                self.assertIn('Hello world', call('logs').stdout)
+                self.assertIn('Simulated climate', call('logs').stdout)
                 self.assertTrue(json.loads(call('status').stdout)['running'])
                 self.assertFalse((app/'build/build').exists())
                 self.assertEqual(Path(deployed['store']), (app/'.micros/host').resolve())
                 self.assertTrue((app/'build/host-packages').is_dir())
-                self.assertTrue((app/'build/units/host/services/hello/generated').is_dir())
+                self.assertTrue((app/'build/units/host/services/climate_sensor/generated').is_dir())
                 self.assertFalse((app/'units/build').exists())
                 self.assertFalse((app/'units/.micros').exists())
                 call('deploy', '--runtime', RUNTIME)  # Identical packages remain installable.
-                source = app/'services/hello/src/service.c'
+                source = app/'services/climate-sensor/src/service.c'
                 original = source.read_text()
-                source.write_text(original.replace('Hello world', 'Hello again'))
+                source.write_text(original.replace('ctx->state.sequence = 0;', 'ctx->state.sequence = 10;'))
                 conflict = call('deploy', '--runtime', RUNTIME, ok=False)
-                self.assertIn('example.hello@1.1.0', conflict.stderr)
+                self.assertIn('example.climate-sensor@1.0.0', conflict.stderr)
                 self.assertIn('version in service.toml', conflict.stderr)
                 self.assertEqual(json.loads(call('status').stdout)['active'], deployed['active'])
                 source.write_text(original)
@@ -119,16 +119,16 @@ class ExternalHostTests(unittest.TestCase):
                 self.assertFalse(stopped['running'])
                 self.assertEqual(stopped['active'], {})
                 call('boot', '--runtime', RUNTIME)
-                contract = app/'services/hello/service.toml'
-                contract.write_text(contract.read_text().replace('1.1.0', '1.1.1'))
-                source = app/'services/hello/src/service.c'
-                source.write_text(source.read_text().replace('return hello_timer_greeting_open(',
-                    'return MICROS_ERROR_INVALID_ARGUMENT;\n    return hello_timer_greeting_open('))
+                contract = app/'services/climate-sensor/service.toml'
+                contract.write_text(contract.read_text().replace('1.0.0', '1.0.1'))
+                source = app/'services/climate-sensor/src/service.c'
+                source.write_text(source.read_text().replace('return climate_timer_sample_open(',
+                    'return MICROS_ERROR_INVALID_ARGUMENT;\n    return climate_timer_sample_open('))
                 failed = call('deploy', '--runtime', RUNTIME, ok=False)
                 self.assertIn('rolled back', failed.stderr)
                 status = json.loads(call('status').stdout)
-                self.assertEqual(status['requested'], {'example.hello':'1.1.1'})
-                self.assertEqual(status['active'], {'example.hello':'1.1.0'})
+                self.assertEqual(status['requested'], {'example.climate-sensor':'1.0.1', 'example.fan-controller':'1.0.0', 'example.status-display':'1.0.0'})
+                self.assertEqual(status['active'], {'example.climate-sensor':'1.0.0', 'example.fan-controller':'1.0.0', 'example.status-display':'1.0.0'})
                 self.assertEqual(status['last_failure']['candidate'], status['requested'])
                 self.assertEqual(status['last_failure']['attempt'], 2)
                 self.assertTrue(status['last_failure']['reason'])

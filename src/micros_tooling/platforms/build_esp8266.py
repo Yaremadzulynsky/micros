@@ -13,6 +13,45 @@ ROOT = Path(__file__).resolve().parents[3]
 SDK_REVISION = "89a3f254b63819035f65d9c5dcdae8864f1a6a8a"
 
 
+def validate_static_stacks(symbols):
+    """The port rounds watchpoints down to eight bytes: never guard a neighbour."""
+    for name in ('controller_stack', 'relay_stack', 'supervisor_stack', 'idle_stack', 'timer_stack'):
+        addresses = [address for symbol, address in symbols.items() if name in symbol]
+        if len(addresses) != 1 or addresses[0] % 16:
+            raise ValueError(f'ESP8266 {name} must have one 16-byte-aligned static reservation')
+
+
+def patch_startup_watchpoint(source):
+    """Clear the previous task's debug watchpoint before initializing static RAM.
+
+    The pinned port re-arms DBREAK0 on every context switch. A warm reset can
+    retain that register: with static stacks, clearing .bss then looks like an
+    overflow in the previous boot's task. Keep runtime stack guards enabled.
+    """
+    needle = 'void call_start_cpu(size_t start_addr)\n{'
+    if source.count(needle) != 1:
+        raise ValueError('Unexpected pinned ESP8266 startup source')
+    return source.replace(needle, needle + '\n    __asm__ __volatile__("movi a2, 0\\nwsr a2, dbreakc0\\nrsync" : : : "a2", "memory");')
+
+
+def patch_static_task_layout(source):
+    """Mirror the vendor's TLS-delete callback fields in its opaque static TCB."""
+    needle = 'void\t\t\t*pvDummy15[ configNUM_THREAD_LOCAL_STORAGE_POINTERS ];'
+    if source.count(needle) != 1:
+        raise ValueError('Unexpected pinned FreeRTOS static task layout')
+    return source.replace(needle, needle + '\n\t#if ( configTHREAD_LOCAL_STORAGE_DELETE_CALLBACKS )\n'
+                          '\t\tvoid (*pvDummy15Callbacks[ configNUM_THREAD_LOCAL_STORAGE_POINTERS ])(int, void *);\n'
+                          '\t#endif')
+
+
+def patch_static_task_check(source):
+    needle = 'typedef tskTCB TCB_t;'
+    if source.count(needle) != 1:
+        raise ValueError('Unexpected pinned FreeRTOS task implementation')
+    return source.replace(needle, needle + '\n_Static_assert(sizeof(StaticTask_t) == sizeof(TCB_t), '
+                          '"Static task storage must match the scheduler TCB");')
+
+
 def prepare_relay_ca(source, output):
     """Freeze public trust material per build, never change the shared roots."""
     pem = source.read_text()
@@ -103,6 +142,13 @@ def main():
     ).strip()
     if revision != SDK_REVISION:
         parser.error("Use the pinned ESP8266 RTOS SDK v3.4 revision " + SDK_REVISION)
+    startup_relative = 'components/esp8266/source/startup.c'
+    startup_original = subprocess.check_output(
+        ['git', '-C', str(args.sdk), 'show', 'HEAD:' + startup_relative], text=True)
+    startup_patched = patch_startup_watchpoint(startup_original)
+    startup_source = args.sdk / startup_relative
+    if startup_source.read_text() != startup_patched:
+        startup_source.write_text(startup_patched)
     # This SDK copy belongs exclusively to the ESP8266 build.
     relative = "components/bootloader/subproject/main/bootloader_start.c"
     original = subprocess.check_output(
@@ -124,6 +170,15 @@ def main():
     if source.read_text() != patched:
         source.write_text(patched)
     args.output.mkdir(parents=True, exist_ok=True)
+    for relative, patch in (
+        ('components/freertos/include/freertos/FreeRTOS.h', patch_static_task_layout),
+        ('components/freertos/freertos/tasks.c', patch_static_task_check),
+    ):
+        original = subprocess.check_output(['git', '-C', str(args.sdk), 'show', 'HEAD:' + relative], text=True)
+        destination = args.sdk / relative
+        patched = patch(original)
+        if destination.read_text() != patched:
+            destination.write_text(patched)
     config = args.output / "sdkconfig"
     if not config.exists():
         config.write_text((ROOT / "src/firmware/platforms/esp8266/sdk/sdkconfig.defaults").read_text())
@@ -209,6 +264,12 @@ def main():
     )
     sys.path.insert(0, str(ROOT / "src"))
     from micros_tooling.platforms.esp8266.firmware import bind
+
+    if not args.test_hung_base:
+        from elftools.elf.elffile import ELFFile
+        with (args.output / 'micros_esp8266.elf').open('rb') as stream:
+            symbols = ELFFile(stream).get_section_by_name('.symtab').iter_symbols()
+            validate_static_stacks({s.name: s['st_value'] for s in symbols if s['st_info']['type'] == 'STT_OBJECT'})
 
     print("Base identity: " + bind(args.output / "micros_esp8266.elf", write=True).hex())
 

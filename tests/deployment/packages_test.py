@@ -34,6 +34,19 @@ with tempfile.TemporaryDirectory(prefix='micros-package-test-') as temporary:
     assert plan['resources']['channel_bytes'] == 512 and plan['resources']['handles'] == 4
     for package, blob in zip(packages, blobs):
         assert build_package(package['manifest'], package['image'], package['schemas']) == blob
+    # Individually valid stacks, arenas and channels can still exceed the
+    # board's combined fixed pool once alignment and block headers are included.
+    for target, stack, pool_limit in ((5, 960, 3840), (6, 2048, 8192)):
+        fixed = copy.deepcopy(packages)
+        for package in fixed:
+            package['manifest']['target'] = target
+            package['manifest']['memory'].update(stack_bytes=stack, arena_bytes=64, arena='RAM')
+            package['metadata'].update(code_bytes=128, data_bytes=64, bss_bytes=0)
+        admitted = admission_plan(fixed, target)
+        assert admitted['resources']['static_pool_bytes'] <= pool_limit
+        excess = copy.deepcopy(fixed)
+        excess[0]['manifest']['memory']['stack_bytes'] += 256 if target == 5 else 2048
+        rejected(lambda: admission_plan(excess, target), 'static_pool_bytes')
     publisher = packages[0]
     invalids = []
     changed = copy.deepcopy(publisher['manifest']); changed['console'] = {'format': 1, 'bridge': True, 'views': []}; invalids.append(changed)

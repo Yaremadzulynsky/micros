@@ -1,3 +1,4 @@
+#include <micros/memory.h>
 #ifndef MICROS_SERVICE_RESTART_COMMAND_H
 #define MICROS_SERVICE_RESTART_COMMAND_H
 #include <stdlib.h>
@@ -22,7 +23,7 @@ static __attribute__((noinline)) void service_restart_command(micros_management_
         int hi = micros_ipc_hex(expected[i*2]), lo = micros_ipc_hex(expected[i*2+1]);
         if (hi < 0 || lo < 0 || (unsigned)((hi<<4)|lo) != selected.good_hash[i]) valid = 0;
     }
-    micros_device_graph_t *graph=valid?malloc(sizeof(*graph)):NULL;
+    micros_device_graph_t *graph=valid?micros_management_allocate(sizeof(*graph)):NULL;
     if (!graph) valid=0;
     if (valid) valid = load_graph(selected.good, graph) && index < graph->service_count;
     micros_result_t result = MICROS_ERROR_STATE;
@@ -48,7 +49,7 @@ static __attribute__((noinline)) void service_restart_command(micros_management_
             micros_controller_yield();
         }
     }
-    free(graph);
+    micros_management_free(graph);
     request->result = result;
     snprintf(request->response, request->response_capacity,
              "{\"service_index\":%u,\"result\":%d}", index, (int)result);

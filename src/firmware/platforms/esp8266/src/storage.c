@@ -1,3 +1,4 @@
+#include <micros/memory.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "support/storage.h"
@@ -83,7 +84,7 @@ uint8_t *micros_storage_read_image(unsigned bank,unsigned slot,size_t *bytes) {
  if(bank>=2 || slot>=4 || !bytes)return NULL;
  const uint32_t *header=(const void *)(uintptr_t)embedded_image_address(bank,slot);
  if(header[0]!=MICROS_IMAGE_MAGIC || header[7]>EMBEDDED_SLOT_BYTES-64 || header[8]>EMBEDDED_SLOT_BYTES-64-header[7])return NULL;
- *bytes=64+header[7]+header[8];uint8_t *data=malloc(*bytes);
+ *bytes=64+header[7]+header[8];uint8_t *data=micros_management_allocate(*bytes);
  if(data)memcpy(data,header,*bytes);
  return data;
 }

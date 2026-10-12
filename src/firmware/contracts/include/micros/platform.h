@@ -39,6 +39,9 @@ uint64_t micros_platform_now_us(void);
 size_t micros_platform_stack_bytes(size_t requested_bytes);
 size_t micros_platform_metadata_bytes(uint32_t gpio_lines);
 size_t micros_platform_task_metadata_bytes(void);
+/* Static targets reserve service stacks during admission, before any hook runs. */
+micros_platform_task_t *micros_platform_task_create_with_stack(void *(*entry)(void *),
+    void *argument, size_t bytes, void *stack);
 micros_platform_task_t *micros_platform_task_create(void *(*entry)(void *), void *argument,
                                                     size_t stack_bytes);
 /** Create the independent deadline supervisor at the platform's supervisory priority. */

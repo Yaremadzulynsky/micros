@@ -16,6 +16,8 @@ instructions can be added here.
 - `units/host.toml` selects the local host application. Successful enrollment creates
   `units/<hardware-id>.toml`, the complete configuration for one physical board.
   Do not invent a placeholder board identity. Boards deploy independently.
+  Enrollment installs the SDK's pristine simulated climate example by default;
+  application-owned edits require a subsequent explicit deployment.
 - Use native service declarations: `config_schema` defines types, defaults and
   bounds; application `config` selects values. Keep generated output in `build/`.
 - Use `./micros compose -d host`, `./micros generate` and `./micros test` before

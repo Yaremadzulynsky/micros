@@ -1,3 +1,4 @@
+#include <micros/memory.h>
 #include <micros/storage.h>
 #include <micros/platform.h>
 #include <micros/capabilities.h>
@@ -7,15 +8,15 @@
 /* Streaming keeps image size independent of the controller's RAM requirement.
  * Native descriptors are admitted by the loader before any hook executes. */
 int micros_deployment_hash(unsigned bank,uint8_t hash[MICROS_ACTIVATION_HASH_BYTES]) {
-    micros_device_graph_t *graph=malloc(sizeof(*graph));
+    micros_device_graph_t *graph=micros_management_allocate(sizeof(*graph));
     if(!graph)return 0;
     if(!micros_storage_read_graph(bank,graph) || graph->service_count>4 || !graph->service_count ||
        graph->magic!=MICROS_GRAPH_MAGIC || graph->version!=MICROS_GRAPH_VERSION || graph->bank!=bank ||
-       graph->checksum!=micros_crc32((const uint8_t*)graph,offsetof(micros_device_graph_t,checksum))) {free(graph);return 0;}
+       graph->checksum!=micros_crc32((const uint8_t*)graph,offsetof(micros_device_graph_t,checksum))) {micros_management_free(graph);return 0;}
     micros_sha256_t state;micros_sha256_init(&state);micros_sha256_update(&state,graph,sizeof(*graph));
     unsigned count=graph->service_count,slots[4];
     for(unsigned i=0;i<count;++i)slots[i]=graph->services[i].slot;
-    free(graph);
+    micros_management_free(graph);
     for(unsigned i=0;i<count;++i) {
         uint32_t header[16];unsigned slot=slots[i];
         if(slot>=MICROS_BOARD_IMAGE_SLOTS || !micros_storage_read_image_part(bank,slot,0,header,sizeof(header)) ||

@@ -65,7 +65,7 @@ async function fixture(empty) {
     await page.getByRole('button',{name:'Deploy your first application',exact:true}).click();
     await page.getByRole('heading',{name:'One command to deploy.'}).waitFor();
     assert.equal(await page.getByText('micros deploy -d 0123456789ad',{exact:true}).count(),1);
-    assert.match(await page.locator('#content').innerText(),/Hello world/);
+    assert.match(await page.locator('#content').innerText(),/Simulated climate/);
     const url=page.url();await page.reload();
     await page.getByRole('heading',{name:'One command to deploy.'}).waitFor();
     assert.equal(page.url(),url);

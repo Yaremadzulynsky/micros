@@ -1,0 +1,21 @@
+[service]
+name = "example.status-display"
+version = "1.0.0"
+
+[service.build]
+api = "display"
+lifecycle = "hooks"
+sources = ["src/service.c"]
+descriptor = "micros_descriptor"
+
+[service.config_schema.stale_after_ms]
+type = "uint32"
+default = 5000
+min = 100
+max = 120000
+
+[service.subscriptions.climate_reading]
+interface = "../../protos/climate/interface.toml"
+
+[service.subscriptions.fan_status]
+interface = "../../protos/fan/interface.toml"

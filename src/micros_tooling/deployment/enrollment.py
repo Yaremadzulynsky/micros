@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 def add_parser(commands):
-    p = commands.add_parser('enroll', help='detect a USB board, flash micros, set Wi-Fi and verify the console')
+    p = commands.add_parser('enroll', help='enroll a USB board and install the simulated climate starter')
     p.add_argument('name', nargs='?', help='console name; existing enrollment names are preserved')
     p.add_argument('--port', help='USB serial port; prompt if several physical boards are connected')
     p.add_argument('--server', help='saved server profile; otherwise choose before connecting')
@@ -35,6 +35,7 @@ def add_parser(commands):
     p.add_argument('--yes', action='store_true', help=argparse.SUPPRESS)
     p.add_argument('--retry-flash', action='store_true', help='explicitly retry an interrupted flash after inspecting its saved log')
     p.add_argument('--rebuild-base', action='store_true', help='archive an unfinished ESP8266 or MKR enrollment and rebuild firmware after an SDK fix')
+    p.add_argument('--no-starter', action='store_true', help='enroll a management-only board without installing the simulated climate example')
     p.add_argument('--json', action='store_true', help='machine-readable result; no interactive prompts')
     return p
 
@@ -465,12 +466,17 @@ def enroll(args):
                     result['project_unit'] = str(unit)
                     result['next_steps'] = [f'micros deploy -d {result["device_id"]} --dry-run',
                                             f'micros deploy -d {result["device_id"]}']
-                    result['message'] += f'\nProject unit: {unit.name}\nNext: ' + result['next_steps'][0]
+                    result['message'] += f'\nProject unit: {unit.name}'
                 else:
                     result['message'] += f'\nAdd or update units/{result["device_id"]}.toml for this board before deploying. Existing project settings were preserved.'
             else:
                 result['message'] += ('\nNo application project selected; no unit file was created. '
-                                      'The board is enrolled, but needs a unit in an application before deployment.')
+                                      'Create an application project to author later updates.')
+            if not args.no_starter:
+                from micros_tooling.deployment.enrollment_starter import install
+                result['starter'] = install(result, root)
+                result['message'] += ('\nSimulated climate starter confirmed: climate sensor, fan controller and status display. '
+                                      'No external hardware is required.\nRead logs: micros logs -d ' + result['device_id'])
         return result
 
 
@@ -564,7 +570,7 @@ def _enroll(args):
             receipt.pop('canceled', None)
             save()
             return dict(device_id=board['device_id'], name=name, platform=board['platform'], flash_mb=board['flash_mb'], base_sha256=receipt['base_sha256'],
-                        online=True, session=str(session), message=f'{name} is online in the console. Base firmware and authenticated connection verified. No application services were deployed.')
+                        online=True, session=str(session), message=f'{name} is online in the console. Base firmware and authenticated connection verified.')
         except KeyboardInterrupt:
             raise EnrollmentCancelled(cancel_enrollment(remote, board, receipt, save)
                                       + '\n' + resume_hint(operator, port, receipt)) from None

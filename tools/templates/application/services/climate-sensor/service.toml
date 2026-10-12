@@ -1,0 +1,18 @@
+[service]
+name = "example.climate-sensor"
+version = "1.0.0"
+timers = ["sample"]
+[service.build]
+api = "climate"
+lifecycle = "hooks"
+sources = ["src/service.c", "src/simulated_sensor.c"]
+descriptor = "micros_descriptor"
+
+[service.config_schema.interval_ms]
+type = "uint32"
+default = 1000
+min = 100
+max = 60000
+
+[service.publications.climate_reading]
+interface = "../../protos/climate/interface.toml"

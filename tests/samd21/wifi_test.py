@@ -9,6 +9,28 @@ class Remote:
         self.sent.append((method,path,body))
         return dict(result=0,networks=[dict(ssid_hex='486f6d65',secured=True)])
 class WifiTest(unittest.TestCase):
+    def test_pairing_reads_identity_from_status_not_wifi_profile_settings(self):
+        import argparse, json, tempfile
+        from unittest.mock import Mock, patch
+        from micros_tooling.platforms.samd21 import cli
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            firmware = root / 'base.elf'; firmware.write_bytes(b'fixture')
+            project = root / 'unit.toml'; project.write_text('[board]\n')
+            remote = Mock(serial_number='usb-identity')
+            remote.__enter__ = Mock(return_value=remote)
+            remote.__exit__ = Mock(return_value=False)
+            remote.status.return_value = dict(base_sha256='ab' * 32, identity=dict(device_id='ac1da4519140'))
+            remote.request.side_effect = AssertionError('Wi-Fi settings are not a device identity')
+            args = argparse.Namespace(command='init', name='mkr', phase='connect', firmware=firmware,
+                                      project=project, json=True)
+            with patch.object(cli, 'state_root', return_value=root), \
+                 patch.object(cli, 'SerialRemote', return_value=remote), \
+                 patch.object(cli, 'base_info', return_value=dict(hash=bytes.fromhex('ab' * 32))), \
+                 patch.object(cli, 'emit'):
+                cli.main(args)
+            self.assertEqual(json.loads((root / 'devices/mkr.json').read_text())['device_id'], 'ac1da4519140')
+
     def test_metadata_only(self):
         r=Remote(); self.assertEqual(settings(r)['networks'],[dict(ssid='Home',secured=True,fallback=False)])
         self.assertTrue(r.sent[0][2].endswith(b' WIFI_GET'))

@@ -4,6 +4,17 @@ This adapter runs the common microS kernel and embedded controller on an ESP8266
 
 The SDK, compiler, generated firmware and device credentials stay outside source control. No device backup is performed by the platform tools.
 
+The pinned SDK startup clears the previous boot's CPU stack watchpoint before
+initializing static RAM. Runtime stack watchpoints remain enabled. This prevents
+a warm reset from mistaking `.bss` initialization of a static task stack for an
+overflow in the previous boot's task.
+
+The build also restores the vendor's thread-local deletion callback fields in
+`StaticTask_t`. Its unpatched declaration omits those fields and is smaller than
+the scheduler's actual task record. An unconditional compile-time assertion in
+the scheduler checks that static task storage matches the real record, even when
+the SDK disables `configASSERT`.
+
 ## Build dependencies
 
 `micros enroll` and `micros init NAME --platform esp8266 --phase prepare` install the pinned ESP8266 SDK, compiler and isolated Python
@@ -51,7 +62,12 @@ Two network profiles are stored on the board. The management network page can ed
 
 ## Flash and service limits
 
-Each 1 MiB execution window contains one 704 KiB base partition and two 128 KiB service banks. Each service bank has a 4 KiB graph and four 31 KiB image slots. Service images contain a 64-byte envelope; each service has 1 KiB of linked RAM. Admission also bounds arenas to 4 KiB, total service stacks to 12 KiB and channel payload storage to 1 KiB. Network/runtime overhead consumes additional RAM; reported live headroom remains relevant.
+Each 1 MiB execution window contains one 704 KiB base partition and two 128 KiB service banks. Each service bank has a 4 KiB graph and four 31 KiB image slots. Service images contain a 64-byte envelope; each service has 1 KiB of linked RAM. Admission also bounds arenas to 4 KiB, total service stacks to 12 KiB and channel payload storage to 1 KiB. The combined application must also fit an 8 KiB static pool, including service stacks,
+configuration, arenas, channel storage and allocation overhead. Service stacks
+are reserved during admission before hooks run. Runtime and RTOS bookkeeping are
+static, and a separate 2304-byte pool is reserved for management staging. Application
+allocations cannot consume the library heap. Wi-Fi and TLS still use SDK-managed
+heap memory, so their measured peak remains part of the total RAM budget.
 
 The build removes duplicate certificates before freezing the relay trust bundle,
 so mbedTLS does not allocate another parsed chain entry for the same root.
@@ -82,6 +98,12 @@ protocol state in the serial diagnostic log. For a diagnostic build, pass
 `--tls-diagnostics` to `src/micros_tooling/platforms/build_esp8266.py` to log each
 step's time, heap, cipher ID and result without logging keys or payloads. Omit
 that flag for production firmware.
+
+Background service `step` hooks use a 10 ms polling interval on this single-core
+target. Polling three services every millisecond can consume enough scheduler
+time to push a fresh TLS handshake past the endpoint's deadline. Timer callbacks
+retain their independent deadlines; channel dispatch through a step can take up
+to one polling interval, plus scheduling delay.
 
 During a candidate boot, journal checks run at most ten times per second. Flash
 reads briefly mask interrupts on this chip, so they must not run on every 1 ms

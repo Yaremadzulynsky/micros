@@ -38,11 +38,11 @@ class LauncherTests(unittest.TestCase):
 
     def test_project_selection_and_generation_from_nested_directory(self):
         bind_starter(self.app, 'aabbccddeeff', 'esp32', 4)
-        nested = self.app / 'services/hello/src'
+        nested = self.app / 'services/climate-sensor/src'
         for args in (['compose', '--json'], ['generate', '--json']):
             results = [json.loads(self.invoke(route, args, nested).stdout) for route in self.routes]
             self.assertTrue(all(result == results[0] for result in results))
-        self.assertTrue((self.app / 'build/services/hello/generated/hello_ipc.c').exists())
+        self.assertTrue((self.app / 'build/services/climate-sensor/generated/climate_ipc.c').exists())
         self.assertEqual((self.app / '.sdk').resolve(), ROOT.resolve())
 
     def test_target_starters_share_parser_and_scaffold(self):
@@ -53,7 +53,7 @@ class LauncherTests(unittest.TestCase):
                 self.assertEqual(sorted(p.name for p in (app / 'units').glob('*.toml')), ['host.toml'])
                 bind_starter(app, 'aabbccddeeff', platform, 4 if platform != 'samd21' else None)
                 result = self.invoke([str(app / 'micros')], ['compose', '--json'], self.directory)
-                self.assertEqual(json.loads(result.stdout)['services'][0]['name'], 'example.hello')
+                self.assertEqual(json.loads(result.stdout)['services'][0]['name'], 'example.climate-sensor')
                 self.assertEqual((app / 'micros').read_bytes(), (self.app / 'micros').read_bytes())
 
     def test_help_explicit_project_and_sdk_escape_do_not_recurse(self):
@@ -128,7 +128,7 @@ class LauncherTests(unittest.TestCase):
                 result = self.invoke(route, [command], self.app, code=1)
                 self.assertIn('Run ./micros enroll', result.stderr)
         self.invoke(self.routes[0], ['test'], self.app)
-        source = self.app / 'services/hello/src/service.c'
+        source = self.app / 'services/climate-sensor/src/service.c'
         original = source.read_bytes()
         self.invoke(self.routes[0], ['new', str(self.app)], self.app, code=1)
         self.assertEqual(source.read_bytes(), original)
