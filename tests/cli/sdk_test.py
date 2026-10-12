@@ -110,6 +110,40 @@ class SDKTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'differs'):
                 sdk.resolve('a'*40)
 
+    def test_sdk_checkout_does_not_adopt_containing_application(self):
+        (self.root / 'micros.lock').touch()
+        checkout = self.root / 'build/sdk'
+        for name in sdk.REQUIRED:
+            target = checkout / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.touch()
+        self.assertIsNone(sdk.project_root(checkout / 'src'))
+        from micros_tooling.storage import client
+        with patch.object(Path, 'cwd', return_value=checkout / 'src'), \
+             patch.dict(os.environ):
+            os.environ.pop('MICROS_APPLICATION_ROOT', None)
+            self.assertIsNone(client.application_root())
+        app = checkout / 'build/app'
+        app.mkdir(parents=True)
+        (app / 'micros.lock').touch()
+        self.assertEqual(sdk.project_root(app), app)
+
+    def test_closed_prompt_has_actionable_error_without_traceback(self):
+        from micros_tooling import dispatch
+        for flags in ([], ['--json']):
+            output = io.StringIO()
+            with patch.object(dispatch, 'main', side_effect=EOFError), \
+                 contextlib.redirect_stderr(output), patch.object(sys, 'argv', ['micros']):
+                with self.assertRaises(SystemExit) as result:
+                    dispatch.entrypoint(['enroll', *flags])
+            self.assertEqual(result.exception.code, 1)
+            self.assertIn('Terminal input closed', output.getvalue())
+            self.assertNotIn('Traceback', output.getvalue())
+            if flags:
+                error = json.loads(output.getvalue())['error']
+                self.assertIn('Terminal input closed', error['message'])
+                self.assertIn('interactive terminal', error['next_action'])
+
     def test_help_needs_no_sdk(self):
         with patch.object(sdk, 'resolve') as resolve, contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(cli.run(['--help']), 0)

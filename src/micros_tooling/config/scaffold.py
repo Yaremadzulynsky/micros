@@ -46,7 +46,7 @@ def bind_starter(root, device_id, platform, flash_mb=None):
     backup = root / 'build/enrollment/000000000000.toml.before'
     if not backup.exists():
         atomic_write(backup, placeholder.read_bytes())
-    atomic_write(destination, toml(unit).encode())
+    atomic_write(destination, toml(unit, comment="Board application configuration. Edit this file to configure this board.").encode())
     placeholder.unlink()
     return destination
 
@@ -71,9 +71,10 @@ def create(destination, platform="esp32"):
         from micros_tooling.config.composition import toml
         if platform != "esp32":
             unit_path = staging / "units/000000000000.toml"
-            unit_path.write_text(toml(starter_unit(platform)))
+            unit_path.write_text(toml(starter_unit(platform), comment="Board application configuration. Edit this file to configure this board."))
         (staging / "micros.lock").write_text(toml(dict(format=1, sdk=dict(
-            repository="https://github.com/Yaremadzulynsky/micros.git", revision=revision))))
+            repository="https://github.com/Yaremadzulynsky/micros.git", revision=revision)),
+            comment="Pinned SDK revision. Update deliberately when upgrading this application."))
         (staging / ".gitignore").write_text("build/\n.sdk\n.micros/\n")
         (staging / ".sdk").symlink_to(ROOT, target_is_directory=True)
         (staging / "micros").chmod(0o755)

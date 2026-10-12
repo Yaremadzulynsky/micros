@@ -586,6 +586,27 @@ class EnrollmentTest(unittest.TestCase):
         p.write_bytes(b'password\r\n')
         self.assertEqual(e.wifi_secret(args(ssid='network', password_file=p)), (b'network', b'password'))
 
+    def test_wifi_prompt_preserves_spaces_and_retries_invalid_inputs(self):
+        with patch('sys.stdin.isatty', return_value=True), \
+             patch('builtins.input', side_effect=['', ' network ']), \
+             patch('getpass.getpass', side_effect=['short', ' password ']), \
+             patch.object(e, 'progress') as messages:
+            result = e.wifi_secret(args(json=False))
+        self.assertEqual(result, (b' network ', b' password '))
+        self.assertNotIn('short', str(messages.call_args_list))
+        self.assertNotIn(' password ', str(messages.call_args_list))
+
+    def test_resume_hint_selects_exact_server_and_port_without_wifi_secrets(self):
+        import shlex
+        receipt = dict(name='My board', flashed=True)
+        hint = e.resume_hint(self.root / 'my server', '/dev/selected', receipt)
+        self.assertIn('resuming will keep it', hint)
+        self.assertEqual(shlex.split(hint.split('Resume: ')[1]),
+                         ['env', 'MICROS_CLIENT_DIR=' + str(self.root / 'my server'),
+                          'micros', 'enroll', 'My board', '--port', '/dev/selected'])
+        self.assertIn('checked before another write', e.resume_hint(self.root, '/dev/selected',
+                      dict(name='My board', flash_started=True)))
+
     def test_management_only_esp32_preparation_uses_real_declarations(self):
         from micros_tooling.config.configuration import load_project
         from micros_tooling.storage.packages import identifier

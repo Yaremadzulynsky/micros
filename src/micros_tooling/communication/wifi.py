@@ -178,6 +178,52 @@ class Wifi:
             raise
 
 
+def prompt_network_name(progress):
+    while True:
+        # Spaces are part of an SSID, including at the beginning and end.
+        ssid = input("2.4 GHz Wi-Fi network name: ").encode("utf-8")
+        try:
+            validate_credentials(ssid, b"")
+            return ssid
+        except PackageError as error:
+            progress(str(error))
+
+
+def credentials_from_terminal(ssid, args, progress, *, open_network=None):
+    """Validate before USB writes; retry only credentials entered interactively."""
+    validate_credentials(ssid, b"")
+    if args.password_file:
+        with Path(args.password_file).open("rb") as stream:
+            password = stream.read(67)
+        require(len(password) <= 66, "Password file exceeds the Wi-Fi credential limit.")
+        password = password.removesuffix(b"\n").removesuffix(b"\r")
+        require(password, "Password file is empty. For an open network, use --open-network explicitly.")
+        validate_credentials(ssid, password)
+        return ssid, password
+    selected_open = args.open_network if open_network is None else open_network
+    if selected_open:
+        return ssid, b""
+    require(
+        not getattr(args, "json", False) and sys.stdin.isatty(),
+        "Password entry needs a terminal. Use --password-file PATH for automation.",
+    )
+    while True:
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("error", getpass.GetPassWarning)
+                password = getpass.getpass("Wi-Fi password: ").encode("utf-8")
+        except getpass.GetPassWarning as error:
+            raise PackageError(
+                "This terminal cannot hide password entry. Use --password-file PATH."
+            ) from error
+        try:
+            require(password, "For an open network, use --open-network explicitly.")
+            validate_credentials(ssid, password)
+            return ssid, password
+        except PackageError as error:
+            progress(str(error))
+
+
 def setup_from_terminal(wifi, args, progress):
     require(
         not getattr(args, "json", False)
@@ -187,6 +233,7 @@ def setup_from_terminal(wifi, args, progress):
     selected_open = args.open_network
     if args.ssid is not None:
         ssid = args.ssid.encode("utf-8")
+        validate_credentials(ssid, b"")
     else:
         require(
             sys.stdin.isatty(),
@@ -205,41 +252,18 @@ def setup_from_terminal(wifi, args, progress):
                 + (" · open" if network["open"] else "")
             )
         progress("0. Enter a network name manually")
-        choice = input("Select network: ").strip()
-        require(
-            choice.isdigit() and 0 <= int(choice) <= len(networks),
-            "Choose a displayed network number.",
-        )
-        if choice == "0":
-            ssid = input("Network name: ").encode("utf-8")
+        while True:
+            choice = input("Select network: ").strip()
+            if choice.isdecimal() and 0 <= int(choice) <= len(networks):
+                break
+            progress("Choose a displayed network number; Ctrl-C cancels.")
+        if int(choice) == 0:
+            ssid = prompt_network_name(progress)
         else:
             selected = networks[int(choice) - 1]
             ssid = bytes.fromhex(selected["ssid_hex"])
             selected_open = selected["open"]
-    if args.password_file:
-        with Path(args.password_file).open("rb") as stream:
-            # At most a 64-byte PSK plus a CRLF file ending; reject oversized input.
-            password = stream.read(67)
-        require(
-            len(password) <= 66, "Password file exceeds the Wi-Fi credential limit."
-        )
-        password = password.removesuffix(b"\n").removesuffix(b"\r")
-    elif selected_open:
-        password = b""
-    else:
-        require(
-            sys.stdin.isatty(),
-            "Password entry needs a terminal. Use --password-file PATH for automation.",
-        )
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("error", getpass.GetPassWarning)
-                password = getpass.getpass("Wi-Fi password: ").encode("utf-8")
-        except getpass.GetPassWarning as error:
-            raise PackageError(
-                "This terminal cannot hide password entry. Use --password-file PATH."
-            ) from error
-        require(password, "For an open network, use --open-network explicitly.")
+    ssid, password = credentials_from_terminal(ssid, args, progress, open_network=selected_open)
     if getattr(args, "wifi_action", None) == "add":
         return wifi.save(ssid, password, getattr(args, "fallback", False))
     return wifi.configure(ssid, password, progress)

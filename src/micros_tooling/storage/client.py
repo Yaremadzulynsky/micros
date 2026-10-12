@@ -13,8 +13,8 @@ def application_root():
     explicit = os.environ.get('MICROS_APPLICATION_ROOT')
     if explicit:
         return Path(explicit).resolve()
-    here = Path.cwd()
-    return next((p for p in (here, *here.parents) if (p / 'micros.lock').is_file()), None)
+    from micros_tooling.sdk import project_root
+    return project_root()
 
 
 def selection_file(project=None):

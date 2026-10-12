@@ -1013,6 +1013,7 @@ def entrypoint(args):
               if "--json" in sys.argv else "\n" + message, file=sys.stderr)
         sys.exit(130)
     except (
+        EOFError,
         OSError,
         ValueError,
         KeyError,
@@ -1021,7 +1022,9 @@ def entrypoint(args):
     ) as error:
         message = str(error)
         offline = len(sys.argv) > 1 and sys.argv[1] in ('generate', 'compose', 'config', 'scaffold-service', 'scaffold-commands', 'contract-diff')
-        if isinstance(error, ssl.SSLCertVerificationError):
+        if isinstance(error, EOFError):
+            message = 'Terminal input closed. Rerun the command in an interactive terminal to continue.'
+        elif isinstance(error, ssl.SSLCertVerificationError):
             message = "Device certificate did not verify. Check the saved device certificate and address."
         elif isinstance(error, FileNotFoundError):
             message = "Required local file or executable is missing: " + str(error.filename)
@@ -1034,7 +1037,8 @@ def entrypoint(args):
                 outcome=getattr(error, "outcome", "not_confirmed"),
                 retryable=getattr(error, "retryable", False),
                 details=getattr(error, "details", None),
-                next_action="Correct the referenced declaration and rerun this command." if offline else "Run micros doctor, status or logs for the affected device."))), file=sys.stderr)
+                next_action="Rerun the command in an interactive terminal." if isinstance(error, EOFError) else
+                    "Correct the referenced declaration and rerun this command." if offline else "Run micros doctor, status or logs for the affected device."))), file=sys.stderr)
         else:
             print("micros: " + message, file=sys.stderr)
         sys.exit(1)

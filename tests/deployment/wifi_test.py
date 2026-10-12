@@ -146,6 +146,49 @@ class WifiTests(unittest.TestCase):
                 setup_from_terminal(wifi, args, lambda message: None)
                 self.assertEqual(configure.call_args.args[:2], (b"test", b" password "))
 
+    def test_invalid_network_and_password_retry_without_rescanning_or_writing(self):
+        wifi = Wifi.__new__(Wifi)
+        args = argparse.Namespace(ssid=None, password_file=None, open_network=False)
+        messages = []
+        with patch("sys.stdin.isatty", return_value=True), \
+             patch.object(wifi, "scan", return_value=[]) as scan, \
+             patch("builtins.input", side_effect=["typo", "9", "00", "", "é" * 17, " home "]), \
+             patch("getpass.getpass", side_effect=["", "short", " password "]), \
+             patch.object(wifi, "configure", return_value={}) as configure:
+            setup_from_terminal(wifi, args, messages.append)
+        scan.assert_called_once()
+        configure.assert_called_once_with(b" home ", b" password ", messages.append)
+        self.assertNotIn("short", " ".join(messages))
+        self.assertNotIn(" password ", " ".join(messages))
+
+    def test_invalid_explicit_ssid_fails_before_password_prompt(self):
+        args = argparse.Namespace(ssid="é" * 17, password_file=None, open_network=False)
+        with patch("getpass.getpass") as password:
+            with self.assertRaisesRegex(PackageError, "Network name"):
+                setup_from_terminal(None, args, lambda message: None)
+            password.assert_not_called()
+
+    def test_empty_password_file_does_not_turn_protected_network_into_open(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "password"
+            path.write_bytes(b"\n")
+            args = argparse.Namespace(ssid="test", password_file=path, open_network=False)
+            with patch("getpass.getpass") as password:
+                with self.assertRaisesRegex(PackageError, "Password file is empty"):
+                    setup_from_terminal(None, args, lambda message: None)
+                password.assert_not_called()
+
+    def test_scanned_open_network_needs_no_password(self):
+        wifi = Wifi.__new__(Wifi)
+        args = argparse.Namespace(ssid=None, password_file=None, open_network=False)
+        with patch("sys.stdin.isatty", return_value=True), \
+             patch.object(wifi, "scan", return_value=[dict(ssid_hex=b"guest".hex(), rssi=-40, open=True)]), \
+             patch("builtins.input", return_value="1"), patch("getpass.getpass") as password, \
+             patch.object(wifi, "configure", return_value={}) as configure:
+            setup_from_terminal(wifi, args, lambda message: None)
+        password.assert_not_called()
+        self.assertEqual(configure.call_args.args[:2], (b"guest", b""))
+
     def test_no_getpass_fallback_to_echoing_stdin(self):
         args = argparse.Namespace(ssid="test", password_file=None, open_network=False)
         with patch("sys.stdin.isatty", return_value=False), patch(

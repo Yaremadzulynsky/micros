@@ -15,7 +15,14 @@ REQUIRED = ('micros', 'src/micros_tooling/dispatch.py', 'src/micros_tooling/conf
 
 def project_root(start=None):
     start = Path(start or Path.cwd()).resolve()
-    return next((p for p in (start, *start.parents) if (p / 'micros.lock').exists()), None)
+    for path in (start, *start.parents):
+        if (path / 'micros.lock').exists():
+            return path
+        # A checkout stored under an application's ignored build directory owns
+        # its commands. Do not adopt the containing application's SDK pin.
+        if all((path / name).exists() for name in REQUIRED):
+            return None
+    return None
 
 
 def project_revision(root):

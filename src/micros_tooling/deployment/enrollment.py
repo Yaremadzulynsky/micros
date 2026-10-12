@@ -1,6 +1,5 @@
 """One resumable USB-to-console enrollment, independent of application recipes."""
 import argparse
-import getpass
 import http.client
 import json
 import os
@@ -11,7 +10,6 @@ import shutil
 import subprocess
 import sys
 import time
-import warnings
 from urllib.parse import urlsplit
 
 from micros_tooling.storage.packages import PackageError, digest, require
@@ -284,27 +282,13 @@ def install(board, port, session, receipt, save, retry=False):
 
 
 def wifi_secret(args):
-    from micros_tooling.communication.wifi import validate_credentials
-    ssid = args.ssid
-    if ssid is None:
+    from micros_tooling.communication.wifi import credentials_from_terminal, prompt_network_name
+    if args.ssid is None:
         require(interactive(args), 'Supply --ssid and --password-file (or --open-network) to configure Wi-Fi without a terminal.')
-        ssid = input('2.4 GHz Wi-Fi network name: ').strip()
-    if args.password_file:
-        with args.password_file.open('rb') as stream:
-            secret = stream.read(67).removesuffix(b'\n').removesuffix(b'\r')
-    elif args.open_network:
-        secret = b''
+        ssid = prompt_network_name(progress)
     else:
-        require(interactive(args), 'Use --password-file PATH for private noninteractive password entry.')
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter('error', getpass.GetPassWarning)
-                secret = getpass.getpass('Wi-Fi password: ').encode()
-        except getpass.GetPassWarning:
-            raise PackageError('Cannot hide password entry; use --password-file PATH.') from None
-        require(secret, 'Use --open-network explicitly for an open network.')
-    validate_credentials(ssid.encode(), secret)
-    return ssid.encode(), secret
+        ssid = args.ssid.encode('utf-8')
+    return credentials_from_terminal(ssid, args, progress)
 
 
 def connect_wifi(board, port, args, receipt, relay, save=lambda: None):
@@ -451,6 +435,16 @@ def cancel_enrollment(remote, board, receipt, save):
     return 'Enrollment canceled. Removed from the dashboard.'
 
 
+def resume_hint(operator, port, receipt):
+    import shlex
+    command = shlex.join(['env', 'MICROS_CLIENT_DIR=' + str(operator),
+                          'micros', 'enroll', receipt['name'], '--port', port])
+    stage = ('Firmware is installed; resuming will keep it.' if receipt.get('flashed') else
+             'The flash outcome will be checked before another write.' if receipt.get('flash_started') else
+             'Saved preparation will be reused.')
+    return stage + '\nResume: ' + command
+
+
 def enroll(args):
     from micros_tooling.deployment.server_selection import enrollment_server
     require(not getattr(args, 'rebuild_base', False) or not (args.firmware or args.retry_flash or args.detect),
@@ -570,10 +564,12 @@ def _enroll(args):
             return dict(device_id=board['device_id'], name=name, platform=board['platform'], flash_mb=board['flash_mb'], base_sha256=receipt['base_sha256'],
                         online=True, session=str(session), message=f'{name} is online in the console. Base firmware and authenticated connection verified. No application services were deployed.')
         except KeyboardInterrupt:
-            raise EnrollmentCancelled(cancel_enrollment(remote, board, receipt, save)) from None
+            raise EnrollmentCancelled(cancel_enrollment(remote, board, receipt, save)
+                                      + '\n' + resume_hint(operator, port, receipt)) from None
         except Exception:
             if receipt.get('pending_enrollment') and not receipt.get('confirmed'):
                 result = cancel_enrollment(remote, board, receipt, save)
                 if 'could not be confirmed' in result:
                     progress(result.replace('Enrollment canceled.', 'Enrollment failed.', 1))
+            progress(resume_hint(operator, port, receipt))
             raise

@@ -57,10 +57,19 @@ Password entry is hidden. With several boards attached, `--port PORT` selects
 one explicitly. Enrollment detects the chip and hardware identity, not arbitrary
 retail-board wiring or attached peripherals.
 
+Mistyped network selections, invalid network names and invalid password lengths
+can be corrected at the prompt. Network-name and password spaces are preserved.
+For unattended entry, use `--ssid NAME --password-file PATH`, or `--open-network`
+for a network without a password. An empty password file is rejected. Keep
+password files outside the project and out of source control.
+
 Success reports the device ID and an authenticated connection to that board and
 base through the console. Keep the private enrollment/session directory printed
 by the tool; it contains credentials and exact build artifacts.
 
+After a failed or canceled ESP enrollment, use the printed `Resume:` command to
+keep the selected server and USB port. It omits Wi-Fi secrets and reuses working
+saved network settings, or prompts privately if configuration is still needed.
 For interruption, rerun enrollment. If a flash result is uncertain, the tool
 checks saved images and may require `--retry-flash`; inspect its saved log before
 requesting that retry. A board with a matching unfinished local enrollment remains selectable as
