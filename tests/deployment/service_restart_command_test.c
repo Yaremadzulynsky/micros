@@ -88,5 +88,12 @@ int main(void) {
     instances[0]=11; restart_result=MICROS_ERROR_REBOOT_REQUIRED;
     service_restart_command(&request,valid);
     assert(request.result==MICROS_ERROR_REBOOT_REQUIRED && instances[1]==22);
+    /* Both fencing values can exceed 32 bits; never truncate or wrap them. */
+    service_boot=UINT64_MAX; instances[0]=UINT64_C(4294967296);
+    restart_result=0; next_state=MICROS_STATE_RUNNING;
+    const char *wide="SERVICE RESTART 0 7 0000000000000000000000000000000000000000000000000000000000000000 4294967296 18446744073709551615";
+    reject("SERVICE RESTART 0 7 0000000000000000000000000000000000000000000000000000000000000000 4294967296 18446744073709551616");
+    service_restart_command(&request,wide);
+    assert(!request.result && instances[0]==33 && instances[1]==22);
     puts("PASS board restart fencing, one-service scope, failure and bounded startup");
 }

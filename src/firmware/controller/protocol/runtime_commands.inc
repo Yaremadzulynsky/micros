@@ -1,3 +1,4 @@
+#include "../../kernel/support/integer.h"
 /* Low-level lifecycle commands are available on every platform. The deployment
  * controller and interactive tooling use the same runtime and admission rules. */
 #define CONTROL_PATH_BYTES 4096u
@@ -19,6 +20,8 @@ static int runtime_command_body(char *line,uint32_t *publish_masks)
 {
 micros_result_t result = MICROS_ERROR_INVALID_ARGUMENT;
 uint64_t instance = 0;
+const char *fields = strchr(line, ' ');
+if (fields) ++fields;
 unsigned key, policy, depth, payload, handles, timers, gpio, publishes, subscribes;
 if (sscanf(line, "CHANNEL %u %u %u %u", &key, &policy, &depth, &payload) == 4)
     result = micros_runtime_channel_create(runtime, key, policy, depth, payload);
@@ -59,9 +62,8 @@ else if (!strncmp(line, "LOAD ", 5)) {
 } else if (!strncmp(line, "CONFIGURE ", 10)) {
     char encoded[MICROS_CONFIG_MAX_BYTES * 2 + 1];
     uint8_t data[MICROS_CONFIG_MAX_BYTES];
-    int consumed = 0;
-    if (sscanf(line, "CONFIGURE %" SCNu64 " %512s%n", &instance, encoded, &consumed) == 2 &&
-        !strcmp(line + consumed, "\n")) {
+    if (fields && micros_parse_u64(&fields, 10, &instance) &&
+        micros_parse_word(&fields, encoded, sizeof(encoded)) && micros_parse_end(fields)) {
         size_t length = strlen(encoded);
         int valid = length % 2 == 0 && length <= sizeof(data) * 2;
         for (size_t index = 0; valid && index < length; ++index)
@@ -77,42 +79,46 @@ else if (!strncmp(line, "LOAD ", 5)) {
         if (valid)
             result = micros_runtime_set_config(runtime, instance, data, length / 2);
     }
-} else if (sscanf(line, "START %" SCNu64, &instance) == 1)
+} else if (!strncmp(line, "START ", 6) && fields &&
+           micros_parse_u64(&fields, 10, &instance) && micros_parse_end(fields))
     result = micros_runtime_start(runtime, instance);
-else if (sscanf(line, "STOP %" SCNu64, &instance) == 1)
+else if (!strncmp(line, "STOP ", 5) && fields &&
+           micros_parse_u64(&fields, 10, &instance) && micros_parse_end(fields))
     result = micros_runtime_stop(runtime, instance);
-else if (sscanf(line, "UNLOAD %" SCNu64, &instance) == 1)
+else if (!strncmp(line, "UNLOAD ", 7) && fields &&
+           micros_parse_u64(&fields, 10, &instance) && micros_parse_end(fields))
     result = micros_runtime_unload(runtime, instance);
-else if (sscanf(line, "STATUS %" SCNu64, &instance) == 1) {
+else if (!strncmp(line, "STATUS ", 7) && fields &&
+           micros_parse_u64(&fields, 10, &instance) && micros_parse_end(fields)) {
     micros_service_status_t status;
     result = micros_runtime_status(runtime, instance, &status);
     if (!result) {
         printf("{\"result\":0,\"state\":\"%s\",\"service_result\":%d,\"handles\":%u,"
-               "\"steps\":%" PRIu64 ",\"callbacks\":%" PRIu64
-               ",\"reboot_required\":%u,\"arena_bytes\":%u,\"arena_alignment\":%u,\"stack_"
-               "bytes\":%u}\n",
+               "\"steps\":%s,\"callbacks\":%s"
+               ",\"reboot_required\":%u,\"arena_bytes\":%s,\"arena_alignment\":%u,\"stack_"
+               "bytes\":%s}\n",
                micros_runtime_state_name(status.state), (int)status.result, (unsigned)status.owned_handles,
-               status.completed_steps, status.completed_callbacks, (unsigned)status.reboot_required,
-               (unsigned)status.arena_bytes, (unsigned)status.arena_alignment, (unsigned)status.stack_bytes);
+               micros_decimal(status.completed_steps).text, micros_decimal(status.completed_callbacks).text, (unsigned)status.reboot_required,
+               micros_decimal(status.arena_bytes).text, (unsigned)status.arena_alignment, micros_decimal(status.stack_bytes).text);
         return 1;
     }
 } else if (!strcmp(line, "USAGE\n")) {
     micros_runtime_usage_t usage = micros_runtime_usage(runtime);
     printf("{\"result\":0,\"services\":%u,\"handles\":%u,\"reserved_handles\":%u,\"tasks\":"
-           "%u,\"channels\":%u,\"channel_bytes\":%zu,\"image_bytes\":%zu,\"arena_bytes\":%"
-           "zu,\"requested_stack_bytes\":%zu,\"host_stack_bytes\":%zu,\"kernel_metadata_"
-           "bytes\":%zu,\"reboot_required\":%u}\n",
+           "%u,\"channels\":%u,\"channel_bytes\":%s,\"image_bytes\":%s,\"arena_bytes\":%s"
+           ",\"requested_stack_bytes\":%s,\"host_stack_bytes\":%s,\"kernel_metadata_"
+           "bytes\":%s,\"reboot_required\":%u}\n",
            (unsigned)usage.loaded_services, (unsigned)usage.live_handles, (unsigned)usage.reserved_handles,
-           (unsigned)usage.live_tasks, (unsigned)usage.channels, usage.channel_bytes, usage.image_bytes,
-           usage.arena_bytes, usage.stack_bytes, usage.platform_stack_bytes,
-           usage.kernel_metadata_bytes, (unsigned)usage.reboot_required);
+           (unsigned)usage.live_tasks, (unsigned)usage.channels, micros_decimal(usage.channel_bytes).text, micros_decimal(usage.image_bytes).text,
+           micros_decimal(usage.arena_bytes).text, micros_decimal(usage.stack_bytes).text, micros_decimal(usage.platform_stack_bytes).text,
+           micros_decimal(usage.kernel_metadata_bytes).text, (unsigned)usage.reboot_required);
     return 1;
 } else if (!strcmp(line, "QUIT\n")) {
     result = micros_runtime_destroy(runtime);
     printf("{\"result\":%d}\n", (int)result);
     return 2;
 }
-printf("{\"result\":%d,\"instance\":%" PRIu64 "}\n", (int)result, instance);
+printf("{\"result\":%d,\"instance\":%s}\n", (int)result, micros_decimal(instance).text);
 return 1;
 }
 

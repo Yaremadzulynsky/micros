@@ -1,3 +1,4 @@
+#include "../../../kernel/support/integer.h"
 #include <micros/transport.h>
 #include <micros/update.h>
 #include "support/management/relay.h"
@@ -65,6 +66,12 @@ size_t micros_transport_read_log(uint8_t *out,size_t capacity)
     xSemaphoreGive(log_lock);
     return count;
 }
+static int parse_log_cursor(const char *query, uint64_t *cursor)
+{
+    if (strncmp(query, "cursor=", 7)) return 0;
+    const char *field = query + 7;
+    return micros_parse_u64(&field, 10, cursor) && !*field;
+}
 static esp_err_t unavailable_response(httpd_req_t *request, const char *message)
 {
     httpd_resp_set_status(request, "503 Service Unavailable");
@@ -87,9 +94,9 @@ int micros_management_execute(micros_management_request_t *message)
         if (count > chunk_bytes)
             count = chunk_bytes;
         size_t used = (size_t)snprintf(message->response, message->response_capacity,
-            "{\"boot_id\":\"%08" PRIx32 "%08" PRIx32 "\",\"start\":%" PRIu64
-            ",\"next\":%" PRIu64 ",\"lost\":%" PRIu64 ",\"end\":%" PRIu64 ",\"data_hex\":\"",
-            log_boot_id[0], log_boot_id[1], start, start + count, start - requested, log_total);
+            "{\"boot_id\":\"%08" PRIx32 "%08" PRIx32 "\",\"start\":%s"
+            ",\"next\":%s,\"lost\":%s,\"end\":%s,\"data_hex\":\"",
+            log_boot_id[0], log_boot_id[1], micros_decimal(start).text, micros_decimal(start + count).text, micros_decimal(start - requested).text, micros_decimal(log_total).text);
         static const char hex[] = "0123456789abcdef";
         for (size_t index = 0; index < count; ++index) {
             uint8_t value = log_ring[(log_position + sizeof(log_ring) - (log_total - start) + index) % sizeof(log_ring)];
@@ -175,7 +182,7 @@ static esp_err_t handle_request(httpd_req_t *request)
         char extra;
         int fields =
             (operation == MICROS_MANAGEMENT_LOG_STREAM || operation == MICROS_MANAGEMENT_BASE_CHUNK)
-                ? sscanf(query, "cursor=%" SCNu64 "%c", &message->log_cursor, &extra) :
+                ? parse_log_cursor(query, &message->log_cursor) :
             operation == MICROS_MANAGEMENT_IMAGE
                 ? sscanf(query, "bank=%u&slot=%u%c", &message->bank, &message->slot, &extra)
                 : sscanf(query, "bank=%u%c", &message->bank, &extra);

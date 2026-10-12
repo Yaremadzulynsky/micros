@@ -1,3 +1,4 @@
+#include "../kernel/support/integer.h"
 #include <micros/status.h>
 #include "channel.h"
 #include <inttypes.h>
@@ -55,8 +56,8 @@ size_t micros_status_append(char *output, size_t capacity, size_t used, micros_r
         micros_channel_status_t channel;
         if (micros_runtime_channel_status(runtime,slot,&channel)) continue;
         used=append(output,capacity,used,
-            "%s{\"key\":%u,\"policy\":%u,\"depth\":%u,\"backlog\":%u,\"published\":%" PRIu64 ",\"missed\":%" PRIu64 ",\"age_us\":%" PRIu64 ",\"payload_bytes\":%u,\"retained_bytes\":%u}",
-            count++?",":"",(unsigned)channel.key,(unsigned)channel.policy,(unsigned)channel.depth,(unsigned)channel.backlog,channel.published,channel.missed,channel.age_us,
+            "%s{\"key\":%u,\"policy\":%u,\"depth\":%u,\"backlog\":%u,\"published\":%s,\"missed\":%s,\"age_us\":%s,\"payload_bytes\":%u,\"retained_bytes\":%u}",
+            count++?",":"",(unsigned)channel.key,(unsigned)channel.policy,(unsigned)channel.depth,(unsigned)channel.backlog,micros_decimal(channel.published).text,micros_decimal(channel.missed).text,micros_decimal(channel.age_us).text,
             (unsigned)channel.payload_bytes,(unsigned)channel.retained_bytes);
     }
     return append(output,capacity,used,"]");

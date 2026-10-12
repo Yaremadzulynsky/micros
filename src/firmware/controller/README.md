@@ -27,3 +27,11 @@ selection; an abandoned transfer leaves confirmed images intact. New images and
 the deployment record must pass validation before activation, and a trial becomes
 confirmed only after the shared health window. Platform storage owns the physical
 journal/rename mechanism that makes that selection durable.
+
+Wire integers use the bounded helpers in `../kernel/support/integer.h`, including
+64-bit cursors, boot/instance identities and telemetry counters. Do not use libc
+`ll`, `j`, `z` or `t` integer conversions: embedded nano libraries may omit them.
+The wire representation stays decimal (or hexadecimal for coordination IDs).
+`portable_integers` and `portable_rpc` test limits, malformed input and the actual
+controller with ARM newlib-nano under QEMU; Linux CI requires that regression.
+This verifies protocol behavior, not board hardware or a firmware installation.

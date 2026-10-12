@@ -1,17 +1,20 @@
 #ifndef MICROS_SERVICE_RESTART_COMMAND_H
 #define MICROS_SERVICE_RESTART_COMMAND_H
 #include <stdlib.h>
+#include "../../kernel/support/integer.h"
 /* Controller-only command, included after the board's graph/storage helpers.
  * No new service hooks or channel teardown. Transport serializes all mutations. */
 static __attribute__((noinline)) void service_restart_command(micros_management_request_t *request, const char *command)
 {
     unsigned index = 0, sequence = 0;
     uint64_t expected_instance = 0, expected_boot = 0;
-    char expected[65] = {0}; int end = 0;
+    char expected[65] = {0}; const char *fields = command;
     micros_activation_record_t selected = micros_storage_selection();
-    int valid = sscanf(command, "SERVICE RESTART %u %u %64s %" SCNu64 " %" SCNu64 "%n",
-                       &index, &sequence, expected, &expected_instance, &expected_boot, &end) == 5 &&
-        end && !command[end] && expected_boot == service_boot && strlen(expected) == 64 && runtime &&
+    int valid = micros_parse_prefix(&fields, "SERVICE RESTART ") &&
+        micros_parse_unsigned(&fields, &index) && micros_parse_unsigned(&fields, &sequence) &&
+        micros_parse_word(&fields, expected, sizeof(expected)) &&
+        micros_parse_u64(&fields, 10, &expected_instance) && micros_parse_u64(&fields, 10, &expected_boot) &&
+        micros_parse_end(fields) && expected_boot == service_boot && strlen(expected) == 64 && runtime &&
         index < instance_count && !selected.pending && selected.good < 2 &&
         running_bank == (int)selected.good && selected.sequence == sequence &&
         instances[index] == expected_instance && !physical_recovery && !deployment_session[0];

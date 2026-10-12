@@ -3,13 +3,16 @@
 #include <stdio.h>
 #include <string.h>
 #include "runtime.h"
+#include "../support/integer.h"
 /* Caller authenticates transport and excludes graph/base transitions. */
 static void micros_coord_console(micros_runtime_t *owner,const char *command,char *reply,size_t capacity) {
-    unsigned key=0,kind=0,role=0;unsigned long long epoch=0;int n=0;
+    unsigned key=0,kind=0,role=0;uint64_t epoch=0;int n=0; const char *fields=command;
     micros_result_t rc=MICROS_ERROR_INVALID_ARGUMENT;
-    if(sscanf(command,"COORD B %u %u %u %llx%n",&key,&kind,&role,&epoch,&n)==4 && n && !command[n]) {
+    if(micros_parse_prefix(&fields,"COORD B ") && micros_parse_unsigned(&fields,&key) &&
+       micros_parse_unsigned(&fields,&kind) && micros_parse_unsigned(&fields,&role) &&
+       micros_parse_u64(&fields,16,&epoch) && micros_parse_end(fields)) {
         rc=micros_runtime_coord_bind(owner,key,kind,role,(uint64_t)epoch);
-        snprintf(reply,capacity,"COORD BOUND %d %llx",(int)rc,(unsigned long long)micros_runtime_coord_identity(owner,key));return;
+        snprintf(reply,capacity,"COORD BOUND %d %s",(int)rc,micros_hexadecimal(micros_runtime_coord_identity(owner,key)).text);return;
     }
     n=0;
     if(sscanf(command,"COORD X %u %n",&key,&n)==1 && n) {

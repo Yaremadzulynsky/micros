@@ -22,6 +22,12 @@ jobs:
         with:
           node-version: '22'
       - uses: seanmiddleditch/gha-setup-ninja@v5
+      - name: Install reduced-libc regression tools
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gcc-arm-none-eabi libnewlib-arm-none-eabi qemu-system-arm
+      - name: Require reduced-libc regression on Linux
+        if: runner.os == 'Linux'
+        run: echo "MICROS_REQUIRE_NANO_TEST=1" >> "$GITHUB_ENV"
       - run: ./micros setup
       - run: cmake -S . -B build/host -G Ninja -DCMAKE_BUILD_TYPE=Debug -DPython3_EXECUTABLE="$PWD/build/python/bin/python"
       - run: cmake --build build/host --parallel 3

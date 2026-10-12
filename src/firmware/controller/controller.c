@@ -1,3 +1,4 @@
+#include "../kernel/support/integer.h"
 #include <micros/platform.h>
 #include <micros/capabilities.h>
 #include <micros/deployment.h>
@@ -412,10 +413,10 @@ static void report_status(void)
         for (unsigned index = 0; index < instance_count; ++index) {
             micros_service_status_t status = {0};
             micros_runtime_status(runtime, instances[index], &status);
-            printf("SERVICE index=%u state=%s result=%d steps=%" PRIu64 " callbacks=%" PRIu64
+            printf("SERVICE index=%u state=%s result=%d steps=%s callbacks=%s"
                    " stack_free=%u\n",
                    index, micros_runtime_state_name(status.state), (int)status.result,
-                   status.completed_steps, status.completed_callbacks,
+                   micros_decimal(status.completed_steps).text, micros_decimal(status.completed_callbacks).text,
                    (unsigned)status.stack_free_bytes);
         }
     }
@@ -462,14 +463,14 @@ static __attribute__((noinline)) void management_status(micros_management_reques
             "{\"identity\":{\"device_id\":\"%02x%02x%02x%02x%02x%02x\","
             "\"base_sha256\":\"%s\",\"abi_major\":%u,\"abi_revision\":%u,"
             "\"graph_format\":%u,\"slots\":%u,\"code_bytes\":%u,\"data_bytes\":%u},"
-            "\"platform\":\"" MICROS_PLATFORM_NAME "\",\"target\":%u,\"ipc_stream\":1,\"service_restart\":1,\"selective_deploy\":%u,\"service_boot\":\"%" PRIu64 "\",\"uptime_us\":%" PRIu64 ",\"reset_reason\":%u,\"physical_recovery\":%s,"
+            "\"platform\":\"" MICROS_PLATFORM_NAME "\",\"target\":%u,\"ipc_stream\":1,\"service_restart\":1,\"selective_deploy\":%u,\"service_boot\":\"%s\",\"uptime_us\":%s,\"reset_reason\":%u,\"physical_recovery\":%s,"
             "\"deployment_session\":\"%s\",\"last_failure\":{\"bank\":%u,\"attempts\":%u,\"reason\":\"%s\"},"
             "\"activation\":{\"sequence\":%u,\"good\":%u,\"previous\":%u,\"candidate\":%u,"
             "\"attempts\":%u,\"pending\":%u,\"good_sha256\":\"%s\"},\"heap\":%u,\"services\":[",
             device_mac[0], device_mac[1], device_mac[2], device_mac[3], device_mac[4], device_mac[5],
             base_hash, (unsigned)MICROS_ABI_MAJOR, (unsigned)MICROS_ABI_REVISION,
             MICROS_GRAPH_VERSION, MICROS_BOARD_IMAGE_SLOTS, MICROS_BOARD_CODE_BYTES,
-            MICROS_BOARD_DATA_BYTES, MICROS_TARGET_ID, MICROS_CAP_SELECTIVE_UPDATE, service_boot, micros_platform_now_us(), (unsigned)micros_controller_reset_reason(),
+            MICROS_BOARD_DATA_BYTES, (unsigned)MICROS_TARGET_ID, MICROS_CAP_SELECTIVE_UPDATE, micros_decimal(service_boot).text, micros_decimal(micros_platform_now_us()).text, (unsigned)micros_controller_reset_reason(),
             physical_recovery ? "true" : "false",
             deployment_session,failed_bank,failed_attempts,failed_reason,
             (unsigned)record.sequence, (unsigned)record.good, (unsigned)record.previous,
@@ -480,14 +481,14 @@ static __attribute__((noinline)) void management_status(micros_management_reques
             micros_service_status_t status = {0};
             micros_runtime_status(runtime, instances[index], &status);
             used += (size_t)snprintf(request->response + used, request->response_capacity - used,
-                                     "%s{\"index\":%u,\"instance\":\"%" PRIu64 "\",\"state\":\"%s\",\"result\":%d,\"steps\":%" PRIu64
-                                     ",\"callbacks\":%" PRIu64 ",\"stack_free_bytes\":%u,\"arena_reserved\":%u,\"arena_pool\":\"%s\",\"stack_reserved\":%u,\"handles_open\":%u,\"handles_limit\":%u,\"timers_open\":%u,\"timers_limit\":%u,\"gpio_granted\":%u,\"gpio_open\":%u,\"publish_mask\":%u,\"subscribe_mask\":%u,\"hook_max_us\":%" PRIu64 ",\"callback_max_us\":%" PRIu64 ",\"timer_late_max_us\":%" PRIu64 "}",
-                                     index ? "," : "", index, instances[index], micros_runtime_state_name(status.state),
-                                     (int)status.result, status.completed_steps,
-                                     status.completed_callbacks, (unsigned)status.stack_free_bytes,
+                                     "%s{\"index\":%u,\"instance\":\"%s\",\"state\":\"%s\",\"result\":%d,\"steps\":%s"
+                                     ",\"callbacks\":%s,\"stack_free_bytes\":%u,\"arena_reserved\":%u,\"arena_pool\":\"%s\",\"stack_reserved\":%u,\"handles_open\":%u,\"handles_limit\":%u,\"timers_open\":%u,\"timers_limit\":%u,\"gpio_granted\":%u,\"gpio_open\":%u,\"publish_mask\":%u,\"subscribe_mask\":%u,\"hook_max_us\":%s,\"callback_max_us\":%s,\"timer_late_max_us\":%s}",
+                                     index ? "," : "", index, micros_decimal(instances[index]).text, micros_runtime_state_name(status.state),
+                                     (int)status.result, micros_decimal(status.completed_steps).text,
+                                     micros_decimal(status.completed_callbacks).text, (unsigned)status.stack_free_bytes,
                                      (unsigned)status.arena_bytes,status.arena_placement ? "PSRAM" : "RAM",(unsigned)status.stack_bytes,(unsigned)status.owned_handles,(unsigned)status.handle_limit,
                                      (unsigned)status.timers_open,(unsigned)status.timer_limit,(unsigned)status.gpio_granted,(unsigned)status.gpio_open,
-                                     (unsigned)status.publish_mask,(unsigned)status.subscribe_mask,status.hook_max_us,status.callback_max_us,status.timer_late_max_us);
+                                     (unsigned)status.publish_mask,(unsigned)status.subscribe_mask,micros_decimal(status.hook_max_us).text,micros_decimal(status.callback_max_us).text,micros_decimal(status.timer_late_max_us).text);
         }
         if (used < request->response_capacity-1) request->response[used++]=']';
         micros_hardware_snapshot_t hardware;
@@ -796,12 +797,16 @@ static char *rpc_error(const char *message) {
 /* The caller owns one reply buffer. Network transports retain it until their
  * acknowledgement; serial releases it immediately. Never copy a 4 KiB reply. */
 char *micros_controller_rpc_reply(char *line, int physical) {
- unsigned operation=0,bank=0,slot=0;uint64_t cursor=0;char session[33]={0};int used=0;
- if(sscanf(line,"RPC %u %u %u %" SCNu64 " %32s %n",&operation,&bank,&slot,&cursor,session,&used)!=5 ||
-    !used || operation>MICROS_MANAGEMENT_ROLLBACK || bank>=2 || slot>=4)
+ unsigned operation=0,bank=0,slot=0;uint64_t cursor=0;char session[33]={0};
+ const char *fields=line;
+ if(!micros_parse_prefix(&fields,"RPC ") || !micros_parse_unsigned(&fields,&operation) ||
+    !micros_parse_unsigned(&fields,&bank) || !micros_parse_unsigned(&fields,&slot) ||
+    !micros_parse_u64(&fields,10,&cursor) || !micros_parse_word(&fields,session,sizeof(session)) ||
+    *fields!=' ' || operation>MICROS_MANAGEMENT_ROLLBACK || bank>=2 || slot>=4)
   return rpc_error("{\"result\":-1,\"error\":\"invalid RPC frame\"}");
- const char *hex=line+used;size_t length=!strcmp(hex,"-")?0:strlen(hex);
- if(length%2 || length>512 || (strcmp(session,"-") && (strlen(session)!=32 || strspn(session,"0123456789abcdef")!=32)))
+ while (*fields==' ') ++fields;
+ const char *hex=fields;size_t length=!strcmp(hex,"-")?0:strlen(hex);
+ if(!*hex || length%2 || length>512 || (strcmp(session,"-") && (strlen(session)!=32 || strspn(session,"0123456789abcdef")!=32)))
   return rpc_error("{\"result\":-1}");
  uint8_t body[256];
  for(size_t i=0;i<length/2;++i) {

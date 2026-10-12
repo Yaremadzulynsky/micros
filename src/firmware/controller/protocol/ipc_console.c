@@ -1,3 +1,4 @@
+#include "../../kernel/support/integer.h"
 #include <micros/ipc_console.h>
 #include <stdio.h>
 #include <string.h>
@@ -28,7 +29,7 @@ void micros_ipc_batch(micros_runtime_t *owner, micros_instance_t instance, unsig
         if (result && result != MICROS_ERROR_MESSAGES_MISSED) { error=(int)result; break; }
         if (count) reply[used++]=',';
         if (result == MICROS_ERROR_MESSAGES_MISSED) {
-            used+=(size_t)snprintf(reply+used,capacity-used,"{\"missed\":%llu}",(unsigned long long)info.messages_missed);
+            used+=(size_t)snprintf(reply+used,capacity-used,"{\"missed\":%s}",micros_decimal(info.messages_missed).text);
         } else {
             used+=(size_t)snprintf(reply+used,capacity-used,"{\"data\":\"");
             for(uint32_t i=0;i<bytes;i++) { reply[used++]=hex[payload[i]>>4]; reply[used++]=hex[payload[i]&15]; }

@@ -7,7 +7,7 @@ CONFIG_PARTITION_TABLE_CUSTOM=y
 CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
 CONFIG_FREERTOS_HZ=1000
 CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
-# RPC cursors and status counters require standard 64-bit printf/scanf support.
+# Keep the existing SDK library default; shared protocol integers also work with nano.
 # CONFIG_NEWLIB_NANO_FORMAT is not set
 CONFIG_MBEDTLS_DYNAMIC_BUFFER=y
 CONFIG_MBEDTLS_DYNAMIC_FREE_PEER_CERT=y
