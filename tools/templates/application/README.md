@@ -8,6 +8,10 @@
 ./micros test                     # Application tests under tests/
 ```
 
+`AGENTS.md` gives coding agents this application's boundaries and links to the
+pinned SDK's instructions through `.sdk/AGENTS.md`. Add project-specific guidance
+there as your application grows.
+
 `micros.lock` pins the SDK revision. `services/hello/service.toml` owns the reusable
 implementation. New projects have no board unit or placeholder hardware ID.
 Run `./micros enroll` to choose or create a server, install the board tools,

@@ -99,6 +99,7 @@ to overwrite an existing directory. `micros init` provisions a board, not a proj
 
 ```text
 my-application/
+  AGENTS.md
   micros
   micros.lock
   host.toml
@@ -106,6 +107,10 @@ my-application/
   services/hello/src/service.c
   tests/
 ```
+
+The generated `AGENTS.md` contains application-specific guidance and links to the
+pinned SDK's `.sdk/AGENTS.md` and device workflows. It is a regular project file
+you can extend, so framework guidance stays tied to your chosen SDK revision.
 
 `micros.lock` records the checkout's exact Git commit. The application launcher
 rejects a different revision; pulling a newer SDK does not silently update an
