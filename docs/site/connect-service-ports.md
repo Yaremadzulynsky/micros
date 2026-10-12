@@ -15,6 +15,26 @@ Services exchange typed messages through named, bounded channels. Each subscribe
 has its own read position; one reader does not consume another's message.
 {: .arch-intro}
 
+## Start with the working example {#starter-flow}
+
+`micros new` already creates a complete, hardware-independent message flow:
+
+```text
+climate-sensor → climate_reading → fan-controller → fan_status
+                         └─────────────┬──────────────┘
+                                 status-display
+```
+
+The sensor calls `src/simulated_sensor.c` on a timer. Both consumers independently
+read the same climate channel; the display also reads the fan decision. The
+protobuf messages under `protos/climate/` and `protos/fan/` carry bounded numeric
+fields, sample IDs and timestamps. Both channels use `latest` delivery.
+
+Run `./micros generate`, `./micros compose -d host` and `./micros test` from the
+[starter project](get-started.md#create-your-project). Read its service sources
+and generated `climate_ipc.h`, `fan_ipc.h` and `display_ipc.h` under `build/services/`.
+The following sections show how to add another message contract to your own services.
+
 ## 01 · Define one shared message {#define-one-shared-message}
 
 In your project, create `protos/reading/reading.proto`:

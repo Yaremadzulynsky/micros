@@ -8,24 +8,23 @@ title: service.toml reference
 its build inputs, settings, resource requirements, ports and commands. Select it
 from a [unit file](unit-configuration.md) to run an instance.
 
-The generated hello file includes commented examples. Only uncomment features
-that your implementation uses; enabling a declaration can require new C hooks,
-unit wiring, or shared interface files.
+The starter contains three complete hook-based contracts. Add declarations only
+for resources your implementation uses; pins, ports and commands also need their
+corresponding implementation and unit configuration.
 
-## Working hello definition
+## Working climate sensor definition
 
-This complete declaration uses the source supplied by `micros new`:
+This is `services/climate-sensor/service.toml` from `micros new`:
 
 ```toml
 [service]
-name = "example.hello"
-version = "1.1.0"
-timers = ["greeting"]
-
+name = "example.climate-sensor"
+version = "1.0.0"
+timers = ["sample"]
 [service.build]
-api = "hello"
+api = "climate"
 lifecycle = "hooks"
-sources = ["src/service.c"]
+sources = ["src/service.c", "src/simulated_sensor.c"]
 descriptor = "micros_descriptor"
 
 [service.config_schema.interval_ms]
@@ -33,14 +32,20 @@ type = "uint32"
 default = 1000
 min = 100
 max = 60000
+
+[service.publications.climate_reading]
+interface = "../../protos/climate/interface.toml"
 ```
+
+The timer calls the simulated driver; the publication sends its reading to the
+fan controller and status display. See [the starter flow](connect-service-ports.md#starter-flow).
 
 ## Service identity
 
 | Key under `[service]` | Required / default | Meaning |
 | --- | --- | --- |
-| `name` | Required string | Deployed service name, such as `example.hello`. A unit can override the name for a separate instance. |
-| `version` | Required string | Three numeric components, such as `1.1.0`. |
+| `name` | Required string | Deployed service name, such as `example.climate-sensor`. A unit can override the name for a separate instance. |
+| `version` | Required string | Three numeric components, such as `1.0.0`. |
 | `timers` | Optional; none | Unique C identifier names, such as `["greeting", "sample"]`. |
 | `types` | Optional; none | Inline named type tables, or a path to a service-local types file. Choose one form. |
 
@@ -63,9 +68,9 @@ To add a file or definition, edit the existing build table:
 
 ```toml
 [service.build]
-api = "hello"
+api = "climate"
 lifecycle = "hooks"
-sources = ["src/service.c", "src/format.c"]
+sources = ["src/service.c", "src/simulated_sensor.c", "src/format.c"]
 defines = ["VERBOSE=1"]
 descriptor = "micros_descriptor"
 ```

@@ -7,7 +7,8 @@ USB and flash details live in this platform and its host backend.
 
 ## Development workflow
 
-For a management-only installation, use `micros enroll` and select the MKR.
+Use `micros enroll` and select the MKR to install the runtime and simulated climate
+starter. For management only, use `micros enroll --no-starter`.
 Enrollment installs the pinned library/core dependencies when needed and uses
 the existing ARM toolchain. Its USB installation does not back up or restore old
 network settings. The separate legacy `init --phase flash` flow below preserves

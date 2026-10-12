@@ -68,7 +68,8 @@ section links, search and a narrow viewport when their presentation changes.
 
 Give each fact one authoritative home. Link to CLI help, validators, and working
 examples for exact contracts; avoid copying flag/schema catalogs. Keep the
-homepage's illustrative greenhouse distinct from executable examples. Historical
+homepage's simulated climate starter aligned with `tools/templates/application/`;
+keep simulated decisions distinct from physical greenhouse operation. Historical
 [preview evidence](preview-evidence.md) stays dated rather than implying current
 coverage. Locate implementation ownership in the [repository map](#repository-map).
 

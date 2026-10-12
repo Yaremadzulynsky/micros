@@ -76,6 +76,17 @@ Admission checks these independently against the selected target/base. PSRAM is
 available only on supporting profiles; code in flash does not remove RAM needs.
 See [format ceilings](declaration-authoring.md#limits-and-validation).
 
+Current MKR and ESP8266 bases reserve separate fixed application and management
+pools. Service stacks, arenas, configuration and channel payloads use the bounded
+application pool; pool exhaustion returns a capacity error, with no fallback to
+the library heap. Wi-Fi/TLS libraries still allocate from their own heap. Host and
+ESP32 retain their existing heap-backed implementation. Available heap therefore
+does not measure unused service-pool capacity on every target.
+
+On ESP8266, background `step` work is scheduled at a 10 ms interval so services
+leave CPU time for networking. Timer deadlines are scheduled independently;
+callback timing still depends on scheduling and bounded hook execution.
+
 Managed handles are owner checked and generation tagged; zero is invalid.
 `CAPACITY` means no bounded resource could be granted; `UNSUPPORTED` means the
 operation is unavailable; `STALE_HANDLE` rejects an old/foreign identity.

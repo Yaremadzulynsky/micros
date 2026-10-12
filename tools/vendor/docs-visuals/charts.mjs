@@ -89,9 +89,9 @@ export function communicationOption(width, height = width < 680 ? 540 : 430) {
     link(8+readerWidth/2,392,8+readerWidth/2,446,true);
     link(8+readerWidth,485,rightX,485);
     card((width-serviceWidth)/2,8,serviceWidth,92,'Climate sensor','Temperature + humidity');
-    card((width-wide)/2,144,wide,84,'climate.reading','Current conditions',true);
+    card((width-wide)/2,144,wide,84,'climate_reading','Current conditions',true);
     card(8,286,readerWidth,106,'Fan\ncontroller','Applies the\nfan policy');
-    card(8,446,readerWidth,78,'fan.status','Current fan state',true);
+    card(8,446,readerWidth,78,'fan_status','Current fan state',true);
     card(rightX,435,readerWidth,100,'Status\ndisplay','Shows both\nmessages');
   } else {
     const serviceWidth = Math.min(194,width*.23), channelWidth = Math.min(234,width*.29);
@@ -102,9 +102,9 @@ export function communicationOption(width, height = width < 680 ? 540 : 430) {
     link(rightX+serviceWidth/2,112,rightX+serviceWidth/2,166,true);
     link(rightX+serviceWidth/2,244,rightX+serviceWidth/2,312,true);
     card(8,152,serviceWidth,104,'Climate sensor','Temperature + humidity');
-    card(channelX,152,channelWidth,104,'climate.reading','Current conditions',true);
+    card(channelX,152,channelWidth,104,'climate_reading','Current conditions',true);
     card(rightX,16,serviceWidth,96,'Fan controller','Applies the fan policy');
-    card(rightX,166,serviceWidth,78,'fan.status','Current fan state',true);
+    card(rightX,166,serviceWidth,78,'fan_status','Current fan state',true);
     card(rightX,312,serviceWidth,104,'Status display','Shows both messages');
   }
   return { ...common, graphic };

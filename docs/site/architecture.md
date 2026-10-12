@@ -19,13 +19,13 @@ services share the device's address space.
 ## 01 · What runs on the device {#what-runs-on-the-device}
 
 <figure class="arch-system">
-  <div class="arch-diagram-label">Application · illustrative greenhouse</div>
-  <div class="arch-workers"><div><strong>Climate sensor</strong><span>Measure conditions</span><small>One worker</small></div><div><strong>Fan controller</strong><span>Apply ventilation policy</span><small>One worker</small></div><div><strong>Status display</strong><span>Explain the result</span><small>One worker</small></div></div>
+  <div class="arch-diagram-label">Application · simulated climate starter</div>
+  <div class="arch-workers"><div><strong>Climate sensor</strong><span>Generate readings</span><small>One worker</small></div><div><strong>Fan controller</strong><span>Apply ventilation policy</span><small>One worker</small></div><div><strong>Status display</strong><span>Explain the result</span><small>One worker</small></div></div>
   <div class="arch-connector">↕ Native service ABI</div>
   <div class="arch-base"><div class="arch-diagram-label">Resident base</div><strong>Micros kernel</strong><p>Lifecycle · owned resources · channels · supervision</p><div class="arch-foundation"><span>Platform integration<br><small>Tasks, time, memory &amp; hardware</small></span><span>Enabled management<br><small>Inspect &amp; deploy from host tools</small></span></div></div>
   <div class="arch-connector">↕ Platform facilities</div>
   <div class="arch-hardware">Controller &amp; peripherals</div>
-  <figcaption>Responsibilities, not memory partitions. The greenhouse is a proposed design example, not a tested application. All native services share the device's address space.</figcaption>
+  <figcaption>Responsibilities, not memory partitions. The starter generates readings and logs fan decisions without external hardware. All native services share the device's address space.</figcaption>
 </figure>
 
 The base contains the kernel, platform integration, and enabled management.
@@ -66,7 +66,7 @@ Generated hook services delegate resource plumbing to generated code. The
 
 ## 03 · Pass messages {#pass-messages}
 
-In the illustrative greenhouse, the sensor publishes climate readings and the fan
+In the simulated climate starter, the sensor publishes climate readings and the fan
 controller and display read independently. A latest-value channel retains current
 state; a bounded stream retains a limited sequence. Neither removes the need to
 handle stale or missing readings.
@@ -84,8 +84,9 @@ unsupported bases require whole-application activation. The
 
 A candidate trial checks liveness before recording a good selection. Runtime
 confirmation is not a physical acceptance test. For the greenhouse's threshold
-change from 28°C to 26°C, a fresh 27°C reading with the fan initially off would
-distinguish the two policies. This greenhouse remains an illustrative design.
+change from 28°C to 26°C, a fresh 26°C reading with the fan initially off would
+distinguish the two policies. The starter can test this policy without a physical fan; wired hardware needs
+separate verification.
 
 ## 05 · Essential limits {#essential-limits}
 
@@ -98,6 +99,6 @@ distinguish the two policies. This greenhouse remains an illustrative design.
 - **Source portability:** rebuild for the target, ABI, and exact base; a board
   definition cannot supply a missing driver.
 
-[Quickstart](get-started.md) runs a real service locally.
+[Quickstart](get-started.md) runs all three services locally.
 [Packages and compatibility](packages-and-storage.md) explains artifacts and base
 matching; the [glossary](glossary.md) defines terms used in the references.

@@ -44,8 +44,9 @@ cd my-application
 ## 03 · Continue in the docs
 
 **[Follow the quickstart →](https://docs.meetmicros.com/site/get-started/#create-your-project)**
-Generate your service interfaces, compose the application, run its first test,
-and choose where to deploy.
+Run the simulated climate starter: three services and two typed protobuf channels,
+with no external hardware required. Then enroll a board to install the same starter
+and deploy your first change.
 
 Working on Micros itself? See the [contributor guide](https://docs.meetmicros.com/site/contributing/).
 
