@@ -108,10 +108,13 @@ class IdempotentDeployTest(unittest.TestCase):
                 manager.__enter__ = Mock(return_value=remote)
                 manager.__exit__ = Mock(return_value=False)
                 args = argparse.Namespace(command='deploy', device=None, firmware=Path('/fake/base.elf'), json=True)
-                with patch.object(module, 'connect', return_value=manager), patch.object(module, 'base_info', return_value=dict(hash=bytes.fromhex('ab'*32))), patch.object(module, 'build', return_value=dict(graph_sha256='cd'*32)), contextlib.redirect_stdout(io.StringIO()) as output:
+                report=dict(graph_sha256='cd'*32,base_sha256='ab'*32,bank=0,
+                            plan=dict(services=[],channels=[]))
+                with patch.object(module, 'connect', return_value=manager), patch.object(module, 'base_info', return_value=dict(hash=bytes.fromhex('ab'*32))), patch.object(module, 'build', return_value=report), contextlib.redirect_stdout(io.StringIO()) as output:
                     module.main(args)
                 self.assertTrue(json.loads(output.getvalue())['unchanged'])
                 remote.deploy.assert_not_called()
                 remote.request.assert_not_called()
+                remote.relay.register_release.assert_called_once()
 
 if __name__ == '__main__': unittest.main()

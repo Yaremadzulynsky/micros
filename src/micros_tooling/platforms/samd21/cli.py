@@ -205,6 +205,9 @@ def main(args):
                 if args.command == 'deploy' and not getattr(args, 'force', False) and status['good'] in (0, 1) and not status['pending'] and status['active'] == status['good']:
                     current = build(project, firmware, output / 'current-check', compiler, status['good'], board, getattr(args, 'overlay', None))
                     if current['graph_sha256'] == status['good_sha256'] and all(s['state'] in (4, 'Running') for s in status['services']):
+                        from micros_tooling.platforms.embedded.releases import publish
+                        from micros_tooling.storage.workspace import Workspace
+                        publish(Workspace(state_root().parent), remote, status, current)
                         emit(dict(unchanged=True, message='Application already matches; no flash writes or restart.', status=status), args)
                         return
                 bank = 1 - status['good'] if status['good'] < 2 else 0
@@ -214,6 +217,9 @@ def main(args):
                 emit(dict(output=str(output), **report), args)
                 return
             result = remote.deploy((output / 'bank.bin').read_bytes(), report)
+            from micros_tooling.platforms.embedded.releases import publish
+            from micros_tooling.storage.workspace import Workspace
+            publish(Workspace(state_root().parent), remote, result, report)
             path = state_root() / 'history' / ((name or 'usb') + '.json')
             history = json.loads(path.read_text()) if path.exists() else []
             history.append(dict(time=time.time(), report=report, status=result))

@@ -1,4 +1,5 @@
 #include "device_support.h"
+#include <micros/controller.h>
 #include <micros/network.h>
 #include "network_support.h"
 #include "update_support.h"
@@ -174,7 +175,7 @@ bool embedded_network_relay(const char *host, unsigned port, const char *token)
     next.port = port;
     return save(next);
 }
-static void release_response() { free(response_text);response_text=nullptr;response_bytes=0; }
+static void release_response() { micros_controller_rpc_release(response_text);response_text=nullptr;response_bytes=0; }
 void embedded_network_poll(char *(*execute)(char *)) {
  if (!request_ready || xSemaphoreTake(request_ready, 0) != pdTRUE) return;
  release_response();
@@ -233,6 +234,9 @@ static int exchange(const Settings &current, const char *path, const char *boot,
         client.stop();
         return -1;
     }
+    // Poll telemetry needs no acknowledgement retention. Release before the
+    // long poll so USB requests can use the same guaranteed workspace.
+    if (boot) release_response();
     network_stage = "headers";
     NetworkClock clock;
     micros_samd21::HttpReader<WiFiSSLClient, NetworkClock> reader(client, clock);

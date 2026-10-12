@@ -34,6 +34,7 @@ static int physical_recovery;
 static uint64_t service_boot;
 static micros_runtime_t *runtime;
 static micros_instance_t instances[MICROS_BOARD_IMAGE_SLOTS];
+static uint8_t image_slots[MICROS_BOARD_IMAGE_SLOTS];
 static unsigned instance_count;
 static int running_bank = -1;
 static unsigned baseline_heap;
@@ -218,6 +219,7 @@ static int boot_graph(unsigned bank)
             .verify_memory = 1, .arena_bytes = service->arena_bytes,
             .arena_alignment = service->arena_alignment, .stack_bytes = service->stack_bytes,
         };
+        image_slots[index] = (uint8_t)service->slot;
         micros_result_t result = micros_application_admit(runtime, &input, &instances[index]);
         if (instances[index]) ++instance_count;
         if (result) goto fail;
@@ -225,6 +227,10 @@ static int boot_graph(unsigned bank)
     uint32_t publish_masks[MICROS_RUNTIME_SERVICE_CAPACITY] = {0};
     for (unsigned index = 0; index < instance_count; ++index)
         publish_masks[index] = graph->services[index].publish_mask;
+    /* Admission copies configuration and policy. Release the staging graph
+     * before allocating service task stacks, which otherwise doubles peak RAM. */
+    free(graph);
+    graph = NULL;
     if (micros_application_start(runtime, instances, publish_masks, instance_count,
                                   config.lifecycle_timeout_us)) goto fail;
     running_bank = bank;
@@ -491,6 +497,15 @@ static __attribute__((noinline)) void management_status(micros_management_reques
                                      (unsigned)status.publish_mask,(unsigned)status.subscribe_mask,micros_decimal(status.hook_max_us).text,micros_decimal(status.callback_max_us).text,micros_decimal(status.timer_late_max_us).text);
         }
         if (used < request->response_capacity-1) request->response[used++]=']';
+        if (used < request->response_capacity) {
+            used += (size_t)snprintf(request->response+used,request->response_capacity-used,
+                ",\"embedded_layout\":1,\"layout_version\":2,\"active\":%u,\"image_slots\":[",
+                (unsigned)(running_bank < 0 ? MICROS_ACTIVATION_NONE : (unsigned)running_bank));
+            for (unsigned i=0;i<instance_count && used<request->response_capacity;++i)
+                used += (size_t)snprintf(request->response+used,request->response_capacity-used,
+                    "%s%u",i?",":"",(unsigned)image_slots[i]);
+            if (used < request->response_capacity-1) request->response[used++]=']';
+        }
         micros_hardware_snapshot_t hardware;
         micros_platform_telemetry(&hardware);
         used=micros_status_append(request->response,request->response_capacity,used,runtime,
@@ -789,14 +804,21 @@ static void management_request(micros_management_request_t *request)
              okay ? "{\"ok\":true}" : "{\"error\":\"service-store operation rejected\"}");
 }
 /* Transport framing is common to serial, pipes and relay connections. */
-static char *rpc_error(const char *message) {
- size_t bytes=strlen(message)+1;char *reply=malloc(bytes);
- if(reply)memcpy(reply,message,bytes);
- return reply;
+/* One reserved response is shared by USB and the outbound relay. The controller
+ * is the sole producer; a transport releases ownership after consuming it.
+ * Never depend on application/TLS heap headroom to answer a management request. */
+static char rpc_response[MICROS_MANAGEMENT_RESPONSE_BYTES + 32];
+static volatile int rpc_response_owned;
+void micros_controller_rpc_release(char *reply) {
+ if(reply == rpc_response) rpc_response_owned=0;
 }
-/* The caller owns one reply buffer. Network transports retain it until their
- * acknowledgement; serial releases it immediately. Never copy a 4 KiB reply. */
+static char *rpc_error(const char *message) {
+ snprintf(rpc_response,sizeof(rpc_response),"%s",message);
+ return rpc_response;
+}
 char *micros_controller_rpc_reply(char *line, int physical) {
+ if(rpc_response_owned)return NULL;
+ rpc_response_owned=1;
  unsigned operation=0,bank=0,slot=0;uint64_t cursor=0;char session[33]={0};
  const char *fields=line;
  if(!micros_parse_prefix(&fields,"RPC ") || !micros_parse_unsigned(&fields,&operation) ||
@@ -816,8 +838,8 @@ char *micros_controller_rpc_reply(char *line, int physical) {
  }
  size_t capacity=operation==MICROS_MANAGEMENT_STATUS || (operation==MICROS_MANAGEMENT_PLATFORM_COMMAND && length/2>=10 && !memcmp(body,"IPC DRAIN ",10)) ?
    MICROS_MANAGEMENT_RESPONSE_BYTES : operation==MICROS_MANAGEMENT_WIFI_GET || operation==MICROS_MANAGEMENT_LOGS || operation==MICROS_MANAGEMENT_PLATFORM_COMMAND ? 1024 : 128;
- char *reply=calloc(1,capacity+32);
- if(!reply)return NULL;
+ char *reply=rpc_response;
+ memset(reply,0,capacity+32);
  micros_management_request_t value={.response=reply+32,.response_capacity=capacity};
  micros_management_request_t *request=&value;
  request->physical=physical;
@@ -834,8 +856,8 @@ char *micros_controller_rpc_reply(char *line, int physical) {
 }
 void micros_controller_remote_line(char *line, int physical) {
  char *reply=micros_controller_rpc_reply(line,physical);
- if(reply){micros_transport_write(reply,strlen(reply));free(reply);}
- else micros_transport_write("{\"result\":-5}",13);
+ if(reply){micros_transport_write(reply,strlen(reply));micros_controller_rpc_release(reply);}
+ else { const char *busy="{\"result\":-7,\"error\":\"management_reply_busy\"}";micros_transport_write(busy,strlen(busy)); }
  micros_transport_write("\n",1);
 }
 

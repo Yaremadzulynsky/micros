@@ -319,7 +319,7 @@ class Handler(BaseHTTPRequestHandler):
                 if body.startswith(b'{'):
                     from micros_tooling.platforms.embedded.telemetry import expand
                     parsed = json.loads(body)
-                    if parsed.get("samd_telemetry") == 1 or parsed.get("embedded_telemetry") == 1:
+                    if parsed.get("samd_telemetry") == 1 or parsed.get("embedded_telemetry") == 1 or parsed.get("embedded_layout") == 1:
                         body = json.dumps(expand(parsed)).encode()
                 self.server.registry.result(agent[1], agent[3], code, body)
                 return self.send(200, b'{}')

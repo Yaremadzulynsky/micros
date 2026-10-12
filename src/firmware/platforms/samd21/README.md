@@ -133,10 +133,17 @@ See `docs/archive/documentation/reviews/mkr-samd21-bringup.md` for dated evidenc
 
 The shared controller formats service, GPIO, memory and network status. The
 platform supplies measurements through `telemetry.h` and `network.h`. Each
-request owns one bounded reply allocation; the relay retains that allocation
-until acknowledgement. Unsupported measurements remain unavailable. Historical
+request borrows the shared reserved reply workspace; the relay retains mutation
+replies until acknowledgement. Unsupported measurements remain unavailable. Historical
 board measurements are in the archived bring-up review; they do not validate a
 new base build. Verify live heap headroom and task stack watermarks after changes.
+
+The build copies the pinned WiFiNINA dependency into its output directory and
+bounds its SPI receive staging buffer to 256 bytes. A failed allocation returns
+no available data before calling the driver; it cannot pass a null buffer to SPI.
+The receive path drains larger replies in chunks. Run
+`python tests/samd21/socket_buffer_check.py PATH_TO_WIFININA` to exercise allocation
+failure, partial reads and cleanup against the actual pinned library source.
 
 ## A/B base updates
 

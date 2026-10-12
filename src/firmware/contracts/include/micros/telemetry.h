@@ -20,6 +20,7 @@ typedef struct {
     unsigned gpio_count;
     size_t internal_free, internal_total, internal_min, internal_largest;
     size_t external_total, external_free;
+    size_t controller_stack_free;
     int runtime_allocations_internal;
 } micros_hardware_snapshot_t;
 void micros_platform_telemetry(micros_hardware_snapshot_t *snapshot);

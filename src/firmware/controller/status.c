@@ -1,5 +1,6 @@
 #include "../kernel/support/integer.h"
 #include <micros/status.h>
+#include <micros/command.h>
 #include "channel.h"
 #include <inttypes.h>
 #include <stdarg.h>
@@ -43,12 +44,13 @@ size_t micros_status_append(char *output, size_t capacity, size_t used, micros_r
         micros_runtime_usage_t allocation = {0};
         if (runtime) allocation = micros_runtime_usage(runtime);
         used=append(output,capacity,used,
-            ",\"heap_accounting\":{\"ipc_storage\":%u,\"ipc_payload_capacity\":%u,\"ipc_assigned\":%u,\"runtime_metadata\":%u,\"supervisor_stack\":%u}",
+            ",\"heap_accounting\":{\"ipc_storage\":%u,\"ipc_payload_capacity\":%u,\"ipc_assigned\":%u,\"runtime_metadata\":%u,\"supervisor_stack\":%u,\"controller_stack_free\":%u,\"management_reply_reserved\":%u}",
             (unsigned)allocation.channel_storage_bytes,
             (unsigned)allocation.channel_payload_capacity,
             (unsigned)allocation.channel_bytes,
             (unsigned)(allocation.kernel_metadata_bytes-allocation.channel_storage_bytes),
-            (unsigned)allocation.supervisor_stack_bytes);
+            (unsigned)allocation.supervisor_stack_bytes,(unsigned)hardware->controller_stack_free,
+            (unsigned)(MICROS_MANAGEMENT_RESPONSE_BYTES+32));
     }
     used=append(output,capacity,used,",\"channels\":[");
     unsigned count=0;

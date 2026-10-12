@@ -56,7 +56,7 @@ struct service_slot {
     micros_platform_image_t *image;
     const micros_service_descriptor_t *descriptor;
     micros_service_args_t args;
-    uint8_t config_data[MICROS_CONFIG_MAX_BYTES];
+    uint8_t *config_data;
     micros_context_t context;
     micros_platform_task_t *task;
     size_t image_bytes;
@@ -84,7 +84,7 @@ struct micros_runtime {
     service_slot_t services[MICROS_RUNTIME_SERVICE_CAPACITY];
     resource_slot_t resources[MICROS_RUNTIME_HANDLE_CAPACITY];
     micros_channel_t channels[MICROS_CHANNEL_CAPACITY];
-    micros_coord_channel_t coordination[MICROS_CHANNEL_CAPACITY];
+    micros_coord_channel_t *coordination[MICROS_CHANNEL_CAPACITY];
     uint64_t channel_missed[MICROS_CHANNEL_CAPACITY];
     uint64_t channel_last_us[MICROS_CHANNEL_CAPACITY];
     micros_platform_gpio_t *gpio;
@@ -195,7 +195,7 @@ static void release_resource(micros_runtime_t *runtime, service_slot_t *service,
         resource->channel_slot < MICROS_CHANNEL_CAPACITY &&
         runtime->channels[resource->channel_slot].key &&
         runtime->channels[resource->channel_slot].generation == resource->channel_generation) {
-        micros_coord_channel_t *c=&runtime->coordination[resource->channel_slot];
+        micros_coord_channel_t *c=runtime->coordination[resource->channel_slot];
         if (c->result.status==MICROS_COORD_ACCEPTED)
             c->result.status=MICROS_COORD_INDETERMINATE;
     }
@@ -411,7 +411,7 @@ static micros_result_t api_ipc_publish(micros_context_t *context, micros_handle_
         : context->service->stop_requested || context->service->state == MICROS_STATE_STOPPING
             ? MICROS_ERROR_STATE
             : MICROS_OK;
-    if (!result && runtime->coordination[resource->channel_slot].kind) result=MICROS_ERROR_UNSUPPORTED;
+    if (!result && runtime->coordination[resource->channel_slot]->kind) result=MICROS_ERROR_UNSUPPORTED;
     if (!result) {
         result = micros_channel_publish(channel, payload, payload_bytes);
         if (!result) {
@@ -433,7 +433,7 @@ static micros_result_t api_ipc_read(micros_context_t *context, micros_handle_t h
     micros_result_t result = runtime->usage.reboot_required ? MICROS_ERROR_REBOOT_REQUIRED
                              : !channel                     ? MICROS_ERROR_STALE_HANDLE
                                                             : MICROS_OK;
-    if (!result && runtime->coordination[resource->channel_slot].kind) result=MICROS_ERROR_UNSUPPORTED;
+    if (!result && runtime->coordination[resource->channel_slot]->kind) result=MICROS_ERROR_UNSUPPORTED;
     if (!result) {
         result = micros_channel_read(channel, &resource->next_sequence, output, capacity,
                                      output_bytes, info);
@@ -781,10 +781,19 @@ micros_result_t micros_runtime_set_config(micros_runtime_t *runtime, micros_inst
         micros_platform_unlock(runtime->sync);
         return MICROS_ERROR_INVALID_ARGUMENT;
     }
-    memset(service->config_data, 0, sizeof(service->config_data));
-    if (bytes)
-        memcpy(service->config_data, data, bytes);
-    service->args.config_data = bytes ? service->config_data : NULL;
+    /* Configuration is immutable once started. Reserve only the admitted
+     * bytes, rather than four maximum-size records in every empty runtime. */
+    uint8_t *copy = bytes ? malloc(bytes) : NULL;
+    if (bytes && !copy) {
+        micros_platform_unlock(runtime->sync);
+        return MICROS_ERROR_CAPACITY;
+    }
+    if (bytes) memcpy(copy, data, bytes);
+    runtime->usage.kernel_metadata_bytes -= service->args.config_bytes;
+    runtime->usage.kernel_metadata_bytes += bytes;
+    free(service->config_data);
+    service->config_data = copy;
+    service->args.config_data = copy;
     service->args.config_bytes = bytes;
     micros_platform_unlock(runtime->sync);
     return MICROS_OK;
@@ -912,6 +921,8 @@ micros_result_t micros_runtime_unload(micros_runtime_t *runtime, micros_instance
     --runtime->usage.loaded_services;
     micros_platform_image_t *image = service->image;
     void *arena = service->args.arena;
+    uint8_t *configuration = service->config_data;
+    runtime->usage.kernel_metadata_bytes -= service->args.config_bytes;
     uint32_t generation = service->generation;
     memset(service, 0, sizeof(*service));
     if (generation == UINT32_MAX)
@@ -919,6 +930,7 @@ micros_result_t micros_runtime_unload(micros_runtime_t *runtime, micros_instance
     else
         service->generation = generation + 1;
     micros_platform_unlock(runtime->sync);
+    free(configuration);
     micros_platform_arena_free(arena);
     micros_platform_image_close(image);
     return MICROS_OK;
@@ -1038,12 +1050,19 @@ micros_result_t micros_runtime_channel_create(micros_runtime_t *runtime, uint32_
     if (!result &&
         (!available || !fits(runtime->usage.channel_bytes, bytes, runtime->config.channel_bytes)))
         result = MICROS_ERROR_CAPACITY;
-    size_t storage_bytes = (bytes + sizeof(void *) - 1) / sizeof(void *) * sizeof(void *);
+    /* Channel records are reserved only for admitted channels, in the same
+     * allocation as their payload. Empty runtimes pay only for slot pointers. */
+    const size_t alignment = _Alignof(micros_coord_channel_t);
+    size_t payload_bytes_aligned = (bytes + alignment - 1) / alignment * alignment;
+    size_t storage_bytes = payload_bytes_aligned + sizeof(micros_coord_channel_t);
     uint8_t *payload = NULL;
-    if (!result && !(payload = micros_platform_arena_allocate(sizeof(void *), storage_bytes, 0)))
+    if (!result && !(payload = micros_platform_arena_allocate(alignment, storage_bytes, 0)))
         result = MICROS_ERROR_CAPACITY;
     if (!result) {
         available->payload = payload;
+        micros_coord_channel_t *coord = (void *)(payload + payload_bytes_aligned);
+        memset(coord, 0, sizeof(*coord));
+        runtime->coordination[available-runtime->channels] = coord;
         runtime->channel_missed[available-runtime->channels] = 0;
         runtime->channel_last_us[available-runtime->channels] = 0;
         available->key = key;
@@ -1076,7 +1095,7 @@ micros_result_t micros_runtime_channel_destroy(micros_runtime_t *runtime, uint32
         uint32_t generation = channel->generation;
         micros_platform_arena_free(channel->payload);
         memset(channel, 0, sizeof(*channel));
-        memset(&runtime->coordination[slot], 0, sizeof(runtime->coordination[slot]));
+        runtime->coordination[slot] = NULL;
         channel->generation = generation == UINT32_MAX ? 0 : generation + 1;
         result = MICROS_OK;
         break;
@@ -1094,7 +1113,11 @@ micros_runtime_usage_t micros_runtime_usage(micros_runtime_t *runtime)
     for (size_t slot = 0; slot < MICROS_CHANNEL_CAPACITY; ++slot) {
         micros_channel_t *channel = &runtime->channels[slot];
         size_t bytes = (size_t)channel->depth * channel->payload_bytes;
-        payload_storage += (bytes + sizeof(void *) - 1) / sizeof(void *) * sizeof(void *);
+        if (channel->key) {
+            const size_t alignment = _Alignof(micros_coord_channel_t);
+            payload_storage += (bytes + alignment - 1) / alignment * alignment +
+                               sizeof(micros_coord_channel_t);
+        }
     }
     usage.channel_storage_bytes = sizeof(runtime->channels) + payload_storage;
     usage.kernel_metadata_bytes += payload_storage;
@@ -1160,7 +1183,7 @@ static micros_result_t console_port(micros_runtime_t *runtime, micros_instance_t
         resource_slot_t *port = &runtime->resources[i];
         if (port->owner != instance || port->kind != (write ? RESOURCE_PUBLISHER : RESOURCE_SUBSCRIBER)) continue;
         micros_channel_t *channel = resource_channel(runtime, port);
-        if (!channel || channel->key != key || runtime->coordination[port->channel_slot].kind) continue;
+        if (!channel || channel->key != key || runtime->coordination[port->channel_slot]->kind) continue;
         if (write) {
             result = micros_channel_publish(channel, input, input_bytes);
             if (!result) { runtime->channel_last_us[port->channel_slot] = micros_platform_now_us(); micros_platform_notify(runtime->sync); }

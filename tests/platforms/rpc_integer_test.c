@@ -29,7 +29,7 @@ int main(void)
         assert(strstr(result,"\"result\":0,"));
         assert(strstr(result,"\"service_boot\":\"18446744073709551615\""));
         assert(strstr(result,"\"base_ota\":{\"version\":0}"));
-        free(result);
+        micros_controller_rpc_release(result);
     }
     const char *invalid[]={"", "R", "RPC", "RPC 0 0 0 0 -", "RPC 0 0 0 0 - ",
         "RPC 0 0 0 18446744073709551616 - -", "RPC 0 0 0 -1 - -", "RPC 0 0 0 +1 - -",
@@ -38,7 +38,14 @@ int main(void)
         "RPC 0 0 0 0 0123456789abcdef0123456789abcdef0 -", "RPC 0 0 0 0 - 0",
         "RPC 0 0 0 0 - gg", "RPC 0 0 0 0 - - junk"};
     for(unsigned i=0;i<sizeof(invalid)/sizeof(invalid[0]);++i) {
-        char *result=reply(invalid[i]); assert(strstr(result,"\"result\":-1")); free(result);
+        char *result=reply(invalid[i]); assert(strstr(result,"\"result\":-1")); micros_controller_rpc_release(result);
     }
+    char *held=reply("RPC 0 0 0 0 - -");
+    char snapshot[MICROS_MANAGEMENT_RESPONSE_BYTES+32];strcpy(snapshot,held);
+    char next[]="RPC 0 0 0 0 - -";
+    assert(micros_controller_rpc_reply(next,1)==NULL);
+    assert(!strcmp(snapshot,held));
+    micros_controller_rpc_release(held);
+    char *again=reply(next);assert(again==held);micros_controller_rpc_release(again);
     puts("portable RPC and status passed"); return 0;
 }

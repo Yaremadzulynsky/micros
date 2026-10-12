@@ -22,6 +22,10 @@ def prepare_relay_ca(source, output):
     # Python 3.10 with OpenSSL 3.6 can reject valid PEM passed as cadata.
     # The file loader validates the same certificates without that compatibility bug.
     ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT).load_verify_locations(cafile=str(source))
+    # Repeated roots waste scarce target RAM when mbedTLS parses the chain.
+    certificates = re.findall(certificate, pem)
+    unique = dict.fromkeys(ssl.PEM_cert_to_DER_cert(value) for value in certificates)
+    pem = "".join(ssl.DER_cert_to_PEM_cert(value) for value in unique)
     destination = output / "trust/relay-roots.pem"
     destination.parent.mkdir(parents=True, exist_ok=True)
     if not destination.exists() or destination.read_text() != pem:
@@ -142,12 +146,28 @@ def main():
     tls_source = tls_root / tls_relative
     if tls_source.read_text() != tls_patched:
         tls_source.write_text(tls_patched)
+    sys.path.insert(0, str(ROOT / "src"))
+    from micros_tooling.platforms.esp8266.tls_memory import (
+        patch_x509_header, patch_x509_source, trust_header, patch_ca_loader)
+    for relative, patch in (("include/mbedtls/x509_crt.h", patch_x509_header),
+                            ("library/x509_crt.c", patch_x509_source)):
+        original = subprocess.check_output(
+            ["git", "-C", str(tls_root), "show", "HEAD:" + relative], text=True)
+        destination = tls_root / relative
+        patched = patch(original)
+        if destination.read_text() != patched:
+            destination.write_text(patched)
+    ca_header = relay_ca.parent / "relay-der.h"
+    generated = trust_header(relay_ca.read_text())
+    if not ca_header.exists() or ca_header.read_text() != generated:
+        ca_header.write_text(generated)
     diagnostic_relative = "components/esp-tls/esp_tls_mbedtls.c"
     diagnostic_original = subprocess.check_output(
         ["git", "-C", str(args.sdk), "show", "HEAD:" + diagnostic_relative], text=True
     )
     diagnostic_source = args.sdk / diagnostic_relative
     diagnostic_patched = patch_tls_handshake_diagnostics(diagnostic_original, args.tls_diagnostics)
+    diagnostic_patched = patch_ca_loader(diagnostic_patched, ca_header)
     if diagnostic_source.read_text() != diagnostic_patched:
         diagnostic_source.write_text(diagnostic_patched)
     env = dict(

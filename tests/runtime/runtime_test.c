@@ -111,6 +111,30 @@ static void test_ownership(const char *directory)
     assert(!micros_runtime_destroy(runtime));
     puts("PASS owner checks, GPIO conflicts, stale resources/instances, generation exhaustion");
 }
+static void test_configuration_storage(const char *directory)
+{
+    micros_runtime_config_t config = micros_runtime_default_config();
+    micros_runtime_t *runtime = micros_runtime_create(&config);
+    micros_instance_t instance;
+    assert(!micros_runtime_load(runtime, fixture_path(directory, "NORMAL"), 2, &instance));
+    size_t metadata = micros_runtime_usage(runtime).kernel_metadata_bytes;
+    uint8_t settings[MICROS_CONFIG_MAX_BYTES];
+    memset(settings, 0x37, sizeof(settings));
+    assert(!micros_runtime_set_config(runtime, instance, settings, sizeof(settings)));
+    service_slot_t *slot = find_service(runtime, instance);
+    settings[0] = 0;
+    assert(slot->args.config_data[0] == 0x37);
+    assert(micros_runtime_usage(runtime).kernel_metadata_bytes == metadata + sizeof(settings));
+    assert(!micros_runtime_set_config(runtime, instance, slot->args.config_data, 2));
+    assert(slot->args.config_data[0] == 0x37 && slot->args.config_bytes == 2);
+    assert(micros_runtime_usage(runtime).kernel_metadata_bytes == metadata + 2);
+    assert(!micros_runtime_set_config(runtime, instance, NULL, 0));
+    assert(!slot->args.config_data && !slot->args.config_bytes);
+    assert(micros_runtime_usage(runtime).kernel_metadata_bytes == metadata);
+    assert(!micros_runtime_unload(runtime, instance));
+    assert(!micros_runtime_destroy(runtime));
+}
+
 static void test_individual_restart(const char *directory)
 {
     micros_runtime_config_t config = micros_runtime_default_config();
@@ -454,7 +478,7 @@ static void test_coordination(const char *directory)
             assert(!micros_runtime_coord_exchange(r[1],1,wire,size,reply,&reply_size));
             assert(!api_coord(ctx[1],h[1],read,data,sizeof(data),&bytes,&ticket));
             assert(!api_ipc_close(ctx[1],h[1]));
-            assert(r[1]->coordination[0].result.status==MICROS_COORD_INDETERMINATE);
+            assert(r[1]->coordination[0]->result.status==MICROS_COORD_INDETERMINATE);
         } else {
             data[1]=99;bytes=2;
             assert(!api_coord(ctx[0],h[0],write,data,sizeof(data),&bytes,&info));
@@ -517,6 +541,7 @@ int main(int argc, char **argv)
     assert(argc == 2 || argc == 3);
     if (argc == 3)
         test_hang(argv[1], argv[2]);
+    test_configuration_storage(argv[1]);
     test_individual_restart(argv[1]);
     test_coordination(argv[1]);
     test_stale_coordination_cleanup(argv[1]);

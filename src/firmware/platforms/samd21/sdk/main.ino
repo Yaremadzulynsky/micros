@@ -9,7 +9,7 @@ void setup()
 {
 
     micros_samd21_watchdog_enable();
-    if (xTaskCreate(controller_task, "controller", 768, NULL, 2, NULL) != pdPASS)
+    if (xTaskCreate(controller_task, "controller", MICROS_CONTROLLER_TASK_STACK_BYTES / sizeof(StackType_t), NULL, 2, NULL) != pdPASS)
         micros_samd21_panic();
     vTaskStartScheduler();
     micros_samd21_panic();

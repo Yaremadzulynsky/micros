@@ -55,3 +55,32 @@ application lifecycle, controller commands, the deployment record and reporting;
 `kernel/` contains runtime and loader internals. A port uses these shared types and
 implementations rather than reimplementing them. Application services use the
 ABI in `src/sdk/abi/include/micros/`.
+
+## Management and application memory
+
+The shared RPC parser reserves one bounded reply workspace before applications
+start. A transport borrows it until its final read and must release it with
+`micros_controller_rpc_release`; it must never free the pointer. The controller
+serializes reply creation. USB receives an explicit pre-execution busy response
+while the relay owns that workspace. Poll telemetry releases its storage once
+sent; mutation replies remain available until acknowledged. This keeps status
+and recovery replies independent of application heap availability.
+
+Channel coordination records share the admitted channel's payload allocation;
+unused channels reserve no records. Service configuration is copied into a
+bounded allocation during admission and released on unload. The maximum channel
+and configuration sizes remain unchanged. The controller releases its temporary
+graph after admission, before allocating worker stacks.
+
+Target startup selects a controller-task stack separately from the total service
+stack budget. SAMD21 and ESP8266 expose its measured unused margin as
+`heap_accounting.controller_stack_free`, alongside reserved management reply
+bytes. Validate peak usage during activation and network connection establishment,
+not only idle heap. TLS work and platform networking buffers are additional costs.
+
+Embedded status identifies its layout version and each service's physical slot.
+The host expands this compact geometry into the flash inventory without allocating
+partition JSON on the controller. CLI deployments publish service/channel labels
+bound to the exact base and graph hashes, including USB deployments when an
+operator server is configured. Missing stored-image measurements remain unknown;
+partition reservations are never reported as measured free space.

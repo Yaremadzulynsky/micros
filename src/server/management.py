@@ -157,7 +157,9 @@ class Management:
             for channel in status.get('channels',[]):
                 match=next((item for item in labels['channels'] if item['key']==channel['key']),None)
                 if match: channel['name']=match['name']
-        return status
+        # Apply newly matched names to the compact embedded flash inventory too.
+        from micros_tooling.platforms.embedded.telemetry import expand
+        return expand(status)
 
     def history(self, device):
         with self.registry.changed:

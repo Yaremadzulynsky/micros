@@ -10,7 +10,7 @@ static micros_result_t api_coord_open(micros_context_t *ctx, uint32_t key, uint3
     resource_slot_t *p=find_resource(ctx,*handle,access==MICROS_IPC_PUBLISH ? RESOURCE_PUBLISHER : RESOURCE_SUBSCRIBER);
     micros_channel_t *ch=resource_channel(r,p);
     if (!ch) { micros_platform_unlock(r->sync); api_ipc_close(ctx,*handle); return MICROS_ERROR_STALE_HANDLE; }
-    micros_coord_channel_t *c=&r->coordination[p->channel_slot];
+    micros_coord_channel_t *c=r->coordination[p->channel_slot];
     if (ch->policy!=MICROS_CHANNEL_LATEST || ch->payload_bytes>MICROS_COORD_PAYLOAD ||
         (c->kind && c->kind!=kind)) rc=MICROS_ERROR_INVALID_ARGUMENT;
     for (unsigned i=0; !rc && i<MICROS_RUNTIME_HANDLE_CAPACITY; ++i) {
@@ -38,7 +38,7 @@ static micros_result_t api_coord(micros_context_t *ctx, micros_handle_t handle, 
     if (!ch || p->line!=kind) rc=MICROS_ERROR_STALE_HANDLE;
     else if (r->usage.reboot_required || ctx->service->stop_requested) rc=MICROS_ERROR_STATE;
     if (rc) { micros_platform_unlock(r->sync); return rc; }
-    micros_coord_channel_t *c=&r->coordination[p->channel_slot];
+    micros_coord_channel_t *c=r->coordination[p->channel_slot];
     micros_coord_record_t *a=&c->primary, *b=&c->result;
     uint64_t now=micros_platform_now_us();
     int write=op==1 || op==3 || op==5 || op==7;
@@ -93,8 +93,8 @@ micros_result_t micros_runtime_coord_exchange(micros_runtime_t *r,uint32_t key,
     micros_result_t rc=MICROS_ERROR_INVALID_ARGUMENT;
     micros_platform_lock(r->sync);
     for(unsigned slot=0;slot<MICROS_CHANNEL_CAPACITY;++slot) {
-        if(r->channels[slot].key!=key)continue;
-        micros_coord_channel_t *c=&r->coordination[slot];
+        if(!r->channels[slot].key || r->channels[slot].key!=key)continue;
+        micros_coord_channel_t *c=r->coordination[slot];
         if(!c->role || r->usage.reboot_required)break;
         rc=MICROS_OK;
         if(bytes) {
@@ -121,8 +121,8 @@ micros_result_t micros_runtime_coord_bind(micros_runtime_t *r,uint32_t key,uint3
     micros_result_t rc=MICROS_ERROR_INVALID_ARGUMENT;
     micros_platform_lock(r->sync);
     for(unsigned slot=0;slot<MICROS_CHANNEL_CAPACITY;++slot) {
-        if(r->channels[slot].key!=key)continue;
-        micros_coord_channel_t *c=&r->coordination[slot];
+        if(!r->channels[slot].key || r->channels[slot].key!=key)continue;
+        micros_coord_channel_t *c=r->coordination[slot];
         if (!epoch && role==1) epoch=c->epoch;
         if(c->kind!=kind || (c->role && (c->role!=role || c->epoch!=epoch)))break;
         int count=0,invalid=0;
@@ -143,6 +143,6 @@ uint64_t micros_runtime_coord_identity(micros_runtime_t *r,uint32_t key) {
     if (!r) return 0;
     uint64_t epoch=0;micros_platform_lock(r->sync);
     for(unsigned slot=0;slot<MICROS_CHANNEL_CAPACITY;++slot)
-        if(r->channels[slot].key==key)epoch=r->coordination[slot].epoch;
+        if(key && r->channels[slot].key==key)epoch=r->coordination[slot]->epoch;
     micros_platform_unlock(r->sync);return epoch;
 }

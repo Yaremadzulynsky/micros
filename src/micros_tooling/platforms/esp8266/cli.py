@@ -239,32 +239,44 @@ def main(args):
             if project is None or project == ROOT / "config/micros.toml":
                 project = ROOT / "examples/esp8266-demo/micros.toml"
             status = remote.status()
-            require(
-                status["base_sha256"] == base_info(firmware)["hash"].hex(),
-                "Connected base differs from ELF",
-            )
-            bank = 1 - status["good"] if status["good"] < 2 else 0
-            output = Path(getattr(args, "output", None) or ROOT / "build/esp8266/deploy")
-            if args.command == 'deploy' and not getattr(args, 'force', False) and status['good'] in (0, 1) and not status['pending'] and status['active'] == status['good']:
-                current = build(project, firmware, output / 'current-check', compiler, status['good'], getattr(args, 'board', None), getattr(args, 'overlay', None))
-                if current['graph_sha256'] == status['good_sha256'] and all(s['state'] in (4, 'Running') for s in status['services']):
-                    print(json.dumps(dict(unchanged=True, message='Application already matches; no flash writes or restart.', status=status)))
-                    return
-            report = build(
-                project,
-                firmware,
-                output,
-                compiler,
-                bank,
-                getattr(args, "board", None),
-                getattr(args, "overlay", None),
-            )
+            release = getattr(args, 'release', None)
+            if release:
+                output = Path(release)
+                report = json.loads((output / 'report.json').read_text())
+                require(report['base_sha256'] == status['base_sha256'], 'Release was built for a different base')
+            else:
+                require(
+                    status["base_sha256"] == base_info(firmware)["hash"].hex(),
+                    "Connected base differs from ELF",
+                )
+                bank = 1 - status["good"] if status["good"] < 2 else 0
+                output = Path(getattr(args, "output", None) or ROOT / "build/esp8266/deploy")
+                if args.command == 'deploy' and not getattr(args, 'force', False) and status['good'] in (0, 1) and not status['pending'] and status['active'] == status['good']:
+                    current = build(project, firmware, output / 'current-check', compiler, status['good'], getattr(args, 'board', None), getattr(args, 'overlay', None))
+                    if current['graph_sha256'] == status['good_sha256'] and all(s['state'] in (4, 'Running') for s in status['services']):
+                        from micros_tooling.platforms.embedded.releases import publish
+                        from micros_tooling.storage.workspace import Workspace
+                        publish(Workspace(state_root().parent), remote, status, current)
+                        print(json.dumps(dict(unchanged=True, message='Application already matches; no flash writes or restart.', status=status)))
+                        return
+                report = build(
+                    project,
+                    firmware,
+                    output,
+                    compiler,
+                    bank,
+                    getattr(args, "board", None),
+                    getattr(args, "overlay", None),
+                )
             result = (
                 report
                 if args.command == "build" or getattr(args, "dry_run", False)
                 else remote.deploy((output / "bank.bin").read_bytes(), report)
             )
             if args.command == 'deploy' and not getattr(args, 'dry_run', False):
+                from micros_tooling.platforms.embedded.releases import publish
+                from micros_tooling.storage.workspace import Workspace
+                publish(Workspace(state_root().parent), remote, result, report)
                 path = state_root() / 'history' / ((name or 'usb') + '.json')
                 history = json.loads(path.read_text()) if path.exists() else []
                 history.append(dict(time=time.time(), report=report, status=result))

@@ -42,6 +42,15 @@ class TLSSetupTest(unittest.TestCase):
             self.assertEqual(frozen.read_bytes(), first)
             self.assertEqual(source.read_bytes(), original)
 
+    def test_duplicate_trust_is_removed_without_dropping_unique_roots(self):
+        source = Path(__file__).resolve().parents[2] / 'src/firmware/platforms/esp8266/sdk/certs/relay-roots.pem'
+        original = source.read_text()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repeated = root / 'repeated.pem'
+            repeated.write_text(original + original)
+            self.assertEqual(prepare_relay_ca(repeated, root).read_text(), original)
+
     def test_invalid_trust_and_private_keys_are_rejected_before_copy(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
