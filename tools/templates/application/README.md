@@ -5,17 +5,28 @@
 ```sh
 ./micros generate                 # Every local service; no board needed
 ./micros generate --json          # Same operation, structured output
-./micros compose                  # Validate the single unit offline
 ./micros test                     # Application tests under tests/
 ```
 
 `micros.lock` pins the SDK revision. `services/hello/service.toml` owns the reusable
-implementation; `units/000000000000.toml` owns this board's identity, wiring,
-settings and memory allocation. Run `./micros enroll` to choose or create a server,
-install the board tools, flash the board, and connect Wi-Fi. After success, an
-unchanged starter for the same platform receives the board ID and detected ESP32
-flash capacity automatically; the original placeholder is saved under
-`build/enrollment/`. The command prints the deployment preview to run next.
+implementation. New projects have no board unit or placeholder hardware ID.
+Run `./micros enroll` to choose or create a server, install the board tools,
+flash the board, and connect Wi-Fi. After the board is verified online,
+enrollment creates `units/<hardware-id>.toml` with its detected board profile,
+ESP32 flash capacity, and the hello example service. Each additional board gets
+its own unit referencing the same project-owned example. Existing unit files and
+service code are preserved. Enrollment does not deploy application services.
+
+Then run the commands printed by enrollment:
+
+```sh
+./micros compose -d HARDWARE_ID       # Validate this board's unit offline
+./micros deploy -d HARDWARE_ID --dry-run
+./micros deploy -d HARDWARE_ID
+./micros logs -d HARDWARE_ID --follow  # Expect Hello world
+```
+
+You can generate, test and run `host.toml` before enrolling any board.
 
 Start by changing `config.interval_ms` under `[services.hello]` in `host.toml`
 or your unit file. The heartbeat's `config_schema` defines the default and bounds;
@@ -30,9 +41,10 @@ in your application before building/deploying. See the
 [service walkthrough](https://docs.meetmicros.com/site/write-a-service/).
 `./micros scaffold-service services/my-service --new` creates an empty hook service.
 
-If you have customized the unit, replace the placeholder ID and filename together
-and select the correct board profile before building or deploying. Enrollment
-preserves customized units and does not deploy application services.
+Review application wiring in the new unit before deploying hardware services.
+Enrollment detects the chip and flash, not attached peripherals. Older untouched
+placeholder units are migrated with a backup under `build/enrollment/`; customized
+legacy placeholders are preserved for you to migrate deliberately.
 
 New services declare local types, `config_schema` types/defaults/bounds, typed `pins`, timer-name
 lists, interface references and commands. Units select `config` values, assign

@@ -9,6 +9,8 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "src"))
+from micros_tooling.config.scaffold import bind_starter
 
 
 class LauncherTests(unittest.TestCase):
@@ -35,6 +37,7 @@ class LauncherTests(unittest.TestCase):
         return result
 
     def test_project_selection_and_generation_from_nested_directory(self):
+        bind_starter(self.app, 'aabbccddeeff', 'esp32', 4)
         nested = self.app / 'services/hello/src'
         for args in (['compose', '--json'], ['generate', '--json']):
             results = [json.loads(self.invoke(route, args, nested).stdout) for route in self.routes]
@@ -47,16 +50,19 @@ class LauncherTests(unittest.TestCase):
             for platform in ('esp32', 'samd21', 'esp8266'):
                 app = self.directory / f'{platform}-{index}'
                 self.invoke(route, ['new', str(app), '--platform', platform], self.app)
+                self.assertFalse((app / 'units').exists())
+                bind_starter(app, 'aabbccddeeff', platform, 4 if platform != 'samd21' else None)
                 result = self.invoke([str(app / 'micros')], ['compose', '--json'], self.directory)
                 self.assertEqual(json.loads(result.stdout)['services'][0]['name'], 'example.hello')
                 self.assertEqual((app / 'micros').read_bytes(), (self.app / 'micros').read_bytes())
 
     def test_help_explicit_project_and_sdk_escape_do_not_recurse(self):
+        bind_starter(self.app, 'aabbccddeeff', 'esp32', 4)
         for args in (['--help'], ['build', '--help'], ['sdk', '--help'], ['host', '--help'], ['setup', '--help']):
             results = [self.invoke(route, args, self.app).stdout for route in self.routes]
             self.assertTrue(all(value == results[0] for value in results), args)
         for route in self.routes:
-            self.invoke(route, ['generate', '--project', str(self.app / 'units/000000000000.toml'), '--json'], self.app)
+            self.invoke(route, ['generate', '--project', str(self.app / 'units/aabbccddeeff.toml'), '--json'], self.app)
 
     def test_pin_mismatch_and_usage_are_structured_and_fail(self):
         for route in self.routes:
@@ -107,13 +113,18 @@ class LauncherTests(unittest.TestCase):
         self.env.pop('MICROS_SDK')
         # Both entrypoints work without mutating a cached SDK to create an interpreter shim.
         for route in ([str(binary)], [str(app / 'micros')]):
-            self.invoke(route, ['compose', '--json'], app)
+            self.invoke(route, ['generate', '--json'], app)
         self.invoke([str(binary)], ['new', str(self.directory / 'second app'), '--platform', 'esp8266'], app)
         (app / '.sdk').unlink()
-        self.invoke([str(app / 'micros')], ['compose', '--json'], app)
+        self.invoke([str(app / 'micros')], ['generate', '--json'], app)
         self.assertFalse((cache / 'build/python').exists())
 
     def test_starter_lifecycle_and_existing_destination(self):
+        self.assertFalse((self.app / 'units').exists())
+        for route in self.routes:
+            for command in ('compose', 'pins', 'deploy'):
+                result = self.invoke(route, [command], self.app, code=1)
+                self.assertIn('Run ./micros enroll', result.stderr)
         self.invoke(self.routes[0], ['test'], self.app)
         source = self.app / 'services/hello/src/service.c'
         original = source.read_bytes()

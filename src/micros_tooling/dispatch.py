@@ -49,7 +49,7 @@ def parser():
     new = commands.add_parser("new", help="create an independent application project offline")
     new.add_argument("directory", type=Path, help="new application directory; must not exist")
     new.add_argument("--platform", choices=hardware_names(), default="esp32",
-                     help="starter board profile and hello memory budget (default: esp32)")
+                     help="accepted for compatibility; enrollment detects the board and selects its profile and memory budget")
     compose = commands.add_parser("compose", help="validate and inspect a setup or deployment offline; optionally emit complete unit recipes")
     compose.add_argument("deployment", type=Path, help="physical setup or deployment TOML naming devices, services, connections and captures")
     compose.add_argument("--output", type=Path, help="write validated recipes to a new review directory")
@@ -379,7 +379,7 @@ def main():
     if args.command == "new":
         from micros_tooling.config.scaffold import create
         destination = create(args.directory, platform=args.platform)
-        print(f"Created application: {destination}\nSee {destination / 'README.md'} for SDK setup and offline composition.")
+        print(f"Created application: {destination}\nSee {destination / 'README.md'} for host tests and board enrollment.")
         return
     if os.environ.get("MICROS_APPLICATION_ROOT") and hasattr(args, "project"):
         require(args.project is not None or getattr(args, "release", None),

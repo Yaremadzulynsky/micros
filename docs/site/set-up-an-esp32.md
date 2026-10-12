@@ -84,17 +84,19 @@ enrollment token. It is different from `--retry-flash`, which retries saved imag
 
 ## 03 · Select the application {#select-the-application}
 
-When enrollment succeeds inside an unchanged [starter project](get-started.md#create-your-project)
-for the same platform, it replaces the placeholder unit ID and filename with the
-enrolled hardware ID and uses the detected ESP32 flash capacity. It preserves the
-original placeholder under `build/enrollment/` and prints the next deployment
-command. This does not deploy a service.
+When enrollment succeeds inside a [starter project](get-started.md#create-your-project),
+it creates `units/HARDWARE_ID.toml` with the detected identity, board profile and
+ESP32 flash capacity, selecting the project's hello service. There is no placeholder
+unit in a new project. Each additional board gets its own file referencing the same
+example. Existing units and service source are preserved. The command prints the
+next deployment commands; enrollment itself does not deploy a service.
 
-Customized units, multiple units and starters for a different platform are left
-unchanged. In those projects, replace the placeholder unit ID and filename yourself
-and set `board.profile` and `board.flash_mb` for the physical board; enrollment
-does not infer application pins. For a Feather V2 with peripheral wiring, use
-`adafruit_feather_esp32_v2` and `8`.
+Older untouched placeholders are migrated with a backup under `build/enrollment/`.
+Customized legacy placeholders are preserved and need manual migration. If you
+removed the hello example, enrollment leaves your service selection to you and
+prints the expected unit path. Review `board.profile` and application pins before
+adding hardware services; enrollment cannot identify peripherals. For a Feather V2
+with peripheral wiring, use `adafruit_feather_esp32_v2` and `flash_mb = 8`.
 
 ```sh
 ./micros compose -d HARDWARE_ID

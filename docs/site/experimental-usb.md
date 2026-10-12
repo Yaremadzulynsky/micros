@@ -62,16 +62,30 @@ micros new my-mkr-application --platform samd21
 micros new my-esp8266-application --platform esp8266
 ```
 
-These starters select `arduino_mkr_wifi_1010` or `esp8266_4mb` and omit the
-ESP32-only `flash_mb` field. The MKR starter gives hello a 1024-byte worker stack;
-the ESP8266 starter retains 4096 bytes. The default `micros new` remains ESP32.
-The MKR's smaller RAM budget cannot reliably accommodate the ESP32 starter's
-4096-byte hello worker together with management. Size stacks for each real
-service and inspect runtime headroom.
+New projects contain the example service and `host.toml`, without a placeholder
+board unit. Successful `./micros enroll` creates the real unit automatically,
+selecting `arduino_mkr_wifi_1010` or `esp8266_4mb` from the detected board. It omits
+ESP32-only `flash_mb` and gives hello a 1024-byte worker stack on MKR or 4096 bytes
+on ESP8266. The `new --platform` flag remains accepted for compatibility.
 
-In your application, rename `units/000000000000.toml` to
-`units/HARDWARE_ID.toml` and set `unit.device_id` to that same ID. No hello source
-or memory edits are needed for a target-specific starter.
+If you used the manual USB provisioning steps above without enrollment, create
+`units/HARDWARE_ID.toml` yourself, using the observed twelve-digit hardware ID:
+
+```toml
+[unit]
+device_id = "HARDWARE_ID"
+
+[board]
+profile = "arduino_mkr_wifi_1010" # Use esp8266_4mb for ESP8266.
+
+[services.hello]
+source = "../services/hello"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 1024 } # Use 4096 for ESP8266.
+config = { interval_ms = 1000 }
+```
+
+Size stacks for each real service and inspect runtime headroom.
 
 If converting an existing ESP32 starter instead, replace its board section with
 `profile = "arduino_mkr_wifi_1010"` or `profile = "esp8266_4mb"`, remove

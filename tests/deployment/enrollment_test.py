@@ -47,18 +47,77 @@ class EnrollmentTest(unittest.TestCase):
         self.remote = Mock()
         self.remote.raw.return_value = b'{}'
 
+    def legacy_unit(self, root):
+        from micros_tooling.config.scaffold import starter_unit
+        from micros_tooling.config.composition import toml
+        unit = starter_unit('esp32')
+        unit['unit'] = {'device_id': '000000000000'}
+        path = root / 'units/000000000000.toml'
+        path.parent.mkdir()
+        path.write_text(toml(unit))
+        return path
+
+    def test_second_board_gets_own_unit_and_existing_edits_are_preserved(self):
+        from micros_tooling.config.scaffold import create, bind_starter
+        from micros_tooling.config.configuration import read_toml, load_project
+        root = create(self.root / 'multiple-boards')
+        source = root / 'services/hello/src/service.c'
+        source.write_text(source.read_text() + '\n/* Application-owned edit. */\n')
+        original_source = source.read_bytes()
+        first = bind_starter(root, 'aabbccddeeff', 'esp32', 8)
+        first.write_text(first.read_text().replace('interval_ms = 1000', 'interval_ms = 250'))
+        original_unit = first.read_bytes()
+        second = bind_starter(root, 'aabbccddee00', 'samd21')
+        self.assertEqual(read_toml(second)['services']['hello']['memory']['stack_bytes'], 1024)
+        self.assertEqual(len(load_project(second)['services']), 1)
+        self.assertEqual(bind_starter(root, 'aabbccddeeff', 'esp32', 4), first)
+        self.assertEqual(first.read_bytes(), original_unit)
+        self.assertEqual(source.read_bytes(), original_source)
+        self.assertEqual(len(list((root / 'units').glob('*.toml'))), 2)
+
+    def test_invalid_identity_capacity_and_removed_example_do_not_create_unit(self):
+        from micros_tooling.config.scaffold import create, bind_starter
+        root = create(self.root / 'invalid-board')
+        for device, capacity in [('000000000000', 4), ('bad', 4), ('aabbccddeeff', 16)]:
+            with self.assertRaises(ValueError):
+                bind_starter(root, device, 'esp32', capacity)
+        self.assertFalse((root / 'units').exists())
+        (root / 'services/hello/service.toml').unlink()
+        self.assertIsNone(bind_starter(root, 'aabbccddeeff', 'esp32', 4))
+        self.assertFalse((root / 'units').exists())
+
+    def test_unit_created_only_after_successful_enrollment(self):
+        from contextlib import nullcontext
+        from micros_tooling.config.scaffold import create
+        from micros_tooling.config.configuration import load_project
+        root = create(self.root / 'enrollment-flow')
+        with patch('micros_tooling.deployment.server_selection.enrollment_server', return_value=nullcontext()), \
+             patch('micros_tooling.storage.client.application_root', return_value=root), \
+             patch.object(e, '_enroll') as install:
+            install.side_effect = ValueError('Wi-Fi not confirmed')
+            with self.assertRaisesRegex(ValueError, 'Wi-Fi not confirmed'):
+                e.enroll(args())
+            self.assertFalse((root / 'units').exists())
+            install.side_effect = None
+            install.return_value = dict(online=True, device_id=BOARD['device_id'], platform='esp32', flash_mb=8, message='Board online.')
+            result = e.enroll(args())
+        unit = Path(result['project_unit'])
+        self.assertEqual(unit.name, BOARD['device_id'] + '.toml')
+        self.assertEqual(load_project(unit)['services'][0]['name'], 'example.hello')
+        self.assertIn('micros deploy -d ' + BOARD['device_id'], result['next_steps'])
+
     def test_starter_binding_uses_detected_identity_and_capacity(self):
         from micros_tooling.config.scaffold import create, bind_starter
         from micros_tooling.config.configuration import read_toml, load_project
         for platform, capacity in (('esp32', 8), ('esp8266', 4), ('samd21', None)):
             root = create(self.root / ('app-' + platform), platform)
-            before = (root / 'units/000000000000.toml').read_bytes()
+            self.assertFalse((root / 'units').exists())
             destination = bind_starter(root, BOARD['device_id'], platform, capacity)
             self.assertEqual(read_toml(destination)['unit']['device_id'], BOARD['device_id'])
             if platform == 'esp32':
                 self.assertEqual(read_toml(destination)['board']['flash_mb'], 8)
             self.assertFalse((root / 'units/000000000000.toml').exists())
-            self.assertEqual((root / 'build/enrollment/000000000000.toml.before').read_bytes(), before)
+            self.assertFalse((root / 'build/enrollment').exists())
             self.assertEqual(len(load_project(destination)['services']), 1)
             self.assertEqual(bind_starter(root, BOARD['device_id'], platform, capacity), destination)
 
@@ -66,7 +125,7 @@ class EnrollmentTest(unittest.TestCase):
         from micros_tooling.config.scaffold import create, bind_starter
         for change in ('custom', 'platform', 'multiple'):
             root = create(self.root / ('app-' + change))
-            placeholder = root / 'units/000000000000.toml'
+            placeholder = self.legacy_unit(root)
             if change == 'custom':
                 placeholder.write_text(placeholder.read_text().replace('stack_bytes = 4096', 'stack_bytes = 8192'))
             if change == 'multiple':
@@ -80,7 +139,7 @@ class EnrollmentTest(unittest.TestCase):
         from micros_tooling.config.configuration import read_toml
         from micros_tooling.config.composition import toml
         root = create(self.root / 'previous-starter')
-        placeholder = root / 'units/000000000000.toml'
+        placeholder = self.legacy_unit(root)
         unit = read_toml(placeholder)
         del unit['services']['hello']['config']
         placeholder.write_text(toml(unit))

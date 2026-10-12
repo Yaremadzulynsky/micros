@@ -14,7 +14,7 @@ def starter_unit(platform):
     from micros_tooling.platforms.registry import get
     target = get(platform)
     require(target is not None and target.board, 'Unsupported starter platform')
-    unit = read_toml(ROOT / 'tools/templates/application/units/000000000000.toml')
+    unit = read_toml(ROOT / 'tools/templates/enrolled-unit.toml')
     if platform != 'esp32':
         unit['board'] = {'profile': target.board}
         if target.starter_stack:
@@ -23,7 +23,7 @@ def starter_unit(platform):
 
 
 def bind_starter(root, device_id, platform, flash_mb=None):
-    """Connect only the untouched starter recipe; never rewrite authored units."""
+    """Create a detected board unit referencing the project example; preserve authored files."""
     from micros_tooling.config.configuration import read_toml
     from micros_tooling.config.composition import toml
     from micros_tooling.storage.store import atomic_write
@@ -34,24 +34,31 @@ def bind_starter(root, device_id, platform, flash_mb=None):
     if destination.is_file():
         return destination if read_toml(destination).get('unit', {}).get('device_id') == device_id else None
     placeholder = root / 'units/000000000000.toml'
-    if sorted((root / 'units').glob('*.toml')) != [placeholder]:
+    unit = starter_unit(platform)
+    if placeholder.exists():
+        # Migrate old, untouched starters, but never discard authored settings.
+        if sorted((root / 'units').glob('*.toml')) != [placeholder]:
+            return None
+        previous = read_toml(placeholder)
+        unit['unit'] = {'device_id': '000000000000'}
+        if 'config' not in previous.get('services', {}).get('hello', {}):
+            unit['services']['hello'].pop('config', None)
+        if previous != unit:
+            return None
+        unit = previous
+    elif not (root / 'services/hello/service.toml').is_file():
+        # A developer may deliberately remove the example. Do not restore it.
         return None
-    unit = read_toml(placeholder)
-    expected = starter_unit(platform)
-    # Earlier starters used the same recipe without an explicit default setting.
-    if 'config' not in unit.get('services', {}).get('hello', {}):
-        expected['services']['hello'].pop('config', None)
-    if unit != expected:
-        return None
-    unit['unit']['device_id'] = device_id
+    unit['unit'] = {'device_id': device_id}
     if platform == 'esp32':
         require(flash_mb in (4, 8), 'Unsupported detected ESP32 flash capacity')
         unit['board']['flash_mb'] = flash_mb
     backup = root / 'build/enrollment/000000000000.toml.before'
-    if not backup.exists():
+    if placeholder.exists() and not backup.exists():
         atomic_write(backup, placeholder.read_bytes())
     atomic_write(destination, toml(unit, comment="Board application configuration. Edit this file to configure this board.").encode())
-    placeholder.unlink()
+    if placeholder.exists():
+        placeholder.unlink()
     return destination
 
 
@@ -69,9 +76,6 @@ def create(destination, platform="esp32"):
         staging = Path(temporary) / "application"
         shutil.copytree(ROOT / "tools/templates/application", staging)
         from micros_tooling.config.composition import toml
-        if platform != "esp32":
-            unit_path = staging / "units/000000000000.toml"
-            unit_path.write_text(toml(starter_unit(platform), comment="Board application configuration. Edit this file to configure this board."))
         (staging / "micros.lock").write_text(toml(dict(format=1, sdk=dict(
             repository="https://github.com/Yaremadzulynsky/micros.git", revision=revision)),
             comment="Pinned SDK revision. Update deliberately when upgrading this application."))

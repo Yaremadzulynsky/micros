@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from micros_tooling.config.configuration import load_project, read_toml
 from micros_tooling.config.composition import toml
+from micros_tooling.config.scaffold import bind_starter
 
 
 class ExternalApplicationTests(unittest.TestCase):
@@ -26,6 +27,8 @@ class ExternalApplicationTests(unittest.TestCase):
         self.env.pop("MICROS_APPLICATION_ROOT", None)
         result = self.run_cli(ROOT / "micros", "new", self.app)
         self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse((self.app/'units').exists())
+        bind_starter(self.app, 'aabbccddeeff', 'esp32', 4)
 
     def run_cli(self, launcher, *args):
         return subprocess.run([str(launcher), *map(str, args)], cwd=self.directory,
@@ -50,7 +53,7 @@ class ExternalApplicationTests(unittest.TestCase):
         self.assertTrue((self.app/'micros.lock').is_file())
 
     def test_explicit_unit_generation_keeps_outputs_under_build(self):
-        unit = self.app/'units/000000000000.toml'
+        unit = self.app/'units/aabbccddeeff.toml'
         run = self.run_cli(self.app/'micros', 'generate', '--project', unit, '--json')
         self.assertEqual(run.returncode, 0, run.stderr)
         self.assertTrue(all(Path(path).is_relative_to(self.app/'build') for path in json.loads(run.stdout)['headers']))
@@ -65,8 +68,8 @@ class ExternalApplicationTests(unittest.TestCase):
         self.assertEqual(source.read_text(), "developer edits\n")
 
     def test_multiple_units_require_explicit_device_for_composition(self):
-        path = self.app/'units/000000000000.toml'
-        (path.parent/'000000000001.toml').write_text(path.read_text().replace('000000000000', '000000000001'))
+        path = self.app/'units/aabbccddeeff.toml'
+        (path.parent/'aabbccddee00.toml').write_text(path.read_text().replace('aabbccddeeff', 'aabbccddee00'))
         run = self.run_cli(self.app/'micros', 'compose')
         self.assertNotEqual(run.returncode, 0)
         self.assertIn('Select -d', run.stderr)

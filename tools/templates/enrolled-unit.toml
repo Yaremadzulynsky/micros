@@ -1,7 +1,4 @@
-# Replace this placeholder ID and filename together with your board's hardware ID.
-[unit]
-device_id = "000000000000"
-
+# Starter configuration for a detected board. Enrollment supplies its identity.
 [project]
 name = "My board application"
 

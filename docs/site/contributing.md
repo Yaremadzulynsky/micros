@@ -44,8 +44,8 @@ ctest --test-dir build/host --output-on-failure
 
 The host suite needs no board or operator credentials. The
 [host CI workflow](../../.github/workflows/host.yml) defines the tested operating
-systems and tool versions, and also checks new-application generation, composition
-and tests. Install Node.js to include the browser-free console checks locally;
+systems and tool versions, and also checks new-application generation and tests before enrollment. The enrollment tests
+check creation and composition of real board units. Install Node.js to include the browser-free console checks locally;
 they need no npm packages or browser. Hardware tests remain explicit operations.
 
 Add `-R TEST_NAME` to CTest for a focused run. Failure details are in

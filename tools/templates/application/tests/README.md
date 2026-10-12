@@ -3,10 +3,11 @@
 Keep tests of your service behavior here. The SDK tests its runtime, ABI and
 built-in services; your project owns tests for your own application behavior.
 
-An initial offline configuration check is:
+Before enrollment, run `./micros generate` and `./micros test`. After enrollment
+creates your board unit, an offline configuration check is:
 
 ```sh
-./micros compose
+./micros compose -d HARDWARE_ID
 ```
 
 Composition validates declarations and source paths. It does not execute services

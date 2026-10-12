@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch
 
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'src'))
-from micros_tooling.config.scaffold import create
+from micros_tooling.config.scaffold import create, bind_starter
 from micros_tooling.config.configuration import read_toml
 from micros_tooling.fleet import server
 
@@ -93,7 +93,9 @@ class OnboardingDefaultsTest(unittest.TestCase):
                                            ('samd21','arduino_mkr_wifi_1010',1024),
                                            ('esp8266','esp8266_4mb',4096)]:
                 app=create(Path(directory)/platform,platform)
-                unit=read_toml(app/'units/000000000000.toml')
+                self.assertFalse((app/'units').exists())
+                path=bind_starter(app,'aabbccddeeff',platform,4 if platform!='samd21' else None)
+                unit=read_toml(path)
                 self.assertEqual(unit['board']['profile'],profile)
                 self.assertEqual(unit['services']['hello']['memory']['stack_bytes'],stack)
                 self.assertEqual('flash_mb' in unit['board'],platform=='esp32')

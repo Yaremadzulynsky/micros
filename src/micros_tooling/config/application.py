@@ -15,6 +15,9 @@ def select_unit(requested=None, *, root, state=None):
     units = {unit_identity(path): path for path in paths}
     if None in units or len(units) != len(paths):
         raise ValueError("Each unit must declare its unique hardware identity")
+    if not units:
+        raise ValueError("No enrolled board units yet. Run ./micros enroll to create units/<hardware-id>.toml, "
+                         "or ./micros host deploy to try the example without a board.")
     if requested:
         hardware_id = bool(re.fullmatch('[0-9a-fA-F]{12}', requested))
         identity = requested.lower() if hardware_id else requested

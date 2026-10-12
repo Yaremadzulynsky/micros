@@ -13,7 +13,7 @@ Start · Quickstart
 
 Clone the SDK once, set up its Python tools, and create your application in a
 separate directory. These instructions use current `main`.
-No board or server is needed to generate and compose your first application.
+No board or server is needed to generate, test or run your first application locally.
 {: .arch-intro}
 
 ## 01 · Install the SDK and CLI {#install-cli}
@@ -80,13 +80,12 @@ cd "$HOME"
 micros new my-application
 cd my-application
 ./micros generate
-./micros compose
+./micros test
 ```
 
-For an experimental board, create the matching starter instead:
-`micros new my-application --platform samd21` (MKR WiFi 1010), or
-`micros new my-application --platform esp8266`. These select its profile and
-hello stack budget; see [USB deployment](experimental-usb.md).
+Enrollment detects the board and selects its profile and example memory budget.
+The optional `new --platform` flag remains accepted for compatibility, but creates
+no board unit. See [USB deployment](experimental-usb.md) for experimental targets.
 
 All launchers use the same CLI. `micros new` creates an ignored `.sdk` link to
 this checkout. Inside the application (including subdirectories), both `micros`
@@ -94,15 +93,15 @@ and `./micros` select its project and validate `micros.lock`. The local launcher
 also works when the SDK is not on PATH. Use `micros sdk COMMAND` to bypass project
 defaults deliberately. Set `MICROS_SDK` to override the link with a matching checkout.
 
-Generation should report hello's interfaces; composition should resolve
-`000000000000.toml` and `example.hello` without contacting a board. `new` refuses
+Generation should report hello's interfaces without contacting a board. New
+projects contain no unit files; enrollment creates one for the actual board. `new` refuses
 to overwrite an existing directory. `micros init` provisions a board, not a project.
 
 ```text
 my-application/
   micros
   micros.lock
-  units/000000000000.toml
+  host.toml
   services/hello/service.toml
   services/hello/src/service.c
   tests/
@@ -177,12 +176,14 @@ SDK revision. No package or release wheel has yet been published.
 
 ## 04 · Use a board {#use-a-board}
 
-[Set up a board](set-up-an-esp32.md). Successful enrollment connects an unchanged
-starter unit to the detected board automatically. For a customized project, rename
-`units/000000000000.toml` to its twelve-digit hardware ID and change `unit.device_id`
-to the same value.
-For ESP32, set the board profile and actual flash capacity before deployment. For example,
-a Feather V2 uses `adafruit_feather_esp32_v2` and `flash_mb = 8`.
+[Set up a board](set-up-an-esp32.md). After successful enrollment,
+`units/<hardware-id>.toml` contains the detected identity, board profile, flash
+capacity and the hello example. Each additional enrolled board gets its own unit;
+existing units and service code are preserved. Run `./micros compose -d HARDWARE_ID`
+to validate the new unit offline, then deploy it with the command printed by enrollment.
+Review the profile and wiring before adding hardware services: enrollment cannot
+identify attached peripherals. For example, a Feather V2 uses
+`adafruit_feather_esp32_v2` and `flash_mb = 8`.
 
 Multiple units require `-d HARDWARE_ID`. Hardware IDs work for offline composition;
 friendly device names require the configured server roster.
