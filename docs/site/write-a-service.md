@@ -21,12 +21,13 @@ The project from [Quickstart](get-started.md) contains a working heartbeat in
 `services/hello/`. Its C code opens the declared `greeting` timer and writes
 `Hello world` to the log. It needs no GPIO or wiring and runs on the host or a board.
 
+The [service reference](service-configuration.md) describes each field.
 The service's `config_schema` defines `interval_ms`, its default and bounds.
 Your `units/host.toml` or selected `units/<hardware-id>.toml` chooses the value:
 
 ```toml
 [services.hello]
-source = "services/hello" # Use "../services/hello" in a unit file.
+source = "../services/hello"
 contract = "service.toml"
 memory = { arena = "RAM", stack_bytes = 4096 }
 config = { interval_ms = 250 }
@@ -44,8 +45,9 @@ You do not write a service descriptor or duplicate resource cleanup. Hooks must
 return in bounded time; see [Service API](service-api.md).
 
 Once a version has been installed, change `version` in the service's `service.toml`
-before deploying different code or settings—for example `1.1.0` to `1.1.1`.
-Installed versions identify immutable packages, which preserves recovery history.
+before deploying different code or settings on the host—for example `1.1.0`
+to `1.1.1`. Host packages are immutable by name/version. Board releases use
+content hashes. See the [unit reference](unit-configuration.md).
 
 ## 02 · Add state and commands {#declare-the-counter}
 

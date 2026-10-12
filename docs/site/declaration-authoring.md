@@ -1,139 +1,159 @@
 ---
-title: Declarations
-hide:
-  - toc
+title: Configuration reference
 ---
 
-<span class="docs-editorial"></span>
+# Configuration reference
 
-Reference · Declarations
-{: .arch-eyebrow}
+Start with **the file you want to change**. Each setting has one owner: the
+service defines what it needs, the unit chooses where and how it runs, and a
+shared interface defines messages exchanged by services.
 
-# Declarations
+Field references: [Service definitions](service-configuration.md) ·
+[Unit files](unit-configuration.md) · [Shared interfaces](interface-configuration.md).
 
-A service contract owns types and requirements. A unit owns physical choices.
-Generated C and metadata are build output. This page documents current-dev TOML;
-[legacy composition](configuration-reference.md) is separate.
-{: .arch-intro}
+## Which file do I edit? {#file-ownership}
 
-## 01 · File ownership {#file-ownership}
+| I want to… | Edit | Reference |
+| --- | --- | --- |
+| Change hello's interval on this host or board | `units/host.toml` or `units/<hardware-id>.toml` → `services.hello.config` | [Unit settings](unit-configuration.md#settings) |
+| Change the interval's default or allowed range | `services/hello/service.toml` → `service.config_schema.interval_ms` | [Service settings](service-configuration.md#settings) |
+| Add C/C++ source files or compiler definitions | `service.toml` → `service.build` | [Build options](service-configuration.md#build) |
+| Declare a timer, pin role, or command | `service.toml` | [Service reference](service-configuration.md) |
+| Choose a physical pin, select a service, or expose a command | Board unit | [Unit reference](unit-configuration.md) |
+| Define a message and whether a channel keeps the latest value or a stream | `interface.toml` and its `.proto` | [Interface reference](interface-configuration.md) |
+| Connect services using that message | Service ports + a same-name channel in the unit | [Complete connection example](connect-service-ports.md) |
 
-| File | Owns |
-| --- | --- |
-| `services/NAME/service.toml` | Build inputs, types, config defaults, pins, timers, ports, commands |
-| `units/HARDWARE_ID.toml` | Hardware ID, board, selected services, config values, pin assignments, channels, exposure, budgets |
-| Shared `interface.toml` and `.proto` | Message identity, delivery policy, fields and wire tags |
+A generated project starts with:
 
-Contract source paths are relative to the contract; unit source paths are relative
-to the unit. `contract = "service.toml"` resolves inside its `source` directory.
-`build.api` is a stable C identifier independent of the instance alias.
-Multiple instances need distinct deployed names. Interfaces and codecs are generated
-under `build/services/`; physical bindings live under `build/units/`.
+```text
+my-application/
+  services/hello/
+    service.toml              requirements, build inputs, setting defaults
+    src/service.c             behavior
+  units/
+    host.toml                 local services and selected settings
+    <hardware-id>.toml        added after successful board enrollment
+  micros.lock                 pinned SDK revision
+```
 
-## 02 · Settings and reusable types {#settings-and-reusable-types}
+You need no interface files for hello. Add them when services exchange messages.
+Each physical board has its own complete unit and deploys independently.
+
+## One setting, from declaration to behavior {#settings-and-reusable-types}
+
+In `services/hello/service.toml`, define what values are valid:
 
 ```toml
-# service.toml
-[service.types.Brightness]
+[service.config_schema.interval_ms]
 type = "uint32"
-min = 0
-max = 255
-
-[service.config]
-brightness = { type = "Brightness", default = 8 }
-
-[service.commands.set_brightness]
-args = { brightness = "Brightness" }
-returns = { brightness = "Brightness" }
+default = 1000
+min = 100
+max = 60000
 ```
 
-The unit selects `config = { brightness = 32 }` in that service's table.
-Omitted values use service defaults; values remain fixed for a service lifetime.
-Startup settings support `uint32` and `enum`; commands have additional types
-listed in [Service commands](service-commands.md). Type references cannot override
-bounds. Enum order is numeric identity, so reordering can change behavior.
-
-Larger service-local types can live in a `types.toml` selected by the service's
-`types` field. The file must stay within that service directory. Use inline types
-or that file, not duplicate definitions. Types in another service are independent;
-shared messages use explicit interface references.
-
-## 03 · Pins and timers {#pins-and-timers}
+In `units/host.toml`, select this host instance's value:
 
 ```toml
-# service.toml
-[service]
-pins = { button = { type = "pullup" }, temperature = { type = "analog" } }
-timers = ["sample"]
-```
-
-```toml
-# unit file
-[services.sensor]
-source = "../services/sensor"
+[services.hello]
+source = "../services/hello"
 contract = "service.toml"
-pins = { button = 38, temperature = 34 }
 memory = { arena = "RAM", stack_bytes = 4096 }
+config = { interval_ms = 250 }
 ```
 
-This is a declaration example; choose actual pins using `./micros pins --all`
-and your board's wiring. Supported types are `input`, `pullup`, `pulldown`,
-`output`, and `analog`. Every role needs one assignment. Reserved pins, physical
-conflicts, unsupported types, and driver `fixed_pin` violations fail validation.
-Disabled new-style services allocate no pins.
+The generated C context provides `ctx->config.interval_ms`. Hello uses it when
+opening its timer. Omitting `config.interval_ms` selects `1000`; choosing `50`
+fails validation before deployment. A setting does not implement behavior by
+itself, and editing TOML does not change an already-running service.
 
-Pull requirements need verified board bias or supported runtime configuration;
-the current ESP32 graph cannot encode internal pulls. Analog input requires an
-available ADC1 mapping and returns raw 12-bit counts with the ABI's 12 dB
-attenuation, not calibrated voltage. Exact target capabilities are in
-[chip/board definitions](../../config/README.md).
+The service uses **`config_schema` for definitions**; the unit uses **`config` for
+values**. Use these names consistently. The references below describe the current
+project format, without alternative migration syntax.
 
-Named timers reserve handles, not schedules. Code chooses delay, period, and
-callback using the generated timer helper. Hook lifecycles close these handles;
-manual ABI lifecycles own their cleanup. See [Write a service](write-a-service.md).
+## How paths and names work
 
-## 04 · Channels {#channels}
+| Written in | Example | Resolved from |
+| --- | --- | --- |
+| Unit `source` | `../services/hello` | Directory containing the unit: `units/` |
+| Unit `contract` | `service.toml` | The selected `source` directory |
+| Service `build.sources` | `src/service.c` | Service source directory |
+| Service `types` | `types.toml` | Directory containing `service.toml`; must stay inside it |
+| Service port `interface` | `../../protos/reading/interface.toml` | Directory containing `service.toml` |
+| Interface `schema` | `reading.proto` | Directory containing `interface.toml` |
 
-[Connect services](connect-service-ports.md) is the complete same-name port/channel
-example. The shared interface owns protobuf and delivery policy. The unit declares
-channel names and optional depth, not copies of schema, policy, keys, or versions.
-Enabled ports attach by name; unrelated groups need distinct names.
+`hello` in `[services.hello]` is the unit's **instance alias**. `example.hello` in
+`[service].name` is its **deployed service name**. `hello` in `[service.build].api`
+is the **generated C prefix**. They serve different purposes; see
+[multiple instances](unit-configuration.md#instances) before selecting one service twice.
 
-Composition rejects mismatched schema or delivery requirements. It derives bounded
-payload capacity and deterministic numeric keys in sorted channel-name order.
-Those keys are release-local, not stable external addresses. An explicit depth
-below a connected minimum fails; omitted depth uses the greatest minimum (default 1).
-`latest` always requires depth 1. Plain channels permit multiple publishers and
-subscribers; coordination has its additional endpoint limits.
+TOML tables keep their scope until the next table header. Put `timers` under
+`[service]`, not below `[service.build]`. Do not repeat a table or key to override
+it: edit the existing declaration. A line beginning with `#` is a comment.
 
-## 05 · Limits and validation {#limits-and-validation}
+## Pins and timers {#pins-and-timers}
 
-| Current format ceiling | Limit |
-| --- | --- |
-| Services, including bridges | 4 |
-| Local channels | 4 |
-| Stream depth | 8 messages |
-| Encoded local message | 256 bytes |
-| Handles per service | 8 |
-| Encoded startup configuration | 256 bytes |
+A service declares pin **roles** and timer **names**. A board unit assigns actual
+pin numbers. The implementation opens timers with a delay and period.
 
-Target/base admission can be tighter. Arena, stack, executable image, and shared
-channel storage are separate budgets; see [Service API](service-api.md#resources)
-and [package compatibility](packages-and-storage.md).
+See [pin and timer fields](service-configuration.md#pins-and-timers) and
+[unit wiring](unit-configuration.md#pins). GPIO requires a physical board;
+`units/host.toml` runs services that do not require it.
+
+## Ports and channels {#channels}
+
+A service publishes or subscribes to a named port. Its referenced interface owns
+the protobuf message and delivery policy. The unit declares a channel with the
+same name. No separate endpoint-binding list is needed.
+
+See [interface fields](interface-configuration.md) for the reference and
+[Connect services](connect-service-ports.md) for the step-by-step example.
+
+## Validate the file you changed {#limits-and-validation}
+
+Run from the application root:
 
 ```sh
-./micros generate
-./micros compose
-./micros contract-diff units/HARDWARE_ID.toml --base HEAD
+./micros generate --service services/hello  # Validate and generate service APIs
+./micros compose -d host                   # Validate the complete host unit
+./micros compose -d HARDWARE_ID            # Validate one enrolled board unit
+./micros test -k settings                  # Run the starter's behavior test
 ```
 
-`generate` needs no board; `compose` validates the unit offline. Neither executes
-service behavior. `contract-diff` reads an explicit Git baseline; external SDK
-references use the current dependency checkout, so compare SDK changes there.
+Generation and composition are offline. Composition checks declarations and
+bindings; it does not prove that hardware works. `deploy --dry-run` additionally
+builds and checks against the selected board's base and live state; it requires
+a connection. Only deployment changes the running application.
 
-Legacy `config_schema`, hardware/timer tables, and keyed channels remain readable;
-do not mix old and new definitions of the same setting/resource. Command metadata
-format 2 requires compatible CLI/server readers; update those before deploying it
-to an older server. Source validators: [declarations](../../src/micros_tooling/config/declarations.py),
-[service contracts](../../src/micros_tooling/config/service_contract.py), and
-[packages](../../src/micros_tooling/storage/packages.py).
+Before enrollment, `compose` defaults to the host. With one board it defaults to
+that board; with multiple boards select one explicitly. `-d host` is always explicit.
+
+| Runtime/package ceiling | Limit |
+| --- | --- |
+| Services, including command bridges | 4 |
+| Channels, including command transport channels | 4 |
+| Stream depth | 8 messages |
+| Encoded channel message | 256 bytes |
+| Handles per service | 8 across timers, GPIO and port endpoints |
+| Encoded startup settings | 256 bytes |
+
+These are ceilings, not guaranteed free capacity. Target/base admission may be
+tighter. Command exposure has [additional transport costs](service-commands.md#transport-budget).
+Stack reservations, service arena memory and channel storage are different
+budgets; see [unit memory](unit-configuration.md#memory).
+
+## Common mistakes
+
+| Symptom | What to check |
+| --- | --- |
+| Source or contract cannot be found | A unit in `units/` normally uses `source = "../services/NAME"`. |
+| Unknown setting | Put defaults/types in the service's `config_schema`; put selected values in the unit's `config`. Check the table containing the key. |
+| Value outside bounds | Change the selected value, or deliberately change the service's declared bounds. |
+| Required channel is not declared | Add `[channels.PORT_NAME]` to the unit for every enabled service port. |
+| Channel has no enabled service port | Remove the unused channel or enable a service with a matching port name. |
+| Pin requirements do not match | Assign every declared role exactly once; inspect `./micros pins -d HARDWARE_ID --all`. |
+| A new command is unavailable remotely | Add its handler, select it in `expose_commands`, and deploy the changed unit. |
+| Generated C mentions a missing callback | Implement the new hook shown by `./micros scaffold-service services/hello --preview`. Generation does not write application behavior. |
+
+The field references are checked against the [service parser](../../src/micros_tooling/config/declarations.py),
+[unit loader](../../src/micros_tooling/config/configuration.py), and
+[channel resolver](../../src/micros_tooling/config/unit_model.py).

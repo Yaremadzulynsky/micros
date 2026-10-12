@@ -3,7 +3,7 @@
 # implement their hooks, then run ./micros generate and ./micros compose.
 # Behavior and setting constraints belong here; values, pin assignments, memory
 # budgets, channel wiring and command exposure belong in units/<target>.toml.
-# Reference: https://docs.meetmicros.com/site/declaration-authoring/
+# Reference: https://docs.meetmicros.com/site/service-configuration/
 
 [service]
 name = "example.hello"

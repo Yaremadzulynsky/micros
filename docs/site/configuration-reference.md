@@ -50,7 +50,7 @@ For runnable service code, start with [hello](get-started.md).
 
 ## 02 · Compatibility reference {#compatibility-reference}
 
-Legacy `config_schema`, hardware/timer declarations, explicit port bindings and
+Legacy hardware/timer declarations, explicit port bindings and
 keyed channels remain readable. Avoid combining old/new definitions of the same
 resource. Refer to [the loader](../../src/micros_tooling/config/configuration.py)
 and [composition implementation](../../src/micros_tooling/config/composition.py)

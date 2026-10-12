@@ -58,7 +58,11 @@ nav:
       - Interactive shell: site/interactive-shell.md
   - Reference:
       - CLI: site/cli.md
-      - Declarations: site/declaration-authoring.md
+      - Configuration:
+          - Which file to edit: site/declaration-authoring.md
+          - Service definitions: site/service-configuration.md
+          - Unit files: site/unit-configuration.md
+          - Shared interfaces: site/interface-configuration.md
       - Service API: site/service-api.md
       - Coordination: site/coordination-reference.md
       - Contributing: site/contributing.md

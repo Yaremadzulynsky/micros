@@ -13,6 +13,13 @@
 pinned SDK's instructions through `.sdk/AGENTS.md`. Add project-specific guidance
 there as your application grows.
 
+For configuration fields, defaults and examples, start with the
+[configuration reference](https://docs.meetmicros.com/site/declaration-authoring/):
+[service definitions](https://docs.meetmicros.com/site/service-configuration/),
+[unit files](https://docs.meetmicros.com/site/unit-configuration/), and
+[shared interfaces](https://docs.meetmicros.com/site/interface-configuration/).
+The matching SDK source is available at `.sdk/docs/site/declaration-authoring.md`.
+
 `micros.lock` pins the SDK revision. `services/hello/service.toml` owns the reusable
 implementation. `units/host.toml` is ready to run locally from the start.
 New projects have no board unit or placeholder hardware ID.

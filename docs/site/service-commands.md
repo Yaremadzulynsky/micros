@@ -56,7 +56,7 @@ generation rejects an oversized worst-case protobuf. The format ceilings are
 [listed once in Declarations](declaration-authoring.md#limits-and-validation).
 
 Command schemas permit eight commands, eight fields per argument/result table,
-eight named types, 1–64 UTF-8 bytes per string, and 1–32 enum choices. Exact
+32 named types, 1–64 UTF-8 bytes per string, and 1–32 enum choices. Exact
 validation lives in the [command implementation](../../src/micros_tooling/commands/schema.py).
 
 The current transport supports ESP32 bases with authenticated IPC bridging and
