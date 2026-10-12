@@ -39,6 +39,10 @@ class EnrollmentTest(unittest.TestCase):
         self.operator.mkdir()
         (self.operator / 'client.json').write_text(json.dumps(dict(url='https://console.example', device_url='https://relay.example')))
         (self.operator / 'servercert.pem').write_bytes(b'certificate')
+        (self.operator / 'admin.token').write_text('test-token')
+        environment = patch.dict(os.environ, {'MICROS_CLIENT_DIR': str(self.operator)})
+        environment.start()
+        self.addCleanup(environment.stop)
         self.workspace = Workspace(self.root / 'workspace')
         self.remote = Mock()
         self.remote.raw.return_value = b'{}'

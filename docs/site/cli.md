@@ -35,6 +35,7 @@ use its hardware ID when working offline. See [Quickstart](get-started.md).
 | Diagnose connection/base compatibility | `./micros doctor -d NAME` | Reads tools, connection, and base identity |
 | Inspect confirmed releases | `./micros history -d NAME` | [Rollback](deploy-an-application.md#restore-a-release) |
 | Open console | `./micros server console` | [Server setup](run-management-server.md) |
+| List or select servers | `./micros server list` · `./micros server use NAME` | [Server profiles](run-management-server.md#server-profiles) |
 | Enroll USB hardware | `./micros enroll` | [Board setup](set-up-an-esp32.md) |
 
 `plan`/`deploy --dry-run` may contact devices and build packages. `compose` is

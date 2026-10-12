@@ -23,6 +23,7 @@ class ClientTests(unittest.TestCase):
         source.mkdir(parents=True)
         for name in ('client.json', 'servercert.pem', 'admin.token', 'prvtkey.pem', 'registry.sqlite'):
             (source / name).write_text(name)
+        (source / 'client.json').write_text('{"url":"https://server.example"}')
         destination = import_operator(source)
         self.assertEqual({p.name for p in destination.iterdir()}, {'client.json', 'servercert.pem', 'admin.token'})
         self.assertEqual(len(list(source.iterdir())), 5)

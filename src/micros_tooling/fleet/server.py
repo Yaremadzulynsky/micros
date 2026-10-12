@@ -102,10 +102,16 @@ def server_main(arguments):
     parser = argparse.ArgumentParser(prog='micros server', description=__doc__)
     from micros_tooling.storage.client import operator_directory
     from micros_tooling.storage.workspace import Workspace
-    parser.add_argument('--compose-project', default=os.environ.get('MICROS_COMPOSE_PROJECT', 'micros-management'),
+    parser.add_argument('--compose-project', default=os.environ.get('MICROS_COMPOSE_PROJECT'),
                         help='isolated Docker Compose project for start/shutdown (or MICROS_COMPOSE_PROJECT)')
-    parser.add_argument('--state', type=Path, default=operator_directory(Workspace(Path(os.environ.get('MICROS_STATE_DIR', ROOT/'.micros')))))
+    location = parser.add_mutually_exclusive_group()
+    location.add_argument('--state', type=Path, help='explicit operator/server state directory')
+    location.add_argument('--profile', help='named server profile; default selects the original saved server')
     sub = parser.add_subparsers(dest='action', required=True)
+    listing = sub.add_parser('list', help='list saved server profiles without connecting')
+    listing.add_argument('--json', action='store_true')
+    use = sub.add_parser('use', help='select a saved server for this project, or this user outside a project')
+    use.add_argument('profile_name')
     client_import = sub.add_parser('import-client', help='copy operator authentication from an existing server directory')
     client_import.add_argument('directory', type=Path)
     setup = sub.add_parser('setup', help='create private TLS/operator credentials for a server hostname or IP')
@@ -132,14 +138,40 @@ def server_main(arguments):
     binding.add_argument('name')
     binding.add_argument('device_id')
     args = parser.parse_args(arguments)
+    from micros_tooling.storage.client import profile_directory, saved_servers, select_server
+    workspace = Workspace(Path(os.environ.get('MICROS_STATE_DIR', ROOT / '.micros')))
+    if args.action == 'list':
+        profiles = saved_servers(workspace)
+        if args.json:
+            print(json.dumps(profiles, indent=2))
+        else:
+            for profile in profiles:
+                print(profile['name'] + ': ' + profile.get('url', profile.get('error', 'incomplete'))
+                      + (' · Cloudflare Access' if profile.get('cloudflare_access') else ''))
+            if not profiles:
+                print('No saved servers. Use server --profile NAME import-client DIRECTORY or setup --host HOST.')
+        return
+    if args.action == 'use':
+        require(not args.state and not args.profile, 'server use takes a profile name, not --state or --profile.')
+        require(not os.environ.get('MICROS_CLIENT_DIR') and not os.environ.get('MICROS_SERVER'),
+                'Unset MICROS_CLIENT_DIR and MICROS_SERVER before saving a different default server.')
+        directory = select_server(args.profile_name)
+        from micros_tooling.storage.client import server_description
+        print('Selected server ' + args.profile_name + ': ' + server_description(directory)['url'])
+        return
+    state = (args.state or (profile_directory(args.profile) if args.profile else operator_directory(workspace))).resolve()
+    if args.compose_project is None:
+        from micros_tooling.storage.client import config_root
+        args.compose_project = ('micros-server-' + state.name
+                                if state.parent == (config_root() / 'servers').resolve()
+                                else 'micros-management')
     if args.action in ('start', 'shutdown'):
         import re
         require(re.fullmatch(r'[a-z0-9][a-z0-9_-]*', args.compose_project),
                 'Compose project must start with a lowercase letter or digit and contain only lowercase letters, digits, hyphens or underscores.')
-    state = args.state.resolve()
     if args.action == 'import-client':
         from micros_tooling.storage.client import import_operator
-        print('Operator configuration: ' + str(import_operator(args.directory)))
+        print('Operator configuration: ' + str(import_operator(args.directory, state)))
         return
     if args.action == 'setup':
         require(not (state/'client.json').exists(), 'Server already configured; preserve its identity')

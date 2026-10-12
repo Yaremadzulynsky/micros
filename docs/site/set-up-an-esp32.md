@@ -43,7 +43,14 @@ a second installation confirmation.
 ./micros enroll
 ```
 
-Choose the board, give it a name, and enter Wi-Fi credentials when prompted.
+First choose a saved server, connect to an existing one using its operator bundle,
+or create a server on this computer. The wizard shows the destination before any
+authentication; Cloudflare Access is optional and depends on that server.
+The selection is remembered privately for this project. See
+[server profiles](run-management-server.md#server-profiles) to manage several servers
+or select one explicitly with `--server NAME`.
+
+Then choose the board, give it a name, and enter Wi-Fi credentials when prompted.
 Password entry is hidden. With several boards attached, `--port PORT` selects
 one explicitly. Enrollment detects the chip and hardware identity, not arbitrary
 retail-board wiring or attached peripherals.

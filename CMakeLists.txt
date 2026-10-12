@@ -384,6 +384,7 @@ if((APPLE AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64") OR
     add_test(NAME platform_routing COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/deployment/platform_routing_test.py")
     add_test(NAME samd_enrollment COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/deployment/samd_enrollment_test.py")
     add_test(NAME enrollment_terminal COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/deployment/enrollment_test.py")
+    add_test(NAME enrollment_server_selection COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/deployment/server_selection_test.py")
     add_executable(base-ota-tests tests/base_ota/ota_test.c src/firmware/platforms/esp32/src/update.c)
     target_include_directories(base-ota-tests PRIVATE tests/base_ota/fakes src/firmware/controller/include)
     target_compile_options(base-ota-tests PRIVATE -Wall -Wextra -Werror -UNDEBUG)

@@ -26,6 +26,7 @@ def add_parser(commands):
     p = commands.add_parser('enroll', help='detect a USB board, flash micros, set Wi-Fi and verify the console')
     p.add_argument('name', nargs='?', help='console name; existing enrollment names are preserved')
     p.add_argument('--port', help='USB serial port; prompt if several physical boards are connected')
+    p.add_argument('--server', help='saved server profile; otherwise choose before connecting')
     p.add_argument('--detect', action='store_true', help='identify chip, MAC and flash only (USB probing resets the board)')
     p.add_argument('--ssid', help='2.4 GHz network name; otherwise prompt or keep working saved Wi-Fi')
     pw = p.add_mutually_exclusive_group()
@@ -410,11 +411,17 @@ def cancel_enrollment(remote, board, receipt, save):
 
 
 def enroll(args):
+    from micros_tooling.deployment.server_selection import enrollment_server
+    with enrollment_server(args):
+        return _enroll(args)
+
+
+def _enroll(args):
     from micros_tooling.storage.client import operator_directory
     from micros_tooling.fleet.server import configured_remote
     workspace = Workspace(Path(os.environ.get('MICROS_STATE_DIR', ROOT / '.micros')))
-    operator = operator_directory(workspace).resolve()
-    remote = configured_remote(workspace)
+    operator = workspace.root if args.detect else operator_directory(workspace).resolve()
+    remote = None if args.detect else configured_remote(workspace)
     require(remote is not None or args.detect, 'Configure console operator access first (micros server import-client PATH), then rerun enroll.')
     roster = [] if args.detect else json.loads(remote.raw('GET', '/v1/devices'))['devices']
     port = choose_port(args, roster=None if args.detect else roster)

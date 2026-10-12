@@ -16,6 +16,51 @@ or use a LAN address when connecting a board or another computer. There is no
 separate frontend build.
 {: .arch-intro}
 
+## Choose among several servers {#server-profiles}
+
+You can save multiple servers and select a different one for each application.
+Interactive `micros enroll` lists their names and addresses **before authentication
+or USB access**, then offers to connect to an existing server or create one on this
+computer. Cloudflare login is needed only when the chosen server uses Cloudflare Access.
+
+Connecting to an existing server requires its operator bundle (`client.json`,
+`servercert.pem`, `admin.token`), obtained from its operator. A hostname alone does
+not grant access. To register and select it directly:
+
+```sh
+micros server --profile lab import-client PRIVATE_COPIED_DIRECTORY
+micros server list
+micros server use lab
+micros enroll
+```
+
+The choice is stored privately in the application's ignored `.micros/server.json`.
+Credentials remain in your user configuration. Later device, deploy and console
+commands use that selection. To enroll without the server picker, use
+`micros enroll --server lab`; this also saves the choice. Noninteractive enrollment
+requires a saved selection, `--server`, or an explicit environment override.
+
+For a new server on this computer, the picker creates an independent identity and
+asks before starting Docker. The equivalent commands are:
+
+```sh
+micros server --profile lab setup --host SERVER_LAN_IP
+micros server --profile lab start
+micros server use lab
+```
+
+Named local servers use separate Docker Compose project names. Each still binds
+TCP 8443 by default: stop the other local instance or use separate bind addresses
+before starting another on the same host. Remote servers can run simultaneously
+on their own hosts. Creating a profile does not provision a remote machine.
+
+Profiles live under `$XDG_CONFIG_HOME/micros/servers/NAME` (or
+`~/.config/micros/servers/NAME`). The name `default` refers to the original
+`micros/server` directory, so existing credentials remain usable.
+`MICROS_CLIENT_DIR` overrides all selection; `MICROS_SERVER=lab` selects a named
+profile for a command. Unset these overrides before using `server use` or
+`enroll --server` to save a different choice.
+
 ## 01 · Prepare the host {#prepare-the-host}
 
 Install the CLI from [Quickstart](get-started.md#install-cli) on a supported macOS
@@ -150,10 +195,12 @@ Follow [board enrollment](set-up-an-esp32.md). After enrollment,
 micros server shutdown
 ```
 
-Shutdown stops the container and retains state. Its location follows
-`MICROS_CLIENT_DIR`, an existing legacy `.micros/server/client.json`, then
-`$XDG_CONFIG_HOME/micros/server` or `~/.config/micros/server`. Preserve that directory
-when moving the server. See [private backups](cli.md#private-backups).
+Shutdown stops the container and retains state. Without `--state` or `--profile`,
+selection follows `MICROS_CLIENT_DIR`, `MICROS_SERVER`, the saved selection,
+an existing legacy workspace `server/client.json`, then the `default` profile.
+Inside an application the saved selection belongs to that project; outside one,
+`server use` saves a user selection in `micros/selected-server.json`.
+Preserve the server's state directory when moving it. See [private backups](cli.md#private-backups).
 
 | Failure | Fix |
 | --- | --- |
