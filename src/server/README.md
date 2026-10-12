@@ -8,37 +8,37 @@ service slot, GPIO or service timer budget.
 
 ## Run locally
 
+Follow [Server and console](../../docs/site/run-management-server.md) for Docker
+prerequisites, local or LAN addresses, certificate trust, named profiles and
+headless sign-in. The server includes the console; no frontend build is needed.
+From an application created with `micros new`, the LAN flow is:
+
 ```sh
-./micros server setup --host 192.168.0.25
+./micros server setup --host SERVER_LAN_IP
 ./micros server start
-./micros server enroll aabbccdd0001 --name feather
-./micros server devices
+./micros server devices       # An empty roster is expected initially
+./micros server console --trust-info
+./micros server console
+./micros enroll               # USB installation and automatic climate starter
+./micros status -d HARDWARE_ID
+./micros logs -d HARDWARE_ID
 ```
 
-The reachable address is the **Docker host's LAN IP**, with published port 8443,
-not its private container address. Reserve that host address in DHCP. Set the
-application's connection setting before preparing the base:
+The address is the **Docker host's reachable LAN address**, not its container
+address or the board's localhost. Port 8443 is the default; use `setup --port`
+for another port. `console --trust-info` prints the selected certificate path.
+Default server state lives in `~/.config/micros/server`; named profiles use
+`~/.config/micros/servers/NAME` (or the corresponding `XDG_CONFIG_HOME` directory).
+Identity, operator token, enrollment tokens and SQLite registry remain there,
+mounted persistently into the container. Credentials do not belong in tracked
+application TOML or the Docker image.
 
-```toml
-[management.server]
-url = "https://192.168.0.25:8443"
-```
-
-Omit this table or use an empty URL to disable the outbound agent. Each enrollment
-creates a private device token and trusted server certificate under
-`.micros/server/enrollments/DEVICE_ID/`. Server identity, operator token and SQLite
-registry live under `.micros/server/`, mounted persistently into the container.
-No credentials belong in tracked TOML or the Docker image.
-
-```sh
-./micros init feather --phase prepare --board examples/hello-service/boards/feather.toml \
-  --relay-credentials .micros/server/enrollments/aabbccdd0001
-# Complete the explicit flash/connect phases. Existing bases need this physical migration.
-./micros server status aabbccdd0001
-./micros server logs aabbccdd0001
-./micros deploy -d feather --dry-run
-./micros deploy -d feather
-```
+Enrollment selects the server and builds its address/trust into the base. It
+creates the physical board's unit and installs the simulated three-service
+starter. For subsequent application changes, run `./micros deploy -d HARDWARE_ID`
+from that application. Manual `server enroll` only authorizes a device; it does
+not flash firmware or install the starter. See [board setup](../../docs/site/set-up-an-esp32.md)
+for the complete supported workflow and recovery behavior.
 
 Normal commands query the configured server first:
 
@@ -67,7 +67,7 @@ Base preparation publishes artifacts automatically when a server is configured.
 For an existing build, publish its original ELF and adjacent `sdkconfig`:
 
 ```sh
-./micros server publish-base --firmware .micros/onboarding/feather/base/micros_runtime.elf
+./micros server publish-base --firmware /private/original-build/micros_runtime.elf
 ./micros server publish-history feather
 ```
 
@@ -118,8 +118,10 @@ falls back to plaintext or disables verification. UDP access to `pool.ntp.org`
 is needed after a cold boot. Enrollment tokens and CA changes require a base update.
 
 Only the existing service-management operations are relayed: status, logs,
-sessions, bounded image/graph upload, activation, pause and reboot. There is no
-arbitrary URL proxy, shell, generic flash write or Wi-Fi password endpoint.
+sessions, bounded image/graph upload, activation, pause, reboot and supported
+Wi-Fi profile operations. Saved Wi-Fi passwords are never returned; see
+[Wi-Fi settings](#saved-wi-fi-networks-in-settings). There is no arbitrary URL
+proxy, shell or generic flash-write endpoint.
 The existing device-owned deployment lease still arbitrates direct and relayed
 clients. A stopped application does not stop the resident management agent.
 
@@ -152,7 +154,8 @@ under the current base-update policy. Choosing a stable hostname before a larger
 rollout avoids recurring address changes in device firmware.
 
 This first version targets a small fleet: one server process, SQLite storage,
-32 concurrent connections, five-second polls and one in-flight operation per ESP.
+32 concurrent connections and one in-flight operation per device. Idle long polls
+refresh presence every five seconds and wake immediately when work arrives.
 It has one operator role. It is not an HA or multi-tenant control plane. Before a
 production AWS rollout, establish certificate renewal, backups, operator access
 policy and capacity appropriate to the fleet. Do not run multiple replicas against

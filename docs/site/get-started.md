@@ -113,6 +113,30 @@ my-application/
   tests/
 ```
 
+### Generate C/C++ APIs from the declarations {#generate-code}
+
+From the application root, regenerate after editing service or interface declarations:
+
+```sh
+./micros generate
+# Or regenerate one service:
+./micros generate --service services/climate-sensor
+```
+
+The generator reads each `services/*/service.toml`, its referenced
+`protos/*/interface.toml` and `.proto` files. It writes the matching headers,
+protobuf codecs, resource bindings and hook lifecycle code under
+`build/services/SERVICE_DIRECTORY/generated/`. For the climate sensor, inspect
+`build/services/climate-sensor/generated/climate_hooks.h`, `climate_config.h`
+and `climate_ipc.h` there. The command prints the generated directory for each service.
+
+Write behavior in `services/*/src/`; generation does not invent the sensor driver
+or fan policy and does not overwrite those source files. Do not edit generated
+files: the next generation replaces them. Unit TOML selects settings, service
+instances and channels; `./micros compose -d host` validates that assembled
+application. Generation does not build or deploy it. Continue below to test and
+run it, or read [which declaration to edit](declaration-authoring.md).
+
 The generated `AGENTS.md` contains application-specific guidance and links to the
 pinned SDK's `.sdk/AGENTS.md` and device workflows. It is a regular project file
 you can extend, so framework guidance stays tied to your chosen SDK revision.

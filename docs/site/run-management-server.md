@@ -114,6 +114,32 @@ micros server devices
 
 An empty roster is normal.
 
+### Where the certificates come from {#generated-certificates}
+
+`micros server setup --host SERVER_LAN_IP` invokes OpenSSL to generate a new
+ECDSA P-256 key and a self-signed certificate for that address, valid for one year.
+You do not download a private key from the repository or create PEM files manually.
+The files belong to this server's private state directory:
+
+| File | Purpose | Sharing |
+| --- | --- | --- |
+| `servercert.pem` | Public server certificate; clients use it to verify TLS | May be given to clients that should trust this server |
+| `prvtkey.pem` | Secret server private key | Keep on the server; include only in protected recovery backups |
+| `admin.token` | Secret operator credential, generated alongside the certificate | Give only to authorized operators |
+| `enrollments/DEVICE_ID/relay-ca.pem` | Public certificate copied during enrollment for board trust | Contains no private key |
+
+The default location is `~/.config/micros/server/`; a named profile uses
+`~/.config/micros/servers/NAME/`. `XDG_CONFIG_HOME`, `--state` and
+`MICROS_CLIENT_DIR` can select other locations. `micros server console --trust-info`
+prints the selected certificate's exact path and fingerprint. Generated identity
+files are not published to GitHub. The PEM files shipped in the SDK's ESP8266
+certificate directory are public CA roots, not your server's private key.
+
+Keep this directory when stopping or updating the server. `server start` reuses
+its identity; rerunning setup is not a certificate-renewal procedure. Board trust
+must be considered before replacing a certificate. Creating it also does not make
+it automatically trusted by a browser; follow [console sign-in](#open-the-console).
+
 ### Board certificate trust
 
 Browser trust and board trust are separate. ESP8266 enrollment builds embed the
