@@ -91,23 +91,22 @@ For a service with no ports, such as the SDK
 names allow two instances (copy that example into `services/hello/` first):
 
 ```toml
-[services.fast]
+[services.first]
 source = "../services/hello"
 contract = "service.toml"
-name = "example.hello_fast"
+name = "example.hello_first"
 memory = { arena = "RAM", stack_bytes = 4096 }
-config = { interval_ms = 250 }
 
-[services.slow]
+[services.second]
 source = "../services/hello"
 contract = "service.toml"
-name = "example.hello_slow"
+name = "example.hello_second"
 memory = { arena = "RAM", stack_bytes = 4096 }
-config = { interval_ms = 2000 }
 ```
 
-The aliases `fast` and `slow` identify local instances. Both reuse the contract's
-C API prefix and source; each receives its own settings and state. Setting
+The aliases `first` and `second` identify local instances. Both reuse the contract's
+C API prefix and source, with separate state. This manual Hello example has a
+fixed one-second timer and no `config_schema`; it does not accept an interval setting. Setting
 `enabled = false` does not remove source files, and the referenced contract must
 still exist and parse. Remove a channel too if no enabled port uses it.
 
@@ -120,7 +119,7 @@ must satisfy its constraints. Unspecified values use declared defaults.
 A nested table is equivalent:
 
 ```toml
-[services.hello.config]
+[services.climate_sensor.config]
 interval_ms = 250
 ```
 
@@ -137,7 +136,12 @@ value, redeploy that target. Editing a file does not change a running service.
 Stack memory, service arena state, and channel payload storage are separate.
 There is no unit `arena_bytes` field: package metadata determines arena size.
 The deployment plan reports reservations, not measured runtime heap usage.
-Keep the enrollment-selected budget initially; reduce it only with evidence.
+Enrollment selects 4096-byte worker stacks for ESP32, 1536 bytes for ESP8266,
+and 1024 bytes for MKR. The host starter uses 4096 bytes. These are budgets for
+this example, not universal defaults for every service. Keep them initially and
+inspect stack headroom when changing behavior. MKR and ESP8266 have no supported
+PSRAM pool; their current bases use separate fixed application and management
+pools. See [resource accounting](service-api.md#resources).
 
 ## Physical identity and board {#board}
 
@@ -213,7 +217,7 @@ expose_commands = ["read", "increment", "reset"]
 Every name must be declared and implemented by that service. Omit the field or
 use `[]` for no remote access. Exposure adds a shared transport bridge and two
 channels per exposed service; account for the [transport budget](service-commands.md#transport-budget).
-The hello starter has no commands; the counter example provides these three.
+The climate starter has no commands; the counter example provides these three.
 
 ## Advanced project and server fields
 

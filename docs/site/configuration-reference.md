@@ -44,9 +44,9 @@ they are not frozen compiled releases. After changing inputs, recompose. For rea
 deployment substitute your hardware identity and wiring, then explicitly select
 `--project build/dht-review/units/HARDWARE_ID.toml` from the SDK CLI.
 
-The [greenhouse design TOML](../assets/visual-storyboard/greenhouse/applications/greenhouse.toml)
-remains illustrative: its sensor/controller/display implementations are not supplied.
-For runnable service code, start with [hello](get-started.md).
+For a runnable example in the current declaration format, use
+[the simulated climate application](get-started.md) and its
+[complete host unit](unit-configuration.md#complete-host-example).
 
 ## 02 · Compatibility reference {#compatibility-reference}
 

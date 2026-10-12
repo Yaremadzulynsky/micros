@@ -11,15 +11,15 @@ Start · Set up a board
 
 # Set up a board
 
-Enroll a USB-connected board with your local management server, then select it
-in your application's unit file. Enrollment installs a management base; it does
-not deploy your application.
+Enroll a USB-connected board with a reachable management server. Enrollment
+installs the Micros runtime, connects the board, and deploys the three-service
+simulated climate starter. No sensor, fan or display hardware is needed.
 {: .arch-intro}
 
 ## 01 · Prepare {#prepare}
 
-First [start the server and console](run-management-server.md) using an address
-the board can reach. A board cannot use the server computer's `localhost`.
+Use an existing server or [create a server and console](run-management-server.md)
+from the enrollment wizard. Choose an address the board can reach. A board cannot use the server computer's `localhost`.
 Use a 2.4 GHz Wi-Fi network. Enrollment automatically installs the pinned build
 tools for an original ESP32 with 4 or 8 MiB flash, including repairing incomplete
 tool installations. The first run needs internet access and can take several
@@ -63,8 +63,8 @@ For unattended entry, use `--ssid NAME --password-file PATH`, or `--open-network
 for a network without a password. An empty password file is rejected. Keep
 password files outside the project and out of source control.
 
-Success reports the device ID and an authenticated connection to that board and
-base through the console. Keep the private enrollment/session directory printed
+Success reports the device ID, an authenticated connection to that board and
+base through the console, and confirmation of the starter deployment. Keep the private enrollment/session directory printed
 by the tool; it contains credentials and exact build artifacts.
 
 After a failed or canceled ESP enrollment, use the printed `Resume:` command to
@@ -100,18 +100,21 @@ in your application, or the enrollment session's `build/` directory when enrolli
 outside a project. Application-owned edits are never run automatically during
 enrollment. If starter installation fails, the board remains enrolled: inspect
 status and use the printed deployment command, without erasing or re-enrolling.
-If you
-removed any of the starter services, enrollment leaves your service selection to you and
+If you removed any of the starter services, enrollment leaves your service selection to you and
 prints the expected unit path. Review `board.profile` and application pins before
 adding hardware services; enrollment cannot identify peripherals. For a Feather V2
 with peripheral wiring, use `adafruit_feather_esp32_v2` and `flash_mb = 8`.
 
+Inspect the application that enrollment already installed:
+
 ```sh
-./micros compose -d HARDWARE_ID
-./micros deploy -d HARDWARE_ID --dry-run
-./micros deploy -d HARDWARE_ID
+./micros status -d HARDWARE_ID
 ./micros logs -d HARDWARE_ID --follow
 ```
+
+Expect three Running services: `example.climate-sensor`, `example.fan-controller`
+and `example.status-display`, with no pending trial. For later source or setting
+changes, [preview and deploy the selected unit](deploy-an-application.md).
 
 The status display logs simulated temperature, humidity and fan state once per second. Ctrl-C stops
 following logs without stopping the board. See [deployment](deploy-an-application.md)

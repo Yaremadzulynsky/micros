@@ -69,8 +69,8 @@ After deployment, open [the shell](interactive-shell.md):
 
 ```text
 commands
-help call example.counter increment
-call example.counter increment
+help call app.counter increment
+call app.counter increment
 ```
 
 All declared arguments are required. Use `FIELD=VALUE`, quote strings with spaces,

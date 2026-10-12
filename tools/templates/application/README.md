@@ -57,13 +57,19 @@ Run `./micros enroll`. After confirming the board online, enrollment creates
 It also installs the SDK's pristine simulated climate starter through the server
 and waits for confirmation. Existing units and service code are preserved; your
 edits are deployed only when you request an update. Use `--no-starter` for a
-management-only board. Then inspect the running example or deploy your changes:
+management-only board. Inspect what enrollment already installed:
+
+```sh
+./micros status -d HARDWARE_ID
+./micros logs -d HARDWARE_ID --follow
+```
+
+After editing this board's unit or services, preview and deploy the change:
 
 ```sh
 ./micros compose -d HARDWARE_ID
 ./micros deploy -d HARDWARE_ID --dry-run
 ./micros deploy -d HARDWARE_ID
-./micros logs -d HARDWARE_ID --follow
 ```
 
 Each board deploys independently. Select `-d HARDWARE_ID` when multiple boards

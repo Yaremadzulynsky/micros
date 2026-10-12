@@ -27,7 +27,13 @@ same hardware ID. See [board setup](set-up-an-esp32.md) for the first installati
 ./micros logs -d NAME
 ```
 
-For hello, check for the expected greeting. From the SDK checkout, add
+Enrollment already deploys the simulated climate starter unless you selected
+`--no-starter`. Use this workflow for subsequent changes. Check all three services
+are Running with no pending trial, then verify `Simulated climate` log lines:
+the default fan turns on at 28°C and off at 24°C. These are generated readings
+and a simulated fan decision, not a physical sensor or actuator test.
+
+From the SDK checkout, add
 `--project PATH/TO/UNIT.toml` to plan/deploy. `deploy --dry-run` is also available;
 ESP32 `plan` uses that preview path. Other platforms use their own dry-run behavior.
 Planning may contact the board/server and build packages; `compose` stays offline.

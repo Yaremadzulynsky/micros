@@ -13,7 +13,9 @@ Start · Quickstart
 
 Clone the SDK once, set up its Python tools, and create your application in a
 separate directory. These instructions use current `main`.
-No board or server is needed to generate, test or run your first application locally.
+Your first application has three services: simulated climate readings, fan control
+and a log display, connected by two typed channels. No board, server or external
+sensor is needed to generate, test or run it locally.
 {: .arch-intro}
 
 ## 01 · Install the SDK and CLI {#install-cli}
@@ -79,8 +81,8 @@ From a directory where you want to keep applications, use a new project name:
 cd "$HOME"
 micros new my-application
 cd my-application
+./micros compose -d host
 ./micros generate
-./micros test
 ```
 
 Enrollment detects the board and selects its profile and example memory budget.
@@ -123,7 +125,9 @@ projects deliberately. The lock does not capture uncommitted SDK changes.
 Edit your application's `services/`, not the SDK example. Generated files
 belong under `build/`.
 
-## 03 · Test the simulated climate application {#run-hello}
+<span id="run-hello"></span>
+
+## 03 · Run the simulated climate application {#run-climate}
 
 With a C17 compiler installed, run from your application directory:
 
@@ -149,8 +153,6 @@ application directory:
 ./micros host deploy
 ./micros host status
 ./micros host logs
-./micros host stop
-./micros host boot
 ```
 
 `units/host.toml` selects local services using the same contracts and configuration as
@@ -158,8 +160,50 @@ a board application, without a hardware ID or board definition. The first deploy
 builds the SDK's native runtime and your services. `host build` only produces
 packages under `build/host-packages`. Installed packages and activation records
 live in `.micros/host`; keep that directory to retain recovery state. Existing
-projects can copy the SDK's `tools/templates/application/units/host.toml` starter
-into their `units/` directory.
+projects need the matching service sources and `protos/` as well as the unit;
+copying only `host.toml` does not create those dependencies.
+
+After several sample periods, logs contain lines like:
+
+```text
+Simulated climate #5: temp=28000 mC humidity=490 permille fan=ON
+Simulated climate #9: temp=24000 mC humidity=470 permille fan=OFF
+```
+
+`28000 mC` means 28°C; `490 permille` means 49% relative humidity. Sample IDs
+advance; their exact value depends on when you read the log. The driver repeats
+20, 22, 24, 26, 28, 30, 28, 26, 24, 22°C. The fan starts off, turns on at or above
+28°C and stays on until at or below 24°C. The display logs decisions; it does not
+drive a physical fan. Local host applications do not appear in the board console.
+
+### Make one change and verify it {#first-change}
+
+In `units/host.toml`, change the existing fan controller setting to:
+
+```toml
+config = { on_millicelsius = 26000, off_millicelsius = 24000 }
+```
+
+Host packages are immutable by service name/version. Change `version = "1.0.0"`
+to `version = "1.0.1"` in `services/fan-controller/service.toml`, then run:
+
+```sh
+./micros compose -d host
+./micros test
+./micros host deploy
+./micros host logs
+```
+
+In the new run, sample 4 at 26°C should report `fan=ON`; with the original
+threshold it reported `fan=OFF`. At 24°C it should still switch off. The tests
+exercise service behavior with controlled fixtures; inspect the deployed logs to
+verify your selected unit settings. Finish the local run with:
+
+```sh
+./micros host stop
+```
+
+`./micros host boot` starts its confirmed selection again later.
 
 Use `./micros compose -d host` to validate the host configuration offline.
 With no board enrolled, `./micros compose` selects the host. With one board, it

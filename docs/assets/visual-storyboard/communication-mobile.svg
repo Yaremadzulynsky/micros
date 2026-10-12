@@ -20,8 +20,8 @@
 <path d="M49 144L251 144A8 8 0 0 1 259 152L259 220A8 8 0 0 1 251 228L49 228A8 8 0 0 1 41 220L41 152A8 8 0 0 1 49 144Z" fill="#f4f5ff" stroke="#a5acf0" stroke-width="1.4" filter="url(#zr3-s0)" class="zr3-cls-3"></path>
 <path d="M110.2 152l79.7 0l0 14l-79.6 0Z" fill="none" pointer-events="visible" class="zr3-cls-3"></path>
 <text dominant-baseline="central" text-anchor="middle" style="font: 600 9px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="159" fill="#5965df">LATEST CHANNEL</text>
-<path d="M109.2 171.5l81.6 0l0 17l-81.6 0Z" fill="none" pointer-events="visible" class="zr3-cls-3"></path>
-<text dominant-baseline="central" text-anchor="middle" style="font: 650 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" x="150" y="180" fill="#5965df">climate.reading</text>
+<path d="M107.5 171.5l85 0l0 17l-85 0Z" fill="none" pointer-events="visible" class="zr3-cls-3"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 650 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" x="150" y="180" fill="#5965df">climate_reading</text>
 <path d="M107.3 197.3l85.5 0l0 15.5l-85.5 0Z" fill="none" pointer-events="visible" class="zr3-cls-3"></path>
 <text dominant-baseline="central" text-anchor="middle" style="font: 400 10.5px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="205" fill="#64748b">Current conditions</text>
 <path d="M16 286L133 286A8 8 0 0 1 141 294L141 384A8 8 0 0 1 133 392L16 392A8 8 0 0 1 8 384L8 294A8 8 0 0 1 16 286Z" fill="#fff" stroke="#b0d8d0" stroke-width="1.4" filter="url(#zr3-s0)" class="zr3-cls-3"></path>
@@ -36,8 +36,8 @@
 <path d="M16 446L133 446A8 8 0 0 1 141 454L141 516A8 8 0 0 1 133 524L16 524A8 8 0 0 1 8 516L8 454A8 8 0 0 1 16 446Z" fill="#f4f5ff" stroke="#a5acf0" stroke-width="1.4" filter="url(#zr3-s0)" class="zr3-cls-3"></path>
 <path d="M34.7 454l79.7 0l0 14l-79.6 0Z" fill="none" pointer-events="visible" class="zr3-cls-3"></path>
 <text dominant-baseline="central" text-anchor="middle" style="font: 600 9px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="74.5" y="461" fill="#5965df">LATEST CHANNEL</text>
-<path d="M48.3 473.5l52.3 0l0 17l-52.3 0Z" fill="none" pointer-events="visible" class="zr3-cls-3"></path>
-<text dominant-baseline="central" text-anchor="middle" style="font: 650 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" x="74.5" y="482" fill="#5965df">fan.status</text>
+<path d="M46.7 473.5l55.7 0l0 17l-55.7 0Z" fill="none" pointer-events="visible" class="zr3-cls-3"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 650 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" x="74.5" y="482" fill="#5965df">fan_status</text>
 <path d="M35.2 493.3l78.5 0l0 15.5l-78.5 0Z" fill="none" pointer-events="visible" class="zr3-cls-3"></path>
 <text dominant-baseline="central" text-anchor="middle" style="font: 400 10.5px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="74.5" y="501" fill="#64748b">Current fan state</text>
 <path d="M167 435L284 435A8 8 0 0 1 292 443L292 527A8 8 0 0 1 284 535L167 535A8 8 0 0 1 159 527L159 443A8 8 0 0 1 167 435Z" fill="#fff" stroke="#b0d8d0" stroke-width="1.4" filter="url(#zr3-s0)" class="zr3-cls-3"></path>

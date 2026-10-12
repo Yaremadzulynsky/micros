@@ -70,8 +70,12 @@ micros_result_t counter_handle_increment(counter_context_t *ctx,
 
 ## 03 · Select it in an application {#select-it-on-your-board}
 
-Creating source does not deploy it. Add this table to your unit file, alongside
-its existing identity, board and services:
+Creating source does not deploy it. To try the counter on an ESP32, keep the
+unit's identity and board tables, and replace its three climate service tables
+and two climate channels with the selection below. Keep the climate source files
+so you can restore the original unit later. The counter plus its generated command
+bridge uses two service slots; adding both to the three-service starter would
+exceed the four-slot limit.
 
 ```toml
 [services.counter]
@@ -81,8 +85,11 @@ memory = { arena = "RAM", stack_bytes = 4096 }
 expose_commands = ["read", "increment", "reset"]
 ```
 
-Run `./micros compose` to validate. To build it locally, add the same selection to
-`units/host.toml` with `source = "../services/counter"`, then run `./micros host build`.
+Run `./micros compose -d HARDWARE_ID` to validate that board. To build the counter
+locally instead, replace the climate services and channels in `units/host.toml`
+with the counter table, **omitting `expose_commands`**, then run
+`./micros compose -d host` and `./micros host build`. The remote command bridge
+requires a supporting ESP32 base; it is not a host command transport.
 Host build/deployment checks do not prove physical board behavior.
 
 Command exposure adds a transport bridge and consumes service/channel resources;
