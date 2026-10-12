@@ -6,10 +6,28 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'src'))
-from micros_tooling.platforms.build_esp8266 import patch_dynamic_tls_setup, prepare_relay_ca
+from micros_tooling.platforms.build_esp8266 import patch_dynamic_tls_setup, patch_tls_handshake_diagnostics, prepare_relay_ca
 
 
 class TLSSetupTest(unittest.TestCase):
+    def test_handshake_instrumentation_is_opt_in_and_keeps_error_handling(self):
+        source = ('#include "esp_log.h"\n'
+                  '    ret = mbedtls_ssl_handshake(&tls->ssl);\n'
+                  '    if (ret != 0) {\n'
+                  'ESP_LOGE(TAG, "mbedtls_ssl_handshake returned -0x%x", -ret);\n'
+                  'return -1;\n}\n')
+        normal = patch_tls_handshake_diagnostics(source)
+        self.assertIn('ret = mbedtls_ssl_handshake(&tls->ssl);', normal)
+        self.assertNotIn('esp_timer_get_time', normal)
+        detailed = patch_tls_handshake_diagnostics(source, detailed=True)
+        self.assertIn('while (tls->ssl.state != MBEDTLS_SSL_HANDSHAKE_OVER)', detailed)
+        self.assertIn('ret = mbedtls_ssl_handshake_step(&tls->ssl);', detailed)
+        self.assertIn('if (ret != 0) break;', detailed)
+        self.assertTrue(detailed.endswith('return -1;\n}\n'))
+        self.assertNotIn('mbedtls_ssl_conf_authmode', detailed)
+        with self.assertRaises(ValueError):
+            patch_tls_handshake_diagnostics(source.replace('ret = mbedtls_ssl_handshake(&tls->ssl);', ''), True)
+
     def test_relay_trust_is_frozen_and_updates_without_changing_shared_roots(self):
         source = Path(__file__).resolve().parents[2] / 'src/firmware/platforms/esp8266/sdk/certs/relay-roots.pem'
         original = source.read_bytes()

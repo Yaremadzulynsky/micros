@@ -88,7 +88,8 @@ def board_definition(value):
     resources = value.get("gpio", {})
     require(isinstance(resources, dict) and len(resources) <= 4,
             "board.gpio supports zero to four resources for the current ESP32 runtime")
-    flash_mb = value.get("flash_mb", 8)
+    default_flash_mb = capabilities["board"].get("default_flash_mb", 8) if capabilities else 8
+    flash_mb = value.get("flash_mb", default_flash_mb)
     require(type(flash_mb) is int and flash_mb in (4, 8), "board.flash_mb must be 4 or 8")
     resolved = []
     pins = set()

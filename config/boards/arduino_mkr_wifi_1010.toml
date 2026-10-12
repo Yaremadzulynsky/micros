@@ -1,0 +1,164 @@
+# Arduino pin numbers map to the SAMD21G18A CMSIS GPIO catalogue via chip_pin.
+[board]
+flash_bytes = 262144
+profile = "arduino_mkr_wifi_1010"
+chip = "samd21"
+module = "Arduino MKR WiFi 1010 / SAMD21G18A"
+numbering = "Arduino D0-D14 = 0-14; A0-A6 = 15-21. chip_pin uses PAxx=xx, PBxx=32+xx."
+verified_on = "2026-10-12"
+sources = ["https://github.com/arduino/ArduinoCore-samd/blob/1.8.13/variants/mkrwifi1010/variant.cpp"]
+exposed = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+onboard = [6, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
+
+[runtime]
+reserved = [22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
+reserved_reason = "Reserved board circuits or pins outside the micros MKR D0-D14/A0-A6 service interface."
+configurable_pulls = false
+analog_gpio = false
+max_gpio_resources = 4
+recovery_button = false
+recovery_reason = "MKR USB bootloader recovery uses reset; recovery-button bindings are not implemented"
+
+[gpio.0]
+chip_pin = 22
+label = "D0 / PA22"
+
+[gpio.1]
+chip_pin = 23
+label = "D1 / PA23"
+
+[gpio.2]
+chip_pin = 10
+label = "D2 / PA10"
+
+[gpio.3]
+chip_pin = 11
+label = "D3 / PA11"
+
+[gpio.4]
+chip_pin = 42
+label = "D4 / PB10"
+
+[gpio.5]
+chip_pin = 43
+label = "D5 / PB11"
+
+[gpio.6]
+chip_pin = 20
+label = "D6 / built-in LED / PA20"
+
+[gpio.7]
+chip_pin = 21
+label = "D7 / PA21"
+
+[gpio.8]
+chip_pin = 16
+label = "D8 / MOSI / PA16"
+
+[gpio.9]
+chip_pin = 17
+label = "D9 / SCK / PA17"
+
+[gpio.10]
+chip_pin = 19
+label = "D10 / MISO / PA19"
+
+[gpio.11]
+chip_pin = 8
+label = "D11 / SDA / PA08"
+
+[gpio.12]
+chip_pin = 9
+label = "D12 / SCL / PA09"
+
+[gpio.13]
+chip_pin = 55
+label = "D13 / RX / PB23"
+
+[gpio.14]
+chip_pin = 54
+label = "D14 / TX / PB22"
+
+[gpio.15]
+chip_pin = 2
+label = "A0 / PA02"
+
+[gpio.16]
+chip_pin = 34
+label = "A1 / PB02"
+
+[gpio.17]
+chip_pin = 35
+label = "A2 / PB03"
+
+[gpio.18]
+chip_pin = 4
+label = "A3 / PA04"
+
+[gpio.19]
+chip_pin = 5
+label = "A4 / PA05"
+
+[gpio.20]
+chip_pin = 6
+label = "A5 / PA06"
+
+[gpio.21]
+chip_pin = 7
+label = "A6 / PA07"
+
+[gpio.22]
+chip_pin = 24
+label = "USB D- / PA24"
+
+[gpio.23]
+chip_pin = 25
+label = "USB D+ / PA25"
+
+[gpio.24]
+chip_pin = 18
+label = "USB ID / PA18"
+
+[gpio.25]
+chip_pin = 3
+label = "AREF / PA03"
+
+[gpio.26]
+chip_pin = 12
+label = "NINA MOSI / PA12"
+
+[gpio.27]
+chip_pin = 13
+label = "NINA MISO / PA13"
+
+[gpio.28]
+chip_pin = 14
+label = "NINA CS / PA14"
+
+[gpio.29]
+chip_pin = 15
+label = "NINA SCK / PA15"
+
+[gpio.30]
+chip_pin = 27
+label = "NINA GPIO0 / PA27"
+
+[gpio.31]
+chip_pin = 40
+label = "NINA reset / PB08"
+
+[gpio.32]
+chip_pin = 41
+label = "Battery ADC / PB09"
+
+[gpio.33]
+chip_pin = 0
+label = "32 kHz crystal input / PA00"
+
+[gpio.34]
+chip_pin = 1
+label = "32 kHz crystal output / PA01"
+
+[gpio.35]
+chip_pin = 28
+label = "NINA ACK / PA28"

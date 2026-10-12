@@ -48,11 +48,29 @@ def patch_dynamic_tls_setup(source):
     return source[:start] + setup + source[end:]
 
 
-def patch_tls_handshake_diagnostics(source):
+def patch_tls_handshake_diagnostics(source, detailed=False):
     """Log the failed protocol step without certificates, keys, or payloads."""
     needle = 'ESP_LOGE(TAG, "mbedtls_ssl_handshake returned -0x%x", -ret);'
     if source.count(needle) != 1:
         raise ValueError("Unexpected pinned TLS handshake source")
+    if not detailed:
+        return source.replace(needle, needle + '\n            ESP_LOGE(TAG, "TLS handshake state: %d", tls->ssl.state);')
+    source = source.replace('#include "esp_log.h"', '#include "esp_log.h"\n#include "esp_timer.h"\n#include "esp_system.h"')
+    call = '    ret = mbedtls_ssl_handshake(&tls->ssl);'
+    if source.count(call) != 1:
+        raise ValueError("Unexpected pinned handshake call")
+    source = source.replace(call, r'''    ret = 0;
+    while (tls->ssl.state != MBEDTLS_SSL_HANDSHAKE_OVER) {
+        int state = tls->ssl.state;
+        unsigned heap = esp_get_free_heap_size();
+        int64_t started = esp_timer_get_time();
+        ret = mbedtls_ssl_handshake_step(&tls->ssl);
+        int cipher = tls->ssl.session_negotiate ? tls->ssl.session_negotiate->ciphersuite : 0;
+        ESP_LOGE(TAG, "TLS step=%d next=%d ms=%u heap=%u->%u cipher=%04x result=%d",
+                 state, tls->ssl.state, (unsigned)((esp_timer_get_time()-started)/1000),
+                 heap, esp_get_free_heap_size(), cipher, ret);
+        if (ret != 0) break;
+    }''')
     return source.replace(needle, needle + '\n            ESP_LOGE(TAG, "TLS handshake state: %d", tls->ssl.state);')
 
 
@@ -68,6 +86,8 @@ def main():
     parser.add_argument("--output", type=Path, default=ROOT / "build/esp8266/firmware")
     parser.add_argument("--relay-ca", type=Path,
                         help="PEM certificates trusted by this base (defaults to bundled public roots)")
+    parser.add_argument("--tls-diagnostics", action="store_true",
+                        help="Log TLS step timing, heap and cipher IDs without key or payload data")
     parser.add_argument("--test-hung-base", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     try:
@@ -127,7 +147,7 @@ def main():
         ["git", "-C", str(args.sdk), "show", "HEAD:" + diagnostic_relative], text=True
     )
     diagnostic_source = args.sdk / diagnostic_relative
-    diagnostic_patched = patch_tls_handshake_diagnostics(diagnostic_original)
+    diagnostic_patched = patch_tls_handshake_diagnostics(diagnostic_original, args.tls_diagnostics)
     if diagnostic_source.read_text() != diagnostic_patched:
         diagnostic_source.write_text(diagnostic_patched)
     env = dict(

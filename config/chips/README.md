@@ -1,20 +1,29 @@
 # Chip capabilities
 
-`esp32.toml` records GPIO directions and internal pulls, fixed ADC mappings,
-and RMT matrix routing with its shared channel limit. Sources and their version
-are recorded in the file. This is a reviewed snapshot, not a live download at
-compose time. Unlisted chips are unknown; adding a file requires checking it
-against the vendor SDK and the relevant package documentation.
+The catalog contains:
+
+- `esp32.toml`: ESP32 GPIO directions, pulls, ADC mappings and RMT routing.
+- `esp8266.toml`: ESP8266EX GPIO0–GPIO16, including GPIO16's different pull
+  capability. Its dedicated TOUT ADC pad is not assigned a GPIO number.
+- `samd21.toml`: the supported SAMD21G18A package's GPIO directions, pulls and
+  fixed ADC mappings. CMSIS numbering uses PAxx = xx and PBxx = 32 + xx;
+  Arduino MKR D0–D14/A0–A6 numbers are board mappings, not chip GPIO numbers.
+
+Each file records its reviewed source versions and references. Profiles load
+through `micros_tooling.config.chips.load_chip`; no network access is required.
+Unlisted chips and package variants are unknown. Hardware capabilities do not
+imply that the current runtime implements them: ESP8266 and SAMD21 currently
+expose digital GPIO only; their board profiles declare runtime pin restrictions
+and numbering. No RMT peripheral is declared for either chip.
 
 GPIO groups are disjoint and supply shared input/output/pull capabilities.
 `gpio.pins` adds fixed mappings. Routable peripheral eligibility is derived from
 its input/output requirements, not duplicated across every pin. This initial
 catalogue covers GPIO, ADC and RMT, not every ESP32 peripheral or driver feature.
 
-Board capability metadata lives in `config/boards/capabilities/`. It identifies
+Board capability metadata lives in `config/boards/`. It identifies
 the chip, verified exposed/onboard connections, external wiring and runtime
-restrictions. It is separate from authored `config/boards/feather.toml` and unit
-recipes, which choose the actual connections and service grants.
+restrictions. Application unit recipes choose the actual connections and service grants.
 
 Inspect without a device:
 

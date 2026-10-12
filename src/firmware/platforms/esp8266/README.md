@@ -58,10 +58,17 @@ TLS setup to allocate only header space, which the SDK wrapper replaces before
 record I/O. This avoids a temporary 16 KiB allocation that can prevent console
 reconnection with an application running. Incoming records still support the
 full 16 KiB limit, and certificate and hostname verification remain enabled.
-Elliptic-curve and integer exponentiation windows are capped at two, and
-fixed-point caching is disabled to leave RAM for a running application and the
-network stack. These bounds do not reduce key sizes or bypass verification.
-Handshake failures include the protocol state in the serial diagnostic log.
+Elliptic-curve calculations use a window of four with fixed-point caching;
+integer exponentiation retains a window of two. The former window of two with
+caching disabled made an ESP8266 handshake take about 18 seconds, and the public
+endpoint closed the connection before completion. The current configuration
+completed the same handshake in about 6.6 seconds on a management-only board.
+Application memory headroom must still be checked separately. These settings do
+not reduce key sizes or bypass verification. Handshake failures include the
+protocol state in the serial diagnostic log. For a diagnostic build, pass
+`--tls-diagnostics` to `src/micros_tooling/platforms/build_esp8266.py` to log each
+step's time, heap, cipher ID and result without logging keys or payloads. Omit
+that flag for production firmware.
 
 During a candidate boot, journal checks run at most ten times per second. Flash
 reads briefly mask interrupts on this chip, so they must not run on every 1 ms

@@ -94,7 +94,8 @@ def erase(args):
             state.write('erase.json', receipt)
             Workspace(session).write('erase.json', receipt)
         save()
-        e.check_identity(board, identify())
+        if mkr:
+            e.check_identity(board, identify())
         # Always recheck the server, including when resuming an interrupted erase.
         with e.Activity('Removing controller from the console'):
             remote.raw('POST', '/v1/revoke', json.dumps(dict(device_id=board['device_id'])).encode())
@@ -105,7 +106,8 @@ def erase(args):
         save()
         for item in states:
             invalidate_enrollment(item, session if item is state else session / item.root.name)
-        e.check_identity(board, identify())
+        if mkr:
+            e.check_identity(board, identify())
         receipt['erase_started'] = True
         save()
         e.progress('Console removal verified. Erasing firmware and settings…' if mkr else 'Console removal verified. Erasing all flash…')
