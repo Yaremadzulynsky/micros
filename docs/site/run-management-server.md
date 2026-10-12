@@ -21,7 +21,8 @@ separate frontend build.
 You can save multiple servers and select a different one for each application.
 Interactive `micros enroll` lists their names and addresses **before authentication
 or USB access**, then offers to connect to an existing server or create one on this
-computer. Cloudflare login is needed only when the chosen server uses Cloudflare Access.
+computer. Press Enter to keep the displayed selected server; mistyped choices
+can be corrected in place, and `q` cancels from the setup prompts. Cloudflare login is needed only when the chosen server uses Cloudflare Access.
 
 Connecting to an existing server requires its operator bundle (`client.json`,
 `servercert.pem`, `admin.token`), obtained from its operator. A hostname alone does
@@ -41,7 +42,9 @@ commands use that selection. To enroll without the server picker, use
 requires a saved selection, `--server`, or an explicit environment override.
 
 For a new server on this computer, the picker creates an independent identity and
-asks before starting Docker. The equivalent commands are:
+suggests its LAN address and an available HTTPS port, and asks before starting
+Docker. It rejects loopback addresses for board enrollment and lets you correct
+invalid names, addresses or occupied ports before creating the server. The equivalent commands are:
 
 ```sh
 micros server --profile lab setup --host SERVER_LAN_IP
@@ -73,7 +76,10 @@ docker compose version
 docker info
 ```
 
-Docker must be running and accessible to your user. The first start downloads
+Docker must be running and accessible to your user. `server start` checks Docker
+and Compose before starting the container and explains how to recover if either
+is unavailable. Imported operator bundles connect to their existing server;
+`server start` requires that server’s private host state. The first start downloads
 and builds its container image. ESP32 tools are unnecessary for the console alone.
 
 ## 02 · Choose local or LAN access {#choose-local-or-lan-access}

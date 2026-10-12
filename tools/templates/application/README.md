@@ -11,8 +11,15 @@
 
 `micros.lock` pins the SDK revision. `services/hello/service.toml` owns the reusable
 implementation; `units/000000000000.toml` owns this board's identity, wiring,
-settings and memory allocation. Replace the placeholder ID and filename together,
-and select the correct board profile before building or deploying.
+settings and memory allocation. Run `./micros enroll` to choose or create a server,
+install the board tools, flash the board, and connect Wi-Fi. After success, an
+unchanged starter for the same platform receives the board ID and detected ESP32
+flash capacity automatically; the original placeholder is saved under
+`build/enrollment/`. The command prints the deployment preview to run next.
+
+If you have customized the unit, replace the placeholder ID and filename together
+and select the correct board profile before building or deploying. Enrollment
+preserves customized units and does not deploy application services.
 
 New services declare local types, `config` defaults, typed `pins`, timer-name
 lists, interface references and commands. Units select `config` values, assign

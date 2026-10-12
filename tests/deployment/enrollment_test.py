@@ -47,6 +47,78 @@ class EnrollmentTest(unittest.TestCase):
         self.remote = Mock()
         self.remote.raw.return_value = b'{}'
 
+    def test_starter_binding_uses_detected_identity_and_capacity(self):
+        from micros_tooling.config.scaffold import create, bind_starter
+        from micros_tooling.config.configuration import read_toml, load_project
+        for platform, capacity in (('esp32', 8), ('esp8266', 4), ('samd21', None)):
+            root = create(self.root / ('app-' + platform), platform)
+            before = (root / 'units/000000000000.toml').read_bytes()
+            destination = bind_starter(root, BOARD['device_id'], platform, capacity)
+            self.assertEqual(read_toml(destination)['unit']['device_id'], BOARD['device_id'])
+            if platform == 'esp32':
+                self.assertEqual(read_toml(destination)['board']['flash_mb'], 8)
+            self.assertFalse((root / 'units/000000000000.toml').exists())
+            self.assertEqual((root / 'build/enrollment/000000000000.toml.before').read_bytes(), before)
+            self.assertEqual(len(load_project(destination)['services']), 1)
+            self.assertEqual(bind_starter(root, BOARD['device_id'], platform, capacity), destination)
+
+    def test_starter_binding_preserves_custom_and_mismatched_units(self):
+        from micros_tooling.config.scaffold import create, bind_starter
+        for change in ('custom', 'platform', 'multiple'):
+            root = create(self.root / ('app-' + change))
+            placeholder = root / 'units/000000000000.toml'
+            if change == 'custom':
+                placeholder.write_text(placeholder.read_text().replace('stack_bytes = 4096', 'stack_bytes = 8192'))
+            if change == 'multiple':
+                (root / 'units/aabbccddeeff.toml').write_text(placeholder.read_text().replace('000000000000', 'aabbccddeeff'))
+            before = {p.name: p.read_bytes() for p in (root / 'units').glob('*.toml')}
+            self.assertIsNone(bind_starter(root, BOARD['device_id'], 'esp8266' if change == 'platform' else 'esp32', 4))
+            self.assertEqual({p.name: p.read_bytes() for p in (root / 'units').glob('*.toml')}, before)
+
+    def test_project_write_failure_does_not_undo_successful_enrollment(self):
+        from contextlib import nullcontext
+        result = dict(online=True, device_id=BOARD['device_id'], platform='esp32', flash_mb=4, message='Board online.')
+        with patch('micros_tooling.deployment.server_selection.enrollment_server', return_value=nullcontext()), \
+             patch.object(e, '_enroll', return_value=result), \
+             patch('micros_tooling.storage.client.application_root', return_value=self.root), \
+             patch('micros_tooling.config.scaffold.bind_starter', side_effect=OSError('read-only project')):
+            self.assertTrue(e.enroll(args())['online'])
+        self.remote.raw.assert_not_called()
+
+    def test_picker_offers_known_unfinished_enrollment(self):
+        from micros_tooling.communication import discovery
+        receipt = dict(board=BOARD, name='desk', flashed=True, base_sha256='ab' * 32)
+        Workspace(self.operator / 'onboarding' / BOARD['device_id']).write('enrollment.json', receipt)
+        port = argparse.Namespace(device='/test-port', vid=0x10c4, pid=1, location='1')
+        discovered = dict(port=port.device, state='identified', platform='esp8266', device_id=BOARD['device_id'])
+        with patch('serial.tools.list_ports.comports', return_value=[port]), \
+             patch.object(e, 'interactive', return_value=True), \
+             patch.object(discovery, 'discover', return_value=[discovered]), \
+             patch('builtins.input', return_value='1'), patch.object(e, 'progress') as progress:
+            selected = e.choose_port(args(), roster=[dict(device_id=BOARD['device_id'], name='desk')])
+        self.assertEqual(selected, port.device)
+        self.assertIn('resume unfinished enrollment', str(progress.call_args_list))
+
+    def test_stopped_local_server_explains_recovery_before_usb(self):
+        (self.operator / 'prvtkey.pem').write_text('private-test-key')
+        self.remote.raw.side_effect = ConnectionRefusedError()
+        with patch('micros_tooling.fleet.server.configured_remote', return_value=self.remote), \
+             patch.object(e, 'choose_port') as choose:
+            with self.assertRaisesRegex(PackageError, 'Start the selected server.*No controller was accessed'):
+                e.enroll(args())
+        choose.assert_not_called()
+
+    def test_bad_controller_choice_does_not_repeat_discovery(self):
+        from micros_tooling.communication import discovery
+        ports = [argparse.Namespace(device='/one', vid=0x10c4, pid=1, location='1'),
+                 argparse.Namespace(device='/two', vid=0x10c4, pid=1, location='2')]
+        with patch('serial.tools.list_ports.comports', return_value=ports), \
+             patch.object(e, 'interactive', return_value=True), \
+             patch.object(discovery, 'discover', return_value=[]) as discover, \
+             patch('builtins.input', side_effect=['bad', '99', '2']):
+            self.assertEqual(e.choose_port(args()), '/two')
+        discover.assert_called_once()
+
     def test_probe_versions_and_chip_families(self):
         for label in ('Chip is ESP8266EX', 'Chip type: ESP8266EX'):
             self.assertEqual(e.parse_probe(label + '\nMAC: f4:cf:a2:d0:8c:e3\nDetected flash size: 4MB'), BOARD)
@@ -210,7 +282,7 @@ class EnrollmentTest(unittest.TestCase):
         self.assertEqual(old_backup.read_bytes(), b'historical recovery data')
 
     def test_already_enrolled_device_is_rejected(self):
-        receipt = dict(board=BOARD, name='desk', flashed=True, files=[{}], base_sha256='ab' * 32)
+        receipt = dict(board=BOARD, name='desk', confirmed=True, flashed=True, files=[{}], base_sha256='ab' * 32)
         session = self.operator / 'onboarding' / BOARD['device_id']
         Workspace(session).write('enrollment.json', receipt)
         self.remote.raw.return_value = json.dumps(dict(devices=[dict(device_id=BOARD['device_id'], name='desk')])).encode()
@@ -225,6 +297,35 @@ class EnrollmentTest(unittest.TestCase):
         install.assert_not_called()
         wifi.assert_not_called()
         verify.assert_not_called()
+
+    def test_connected_unfinished_enrollment_resumes_without_reflashing(self):
+        session = self.operator / 'onboarding' / BOARD['device_id']
+        receipt = dict(board=BOARD, name='desk', flashed=True, files=[{}], base_sha256='ab' * 32)
+        Workspace(session).write('enrollment.json', receipt)
+        existing = dict(device_id=BOARD['device_id'], name='desk', online=True,
+                        status=dict(identity=dict(base_sha256='ab' * 32)))
+        self.remote.raw.return_value = json.dumps(dict(devices=[existing])).encode()
+        with patch.object(e, 'choose_port', return_value='port'), patch.object(e, 'probe', return_value=BOARD), \
+             patch('micros_tooling.fleet.server.configured_remote', return_value=self.remote), \
+             patch.object(e, 'credentials', return_value=self.root), \
+             patch.object(e, 'prepare') as prepare, patch.object(e, 'install') as install, \
+             patch.object(e, 'connect_wifi'), patch.object(e, 'verify_console'):
+            result = e.enroll(args())
+        self.assertTrue(result['online'])
+        prepare.assert_not_called()
+        install.assert_not_called()
+        self.assertTrue(Workspace(session).read('enrollment.json')['confirmed'])
+
+    def test_resume_requires_same_board_name_and_base(self):
+        existing = dict(device_id=BOARD['device_id'], name='desk',
+                        status=dict(identity=dict(base_sha256='ab' * 32)))
+        receipt = dict(board=BOARD, name='desk', flashed=True, base_sha256='ab' * 32)
+        self.assertTrue(e.resumable(receipt, existing))
+        for change in (dict(confirmed=True), dict(flashed=False), dict(name='other'),
+                       dict(base_sha256='cd' * 32), dict(base_sha256=None),
+                       dict(board=dict(BOARD, device_id='aabbccddeeff'))):
+            with self.subTest(change=change):
+                self.assertFalse(e.resumable(dict(receipt, **change), existing))
 
     def test_wifi_failure_resumes_without_reflashing_or_rotating(self):
         self.remote.raw.return_value = b'{"devices":[]}'

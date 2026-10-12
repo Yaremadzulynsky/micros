@@ -173,8 +173,10 @@ SDK revision. No package or release wheel has yet been published.
 
 ## 04 · Use a board {#use-a-board}
 
-[Set up a board](set-up-an-esp32.md), then rename `units/000000000000.toml` to
-its twelve-digit hardware ID and change `unit.device_id` to the same value.
+[Set up a board](set-up-an-esp32.md). Successful enrollment connects an unchanged
+starter unit to the detected board automatically. For a customized project, rename
+`units/000000000000.toml` to its twelve-digit hardware ID and change `unit.device_id`
+to the same value.
 For ESP32, set the board profile and actual flash capacity before deployment. For example,
 a Feather V2 uses `adafruit_feather_esp32_v2` and `flash_mb = 8`.
 

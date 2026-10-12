@@ -32,6 +32,8 @@ class ServerSelectionTests(unittest.TestCase):
         self.project.mkdir()
         self.workspace = Workspace(self.root / 'cache')
         stack.enter_context(patch.object(e, 'progress'))
+        stack.enter_context(patch.object(selection, 'port_available', return_value=True))
+        stack.enter_context(patch.object(selection, 'local_address', return_value='192.0.2.1'))
         self.auth = stack.enter_context(patch('micros_tooling.fleet.server.configured_remote'))
         self.usb = stack.enter_context(patch.object(e, 'choose_port'))
 
@@ -129,9 +131,9 @@ class ServerSelectionTests(unittest.TestCase):
 
     def test_create_can_defer_start_without_docker_or_enrollment(self):
         def setup(argv):
-            self.assertEqual(argv, ['--profile', 'lab', 'setup', '--host', '192.0.2.1'])
+            self.assertEqual(argv, ['--profile', 'lab', 'setup', '--host', '192.0.2.1', '--port', '8443'])
             self.profile('lab')
-        with patch('builtins.input', side_effect=['n', 'lab', '192.0.2.1', 'n']), \
+        with patch('builtins.input', side_effect=['n', 'lab', '192.0.2.1', '', 'n']), \
              patch('micros_tooling.fleet.server.server_main', side_effect=setup) as command:
             with self.assertRaisesRegex(e.EnrollmentCancelled, 'Server saved'):
                 selection.choose_server(self.workspace)
@@ -190,10 +192,74 @@ class ServerSelectionTests(unittest.TestCase):
         def command(argv):
             if argv[2] == 'setup':
                 self.profile('lab')
-        with patch('builtins.input', side_effect=['n', 'lab', '192.0.2.1', 'y']), \
+        with patch('builtins.input', side_effect=['n', 'lab', '192.0.2.1', '', 'y']), \
              patch('micros_tooling.fleet.server.server_main', side_effect=command) as run:
             self.assertEqual(selection.choose_server(self.workspace), client.profile_directory('lab'))
         self.assertEqual(run.call_args_list[1].args[0], ['--profile', 'lab', 'start'])
+
+    def test_invalid_menu_retries_before_authentication(self):
+        self.profile('default')
+        lab = self.profile('lab')
+        with patch('builtins.input', side_effect=['wrong', '99', '2']):
+            self.assertEqual(selection.choose_server(self.workspace), lab)
+        self.auth.assert_not_called()
+        self.usb.assert_not_called()
+
+    def test_enter_keeps_explicitly_selected_server(self):
+        lab = self.profile('lab')
+        client.select_server('lab')
+        with patch('builtins.input', return_value=''):
+            self.assertEqual(selection.choose_server(self.workspace), lab)
+
+    def test_new_server_retries_bad_host_and_port_before_setup(self):
+        def command(argv):
+            self.assertEqual(argv, ['--profile', 'lab', 'setup', '--host', '192.0.2.1', '--port', '18443'])
+            self.profile('lab')
+        with patch('builtins.input', side_effect=['n', 'Bad Name', 'lab', '129', 'localhost',
+                                                '127.0.0.1', 'https://example.test', '', 'bad', '0', '8443', '', 'n']), \
+             patch.object(selection, 'port_available', side_effect=lambda port: port != 8443), \
+             patch('micros_tooling.fleet.server.server_main', side_effect=command) as run:
+            with self.assertRaisesRegex(e.EnrollmentCancelled, 'Server saved'):
+                selection.choose_server(self.workspace)
+        run.assert_called_once()
+
+    def test_cancel_during_creation_does_not_create_identity(self):
+        with patch('builtins.input', side_effect=['n', 'lab', 'q']), \
+             patch('micros_tooling.fleet.server.server_main') as run:
+            with self.assertRaises(e.EnrollmentCancelled):
+                selection.choose_server(self.workspace)
+        run.assert_not_called()
+        self.assertFalse(client.profile_directory('lab').exists())
+
+    def test_invalid_host_is_rejected_before_creating_identity(self):
+        for host in ('129', '192.168.1', '999.1.1.1', 'https://example.test', 'host:8443',
+                     '-host', 'host..local', '0.0.0.0', '::', '224.0.0.1'):
+            with self.subTest(host=host), self.assertRaises(ValueError):
+                server_main(['--profile', 'invalid', 'setup', '--host=' + host])
+            self.assertFalse(client.profile_directory('invalid').exists())
+
+    def test_missing_server_has_actionable_setup_guidance(self):
+        with self.assertRaisesRegex(ValueError, 'micros enroll'):
+            server_main(['--profile', 'missing', 'devices'])
+
+    def test_imported_operator_cannot_start_an_unrelated_local_server(self):
+        self.profile('imported')
+        with patch('micros_tooling.fleet.server.RelayRemote'), \
+             patch('micros_tooling.fleet.server.subprocess.run') as run:
+            with self.assertRaisesRegex(ValueError, 'operator access only'):
+                server_main(['--profile', 'imported', 'start'])
+        run.assert_not_called()
+
+    def test_stopped_docker_is_reported_before_container_start(self):
+        directory = self.profile('local-test')
+        (directory / 'prvtkey.pem').write_text('test-key')
+        with patch('micros_tooling.fleet.server.RelayRemote'), \
+             patch('micros_tooling.fleet.server.shutil.which', return_value=sys.executable), \
+             patch('micros_tooling.fleet.server.subprocess.run',
+                   side_effect=[argparse.Namespace(returncode=0), argparse.Namespace(returncode=1)]) as run:
+            with self.assertRaisesRegex(ValueError, 'Docker is not running'):
+                server_main(['--profile', 'local-test', 'start'])
+        self.assertEqual(run.call_count, 2)
 
     def test_custom_port_persists_and_controls_docker_binding(self):
         directory = client.profile_directory('custom')

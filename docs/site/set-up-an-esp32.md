@@ -63,8 +63,10 @@ by the tool; it contains credentials and exact build artifacts.
 
 For interruption, rerun enrollment. If a flash result is uncertain, the tool
 checks saved images and may require `--retry-flash`; inspect its saved log before
-requesting that retry. Already enrolled controllers are rejected by this wizard;
-use the normal deployment/update flow for those controllers.
+requesting that retry. A board with a matching unfinished local enrollment remains selectable as
+“resume unfinished enrollment,” even if it reached the console before the previous
+command finished. Its installed firmware is retained. Confirmed enrollments use
+the normal deployment/update flow.
 
 If an **unfinished ESP8266 enrollment needs a firmware fix**, first select the
 corrected SDK revision, then run `./micros enroll --rebuild-base`. This explicitly
@@ -73,10 +75,17 @@ enrollment token. It is different from `--retry-flash`, which retries saved imag
 
 ## 03 · Select the application {#select-the-application}
 
-In your [project](get-started.md#create-your-project), replace the placeholder
-unit ID and filename with the enrolled hardware ID. Set `board.profile` and
-`board.flash_mb` for the physical board; enrollment does not infer application pins.
-For a Feather V2, use `adafruit_feather_esp32_v2` and `8`.
+When enrollment succeeds inside an unchanged [starter project](get-started.md#create-your-project)
+for the same platform, it replaces the placeholder unit ID and filename with the
+enrolled hardware ID and uses the detected ESP32 flash capacity. It preserves the
+original placeholder under `build/enrollment/` and prints the next deployment
+command. This does not deploy a service.
+
+Customized units, multiple units and starters for a different platform are left
+unchanged. In those projects, replace the placeholder unit ID and filename yourself
+and set `board.profile` and `board.flash_mb` for the physical board; enrollment
+does not infer application pins. For a Feather V2 with peripheral wiring, use
+`adafruit_feather_esp32_v2` and `8`.
 
 ```sh
 ./micros compose -d HARDWARE_ID

@@ -48,10 +48,12 @@ class OnboardingDefaultsTest(unittest.TestCase):
     def run_server(self,action,options=(),environment=None):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);(root/'client.json').write_text(json.dumps({'url':'https://localhost:8443'}))
+            for name in ('servercert.pem', 'admin.token', 'prvtkey.pem'):
+                (root/name).write_text('test fixture')
             with patch.dict(os.environ,environment or {},clear=True), \
                  patch.object(server,'RelayRemote',return_value=Mock()), \
-                 patch.object(server.shutil,'which',return_value='/docker'), \
-                 patch.object(server.subprocess,'run') as run,contextlib.redirect_stdout(io.StringIO()):
+                 patch.object(server.shutil,'which',return_value=sys.executable), \
+                 patch.object(server.subprocess,'run',return_value=Mock(returncode=0)) as run,contextlib.redirect_stdout(io.StringIO()):
                 server.server_main(['--state',str(root),*options,action])
                 return run.call_args
 
@@ -71,7 +73,7 @@ class OnboardingDefaultsTest(unittest.TestCase):
 
     def test_invalid_namespace_rejected_before_credentials_or_docker(self):
         for name in ('','UPPER','-prefix','two names','a/b','$(command)'):
-            with patch.object(server,'RelayRemote') as remote,patch.object(server.subprocess,'run') as run:
+            with patch.object(server,'RelayRemote') as remote,patch.object(server.subprocess,'run',return_value=Mock(returncode=0)) as run:
                 with self.assertRaisesRegex(PackageError,'Compose project'):
                     server.server_main(['--state','/nonexistent','--compose-project='+name,'start'])
                 remote.assert_not_called();run.assert_not_called()

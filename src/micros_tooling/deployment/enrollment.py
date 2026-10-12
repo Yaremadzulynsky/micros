@@ -50,6 +50,26 @@ def interactive(args):
     return not args.json and sys.stdin.isatty()
 
 
+def resumable(receipt, existing):
+    """An online board may have connected just before enrollment was interrupted."""
+    if not (receipt and not receipt.get('confirmed') and receipt.get('flashed')
+            and isinstance(receipt.get('base_sha256'), str)
+            and re.fullmatch('[0-9a-f]{64}', receipt.get('base_sha256', ''))
+            and receipt.get('board', {}).get('device_id') == existing['device_id']
+            and receipt.get('name') == existing['name']):
+        return False
+    observed = ((existing.get('status') or {}).get('identity') or {}).get('base_sha256')
+    return not observed or observed == receipt['base_sha256']
+
+
+def valid_board_name(name, roster, device_id):
+    require(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_. -]{0,79}', name),
+            'Use a board name containing letters, digits, spaces, dots, underscores or hyphens.')
+    require(not any(d['name'] == name and d['device_id'] != device_id for d in roster),
+            'That name belongs to another board; choose a different name.')
+    return name
+
+
 def choose_port(args, roster=None):
     from serial.tools import list_ports
     from micros_tooling.communication.wifi import USB_VENDORS
@@ -72,25 +92,38 @@ def choose_port(args, roster=None):
         found = {item['port']: item for item in discover()}
     enrolled = {d['device_id']: d for d in (roster or [])}
     operation = getattr(args, 'command', 'enroll')
+    operator = None
+    if enrolled and operation == 'enroll':
+        from micros_tooling.storage.client import operator_directory
+        operator = operator_directory(Workspace(Path(os.environ.get('MICROS_STATE_DIR', ROOT / '.micros'))))
     available = []
     for p in choices:
         result = found.get(p.device, {})
         detail = describe(result, operation) if result else 'unidentified'
         existing = enrolled.get(result.get('device_id'))
+        resume = False
+        if existing and operation == 'enroll':
+            try:
+                saved = Workspace(operator / 'onboarding' / existing['device_id']).read('enrollment.json', {})
+                resume = resumable(saved, existing)
+            except (OSError, ValueError):
+                pass
         blocker = operation_blocker(result, operation)
         if p.vid in (0x2341, 0x2a03) and p.pid not in (0x8054, 0x0054):
             blocker = f'{operation} not supported yet for this board'
         if blocker:
             progress(f'— {p.device}: {detail}' + ('' if blocker in detail else f' · {blocker}'))
-        elif existing:
+        elif existing and not resume:
             progress(f'— {p.device}: {detail} · {existing["name"]} · already enrolled')
         else:
             available.append(p)
-            progress(f'{len(available)}. {p.device}: {detail}')
+            progress(f'{len(available)}. {p.device}: {detail}' + (' · resume unfinished enrollment' if resume else ''))
     require(available, f'No controllers available to {operation}. See the reason beside each connected interface.')
-    choice = input(f'Select controller to {operation}: ').strip()
-    require(choice.isdigit() and 1 <= int(choice) <= len(available), 'Choose a displayed available controller number.')
-    return available[int(choice) - 1].device
+    from micros_tooling.deployment.server_selection import prompt
+    def controller_number(choice):
+        require(choice.isdigit() and 1 <= int(choice) <= len(available), 'Choose a displayed available controller number, or q to cancel.')
+        return int(choice) - 1
+    return available[prompt(f'Select controller to {operation}', controller_number)].device
 
 
 def esptool():
@@ -423,7 +456,25 @@ def enroll(args):
     require(not getattr(args, 'rebuild_base', False) or not (args.firmware or args.retry_flash or args.detect),
             'Use --rebuild-base without --firmware, --retry-flash or --detect.')
     with enrollment_server(args):
-        return _enroll(args)
+        result = _enroll(args)
+        if result.get('online'):
+            from micros_tooling.storage.client import application_root
+            root = application_root()
+            if root:
+                from micros_tooling.config.scaffold import bind_starter
+                unit = None
+                try:
+                    unit = bind_starter(root, result['device_id'], result['platform'], result.get('flash_mb'))
+                except (OSError, ValueError) as error:
+                    progress(f'Board enrollment succeeded; project setup needs attention: {error}')
+                if unit:
+                    result['project_unit'] = str(unit)
+                    result['next_steps'] = [f'micros deploy -d {result["device_id"]} --dry-run',
+                                            f'micros deploy -d {result["device_id"]}']
+                    result['message'] += f'\nProject unit: {unit.name}\nNext: ' + result['next_steps'][0]
+                else:
+                    result['message'] += f'\nAdd or update units/{result["device_id"]}.toml for this board before deploying. Existing project settings were preserved.'
+        return result
 
 
 def _enroll(args):
@@ -433,7 +484,17 @@ def _enroll(args):
     operator = workspace.root if args.detect else operator_directory(workspace).resolve()
     remote = None if args.detect else configured_remote(workspace)
     require(remote is not None or args.detect, 'Configure console operator access first (micros server import-client PATH), then rerun enroll.')
-    roster = [] if args.detect else json.loads(remote.raw('GET', '/v1/devices'))['devices']
+    try:
+        roster = [] if args.detect else json.loads(remote.raw('GET', '/v1/devices'))['devices']
+    except (ConnectionRefusedError, TimeoutError) as error:
+        from micros_tooling.storage.client import server_description
+        import shlex
+        url = server_description(operator)['url']
+        if (operator / 'prvtkey.pem').is_file():
+            recovery = 'Start the selected server with ' + shlex.join(['micros', 'server', '--state', str(operator), 'start']) + ', then rerun enroll.'
+        else:
+            recovery = 'Check its address, network access, and that the server is running on its host, then rerun enroll.'
+        raise PackageError(f'No server answered at {url}. {recovery} No controller was accessed.') from error
     port = choose_port(args, roster=None if args.detect else roster)
     from micros_tooling.deployment.samd_enrollment import is_mkr, enroll_mkr
     if is_mkr(port):
@@ -446,7 +507,6 @@ def _enroll(args):
     if args.detect:
         return dict(**board, port=port, message=f'{board["chip"]} · {board["flash_mb"]} MiB · {board["device_id"]} · {port}')
     existing = next((d for d in roster if d['device_id'] == board['device_id']), None)
-    require(existing is None, 'This controller is already enrolled. Use micros erase first to start over.')
     remote = configured_remote(workspace, board['device_id'])
     session = operator / 'onboarding' / board['device_id']
     state = Workspace(session)
@@ -454,6 +514,11 @@ def _enroll(args):
         receipt = state.read('enrollment.json', {})
         if receipt:
             check_identity(receipt['board'], board)
+        if existing:
+            require(resumable(receipt, existing) and not getattr(args, 'rebuild_base', False),
+                    'This controller is already enrolled. Use micros status or micros deploy for the existing board; '
+                    'enrollment will not replace its firmware.')
+            progress('Resuming the saved enrollment; keeping the installed firmware and checking its connection.')
         if getattr(args, 'rebuild_base', False):
             require(receipt and not receipt.get('confirmed'),
                     '--rebuild-base requires an unfinished enrollment; confirmed controllers must use the normal update workflow.')
@@ -472,9 +537,9 @@ def _enroll(args):
         require(not args.name or not name or args.name == name, f'Existing enrollment name is {name!r}; this command will not rename or reset it.')
         if not name:
             require(interactive(args), 'Supply a board name: micros enroll NAME …')
-            name = input('Board name: ').strip()
-        require(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_. -]{0,79}', name), 'Use a board name containing letters, digits, spaces, dots, underscores or hyphens.')
-        require(not any(d['name'] == name and d['device_id'] != board['device_id'] for d in roster), 'That name belongs to another board; choose a different name.')
+            from micros_tooling.deployment.server_selection import prompt
+            name = prompt('Board name', lambda value: valid_board_name(value, roster, board['device_id']))
+        valid_board_name(name, roster, board['device_id'])
         if not receipt and not args.firmware and not args.retry_flash:
             installed = installed_base(board, port, remote, existing)
             if installed:
@@ -502,7 +567,7 @@ def _enroll(args):
             receipt['pending_enrollment'] = False
             receipt.pop('canceled', None)
             save()
-            return dict(device_id=board['device_id'], name=name, platform=board['platform'], base_sha256=receipt['base_sha256'],
+            return dict(device_id=board['device_id'], name=name, platform=board['platform'], flash_mb=board['flash_mb'], base_sha256=receipt['base_sha256'],
                         online=True, session=str(session), message=f'{name} is online in the console. Base firmware and authenticated connection verified. No application services were deployed.')
         except KeyboardInterrupt:
             raise EnrollmentCancelled(cancel_enrollment(remote, board, receipt, save)) from None

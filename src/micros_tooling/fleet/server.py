@@ -18,6 +18,30 @@ from micros_tooling.communication.remote import Remote, accepted, decode_respons
 ROOT = Path(__file__).resolve().parents[3]
 
 
+def server_address(host, port=8443):
+    """Validate the client address before creating any private server identity."""
+    require(1 <= port <= 65535, 'Server port must be between 1 and 65535')
+    try:
+        address = ipaddress.ip_address(host)
+    except ValueError:
+        import re
+        labels = host.rstrip('.').split('.')
+        require(len(host) <= 253 and not re.fullmatch(r'[0-9.]+', host)
+                and all(re.fullmatch(r'[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?', label)
+                        for label in labels),
+                'Enter a hostname or complete IP address, without https://, a port, or a path.')
+        san = 'DNS:' + host
+    else:
+        require(not address.is_unspecified and not address.is_multicast and '%' not in host,
+                'Use the server address clients can reach, not a wildcard, multicast, or scoped address.')
+        san = 'IP:' + host
+        if address.version == 4:
+            # Retain DNS SAN compatibility with the pinned ESP8266 TLS library.
+            san += ',DNS:' + host
+    authority = '[' + host + ']' if ':' in host else host
+    return f'https://{authority}:{port}', san
+
+
 class RelayRemote(Remote):
     """Reuse existing status validation and deployment leases over an HTTPS relay."""
     def __init__(self, url, certificate, token_file, device_id, *, cloudflare_access=False):
@@ -176,18 +200,7 @@ def server_main(arguments):
         return
     if args.action == 'setup':
         require(not (state/'client.json').exists(), 'Server already configured; preserve its identity')
-        require(1 <= args.port <= 65535, 'Server port must be between 1 and 65535')
-        try:
-            address = ipaddress.ip_address(args.host)
-            san = 'IP:'+args.host
-            # The pinned ESP8266 TLS library only checks DNS SANs. Retain the
-            # IP SAN for modern clients and the same exact name for that client.
-            if address.version == 4:
-                san += ',DNS:'+args.host
-        except ValueError:
-            import re
-            require(re.fullmatch('[A-Za-z0-9.-]+', args.host), 'Invalid server hostname')
-            san = 'DNS:'+args.host
+        url, san = server_address(args.host, args.port)
         state.mkdir(parents=True, exist_ok=True, mode=0o700)
         state.chmod(0o700)
         subprocess.run(['openssl','req','-x509','-newkey','ec','-pkeyopt','ec_paramgen_curve:P-256',
@@ -195,14 +208,17 @@ def server_main(arguments):
             '-keyout',str(state/'prvtkey.pem'),'-out',str(state/'servercert.pem')], check=True,capture_output=True)
         (state/'prvtkey.pem').chmod(0o600)
         atomic_write(state/'admin.token', secrets.token_hex(32).encode())
-        host = '[' + args.host + ']' if ':' in args.host else args.host
-        url = f'https://{host}:{args.port}'
         atomic_write(state/'client.json', json.dumps(dict(url=url)).encode())
         import shlex
         selection = ['--profile', args.profile] if args.profile else ['--state', str(state)]
         print('Server identity ready at ' + url + '. Run ' +
               shlex.join(['micros', 'server', *selection, 'start']) + ' to start the console.')
         return
+    from micros_tooling.storage.client import server_description
+    require((state/'client.json').is_file(),
+            'No server is configured here. Run micros enroll to create or connect to a server, '
+            'or micros server setup --host SERVER_LAN_IP for a new local server.')
+    server_description(state)
     config = json.loads((state/'client.json').read_text())
     remote = RelayRemote(config['url'], state/'servercert.pem', state/'admin.token', getattr(args,'device_id',''),
                          cloudflare_access=config.get('cloudflare_access') is True)
@@ -233,6 +249,18 @@ def server_main(arguments):
         print('Opened management console at '+config['url']+'/console/')
     elif args.action in ('start','shutdown'):
         docker = shutil.which('docker') or '/Applications/Docker.app/Contents/Resources/bin/docker'
+        if args.action == 'start':
+            require((state / 'prvtkey.pem').is_file(),
+                    'This profile has operator access only. Start the server on its host; '
+                    'use micros server console or devices to connect from this computer.')
+            require(Path(docker).is_file(), 'Docker is not installed. Install Docker with Compose, start it, then rerun this command.')
+            for arguments, message in ((['compose', 'version'], 'Docker Compose is unavailable. Install the Compose plugin, then rerun this command.'),
+                                       (['info'], 'Docker is not running or accessible. Start Docker and check docker info, then rerun this command.')):
+                try:
+                    check = subprocess.run([docker, *arguments], capture_output=True, timeout=15)
+                    require(check.returncode == 0, message)
+                except subprocess.TimeoutExpired:
+                    require(False, message)
         command = [docker,'compose','-p',args.compose_project,'-f',str(ROOT/'src/server/compose.yaml')]
         command += ['up','--build','-d'] if args.action == 'start' else ['stop']
         subprocess.run(command, env=dict(os.environ, MICROS_SERVER_STATE=str(state),
