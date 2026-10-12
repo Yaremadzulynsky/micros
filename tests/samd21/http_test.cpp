@@ -28,6 +28,22 @@ static int parse(const std::string &message, std::string *body = nullptr)
 }
 int main()
 {
+    // Consecutive replies must leave exactly the next response in the stream.
+    for (const std::string &connection : {std::string(), std::string("Connection: keep-alive\r\n"), std::string("Connection: keep-alive, CLOSE \r\n")}) {
+        Client client{"HTTP/1.1 200 OK\r\n"+connection+"Content-Length: 2\r\n\r\n{}HTTP/1.1 204 No Content\r\n\r\n"};
+        Clock clock; uint8_t out[4]; size_t count;
+        micros_samd21::HttpReader<Client,Clock> first(client,clock,10);
+        assert(first.response(out,sizeof(out),count)==200 && count==2);
+        assert(first.reusable()==(connection.find("CLOSE")==std::string::npos));
+        micros_samd21::HttpReader<Client,Clock> second(client,clock,10);
+        assert(second.response(out,sizeof(out),count)==204 && count==0 && second.reusable());
+    }
+    {
+        Client client{"HTTP/1.0 200 OK\r\nContent-Length: 0\r\n\r\n"};
+        Clock clock; uint8_t out[1]; size_t count;
+        micros_samd21::HttpReader<Client,Clock> reader(client,clock,10);
+        assert(reader.response(out,sizeof(out),count)==200 && !reader.reusable());
+    }
     std::string body;
     const std::string prefix = "HTTP/1.1 200 OK\r\n";
     assert(

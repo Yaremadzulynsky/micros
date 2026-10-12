@@ -53,6 +53,12 @@ to ground to exercise changes. Services contain no SAMD or Arduino API calls.
 
 ## Images and bounded resources
 
+The relay worker reuses its authenticated NINA TLS connection across polls and
+command results. It reconnects on a peer close, incomplete HTTP response, network
+change or base download. HTTP responses are fully framed before reuse; an
+uncertain command is never replayed to recover a connection. Reopening TLS for
+every poll/result previously made RPC round trips take about 12 seconds.
+
 Services are independently compiled into `.msp` packages and a `bank.bin` plus
 `report.json`. Code and constants execute from flash; initialized data is copied
 to a stable RAM slot. The base hash binds packages to the exact RAM/linker layout.

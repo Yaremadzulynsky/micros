@@ -15,6 +15,7 @@ template <class Client, class Clock> class HttpReader
     Client &client;
     Clock &clock;
     uint32_t deadline;
+    bool persistent = false;
     int byte()
     {
         while ((int32_t)(deadline - clock.now()) > 0)
@@ -79,6 +80,7 @@ template <class Client, class Clock> class HttpReader
     }
 
   public:
+    bool reusable() const { return persistent; }
     HttpReader(Client &input, Clock &timer, uint32_t timeout = 10000)
         : client(input), clock(timer), deadline(timer.now() + timeout)
     {
@@ -91,6 +93,7 @@ template <class Client, class Clock> class HttpReader
             (strncmp(scratch, "HTTP/1.1 ", 9) && strncmp(scratch, "HTTP/1.0 ", 9)) ||
             sscanf(scratch + 9, "%u", &status) != 1 || status < 200 || status > 599)
             return -1;
+        persistent = !strncmp(scratch, "HTTP/1.1 ", 9);
         bool has_length = false;
         chunked = false; length = 0;
         for (unsigned headers = 0;; ++headers)
@@ -100,6 +103,20 @@ template <class Client, class Clock> class HttpReader
                 return -1;
             if (!n)
                 break;
+            if (!strncasecmp(scratch, "Connection:", 11))
+            {
+                const char *value = scratch + 11;
+                while (*value)
+                {
+                    while (*value == ' ' || *value == '\t' || *value == ',') ++value;
+                    const char *end = value;
+                    while (*end && *end != ',') ++end;
+                    const char *trimmed = end;
+                    while (trimmed > value && (trimmed[-1] == ' ' || trimmed[-1] == '\t')) --trimmed;
+                    if (trimmed - value == 5 && !strncasecmp(value, "close", 5)) persistent = false;
+                    value = end;
+                }
+            }
             if (!strncasecmp(scratch, "Content-Length:", 15))
             {
                 if (has_length || !number(scratch + 15, 10, capacity, length, false))

@@ -106,6 +106,21 @@ class RelayTests(unittest.TestCase):
         second.join(2)
         self.assertEqual(results, [(200, b'{}'), (200, b'{}')])
 
+    def test_console_requests_use_embedded_rpc_framing(self):
+        from server.remote import RegistryRemote
+        for platform in ('samd21','esp8266'):
+            with patch('server.relay.POLL_SECONDS',0):
+                self.registry.poll(DEVICE,BOOT,dict(STATUS,platform=platform))
+            remote=RegistryRemote(self.registry,DEVICE)
+            with patch.object(self.registry,'command',return_value=(200,b'{"result":0}')) as command:
+                remote.request('GET','/v1/log-stream?cursor=1099511627776')
+                self.assertEqual(command.call_args.args[1:5],(18,0,0,0))
+                self.assertEqual(command.call_args.args[-1],b'RPC 7 0 0 1099511627776 - -')
+                remote.session_id='c'*32
+                remote.request('POST','/v1/platform-command',b'SERVICE COMMAND')
+                self.assertEqual(command.call_args.args[-1],
+                    ('RPC 18 0 0 0 '+'c'*32+' '+b'SERVICE COMMAND'.hex()).encode())
+
     def test_timeout_and_restart_never_replay_work(self):
         self.ready()
         with patch('server.relay.COMMAND_SECONDS',0.02):
