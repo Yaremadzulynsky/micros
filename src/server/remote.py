@@ -26,9 +26,29 @@ class RegistryRemote(Remote):
     def __init__(self, registry, device):
         self.registry,self.device_id,self.session_id=registry,device,''
     def request(self,method,path,body=b'',token=None):
+        import json
         from urllib.parse import urlsplit,parse_qs
         route=urlsplit(path); query=parse_qs(route.query) if route.query else {}
-        code,response=self.registry.command(self.device_id,ROUTES[(method,route.path)],
-            int(query.get('bank',['0'])[0]),int(query.get('slot',['0'])[0]),int(query.get('cursor',['0'])[0]),self.session_id,body)
+        operation=ROUTES[(method,route.path)]
+        bank,slot,cursor=(int(query.get(key,['0'])[0]) for key in ('bank','slot','cursor'))
+        with self.registry.changed:
+            row=self.registry.db.execute('SELECT status FROM devices WHERE id=?',(self.device_id,)).fetchone()
+        status=json.loads(row[0]) if row and row[0] else {}
+        embedded=status.get('platform') in ('samd21','esp8266')
+        drain=embedded and operation==7
+        if embedded:
+            if drain:
+                operation,cursor=1,0  # These targets expose a shared, consuming log read.
+            # Embedded transports consume the common RPC frame, including
+            # console log cursors and command bodies, just like the CLI.
+            body=f'RPC {operation} {bank} {slot} {cursor} {self.session_id or "-"} {body.hex() or "-"}'.encode('ascii')
+            operation,bank,slot,cursor=18,0,0,0
+        code,response=self.registry.command(self.device_id,operation,bank,slot,cursor,self.session_id,body)
         accepted(code,response)
+        if embedded:
+            from micros_tooling.storage.packages import require
+            reply=decode_response(response)
+            require(reply.get('result')==0,'Device rejected the console request: '+str(reply.get('error','unknown error')))
+            if drain:
+                return dict(mode='drain',data_hex=reply['hex'])
         return response.decode(errors='replace') if route.path=='/v1/logs' else decode_response(response)

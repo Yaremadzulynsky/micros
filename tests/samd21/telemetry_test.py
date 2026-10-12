@@ -6,6 +6,27 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[2] / "src"))
 from micros_tooling.platforms.samd21.telemetry import expand
 
 class TelemetryTest(unittest.TestCase):
+    def test_shared_controller_layout_preserves_fields_and_physical_slot(self):
+        report=dict(platform='samd21', embedded_layout=1, layout_version=2, active=1,
+                    image_slots=[2], base_ota=dict(slot=0,version=1),
+                    board=dict(gpio=[dict(pin=6)]),
+                    services=[dict(name='example.hello',state='Running',stack_free_bytes=600)])
+        result=expand(report)
+        self.assertEqual(result['services'],report['services'])
+        self.assertEqual(result['board']['gpio'],report['board']['gpio'])
+        parts=sorted(result['flash']['partitions'],key=lambda part:part['offset'])
+        end=0
+        for part in parts:
+            self.assertEqual(part['offset'],end);end+=part['size']
+        self.assertEqual(end,result['flash']['total_bytes'])
+        image=next(part for part in parts if part.get('image'))
+        self.assertEqual(image['image']['slot'],2)
+        self.assertEqual(image['name'],'example.hello')
+        self.assertNotIn('image_bytes',image['image'])
+        self.assertEqual(expand(result),result)
+        for slots in ([0,1],[4],[True],[1,1]):
+            with self.assertRaises(ValueError): expand(dict(report,image_slots=slots))
+
     def report(self):
         return dict(platform='samd21',samd_telemetry=1,active=1,
             service_rows=[['blink','1.0',4,0,100,2,128,1024,600,8,2,4,1,1,1,0,0,100,20,30,500]],

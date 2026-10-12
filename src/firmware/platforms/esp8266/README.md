@@ -41,7 +41,7 @@ Enroll the board's MAC identity with `micros server enroll`, then supply the res
 ./micros wifi add --platform esp8266 --ssid FALLBACK
 ```
 
-Two network profiles are stored on the board. The management network page can edit them without returning passwords. The board validates TLS certificates and hostnames after obtaining network time. The public root bundle contains ISRG Root X1 and GTS Root R4; the latter comes from [Google's root repository](https://pki.goog/roots.pem). Update the bundle when changing to a relay with a different trust chain.
+Two network profiles are stored on the board. The management network page can edit them without returning passwords. The board validates TLS certificates and hostnames after obtaining network time. The public root bundle includes ISRG Root X1 and GTS Root R4; the latter comes from [Google's root repository](https://pki.goog/roots.pem). Update the bundle when changing to a relay with a different trust chain.
 
 ```sh
 ./micros status -d esp8266 --via relay
@@ -52,6 +52,19 @@ Two network profiles are stored on the board. The management network page can ed
 ## Flash and service limits
 
 Each 1 MiB execution window contains one 704 KiB base partition and two 128 KiB service banks. Each service bank has a 4 KiB graph and four 31 KiB image slots. Service images contain a 64-byte envelope; each service has 1 KiB of linked RAM. Admission also bounds arenas to 4 KiB, total service stacks to 12 KiB and channel payload storage to 1 KiB. Network/runtime overhead consumes additional RAM; reported live headroom remains relevant.
+
+The build removes duplicate certificates before freezing the relay trust bundle,
+so mbedTLS does not allocate another parsed chain entry for the same root.
+It also stores the validated roots as immutable DER in flash. The pinned SDK
+receives a narrow backport of Mbed TLS's `mbedtls_x509_crt_parse_der_nocopy`
+ownership model: only these static trust buffers are borrowed; ordinary and peer
+certificate parsing still owns its buffers. All configured roots and verification
+rules are retained. The bundled nine roots avoid 8,897 bytes of duplicate heap
+storage, plus temporary PEM decoding buffers. `tests/esp8266/tls_trust_test.c`
+compares copying and borrowed parsing, verification and malformed-input cleanup
+with the pinned libraries under AddressSanitizer.
+After preparing a base build, run it with
+`python tests/esp8266/tls_trust_check.py SDK_PATH BASE_BUILD_PATH`.
 
 The pinned SDK uses dynamic TLS record buffers. The build patches its initial
 TLS setup to allocate only header space, which the SDK wrapper replaces before

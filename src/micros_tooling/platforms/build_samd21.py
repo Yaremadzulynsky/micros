@@ -9,6 +9,16 @@ ROOT = Path(__file__).resolve().parents[3]
 FREERTOS_COMMIT = "dbf70559b27d39c1fdb68dfb9a32140b6a6777a0"
 
 
+def patch_nina_socket_buffer(source):
+    """Bound SPI receive staging and reject allocation failure before driver I/O."""
+    size = '#define WIFI_SOCKET_BUFFER_SIZE 1500'
+    allocation = '_buffers[socket].data = _buffers[socket].head = (uint8_t*)malloc(WIFI_SOCKET_BUFFER_SIZE);'
+    if source.count(size) != 1 or source.count(allocation) != 1:
+        raise ValueError('Unexpected pinned WiFiNINA socket buffer source')
+    return source.replace(size, '#define WIFI_SOCKET_BUFFER_SIZE 256').replace(
+        allocation, allocation + '\n      if (_buffers[socket].data == NULL) return 0;')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--freertos", type=Path, default=ROOT / "build/toolchains/freertos-kernel-v11.1.0")
@@ -34,6 +44,11 @@ def main():
     if not (compiler / "arm-none-eabi-gcc").is_file():
         parser.error("--compiler-dir must contain arm-none-eabi-gcc")
     output = args.output.resolve()
+    # Patch an isolated build copy; leave the pinned dependency checkout intact.
+    nina_copy = output / "wifinina"
+    shutil.copytree(nina, nina_copy, dirs_exist_ok=True, ignore=shutil.ignore_patterns('.git'))
+    socket_source = nina_copy / "src/utility/WiFiSocketBuffer.cpp"
+    socket_source.write_text(patch_nina_socket_buffer(socket_source.read_text()))
     sketch = output / "runtime"
     source = sketch / "src"
     source.mkdir(parents=True, exist_ok=True)
@@ -118,7 +133,7 @@ def main():
     # Arduino can retain object files for removed generated wrappers; rebuild
     # its cache so a renamed platform source is never linked twice.
     subprocess.run([
-        "arduino-cli", "compile", "--clean", *(["--verbose"] if args.verbose else []), "--fqbn", "arduino:samd:mkrwifi1010", "--library", str(nina),
+        "arduino-cli", "compile", "--clean", *(["--verbose"] if args.verbose else []), "--fqbn", "arduino:samd:mkrwifi1010", "--library", str(nina_copy),
         "--build-property", "build.variant.path="+str(variant),
         "--build-path", str(output / "objects"), "--output-dir", str(output / "firmware"),
         "--build-property", "compiler.path=" + str(compiler) + "/",

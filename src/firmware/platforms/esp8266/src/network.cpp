@@ -2,6 +2,7 @@
 #include "freertos/task.h"
 #include "support/storage.h"
 #include "device_support.h"
+#include <micros/controller.h>
 #include <micros/network.h>
 #include "esp_event_loop.h"
 #include "esp_http_client.h"
@@ -183,7 +184,7 @@ bool embedded_network_base_fetch(const char *actor, const char *hash) {
   fetch_pending = true;
   return true;
 }
-static void release_response() { free(response_text);response_text=nullptr;response_bytes=0; }
+static void release_response() { micros_controller_rpc_release(response_text);response_text=nullptr;response_bytes=0; }
 void embedded_network_poll(char *(*execute)(char *)) {
  if (!request_ready || xSemaphoreTake(request_ready, 0) != pdTRUE) return;
  release_response();
@@ -257,6 +258,9 @@ static int exchange(const Settings &current, const char *path, const char *boot,
   auto client = open(current, path, bytes, boot, result);
   if (!client)
     return -1;
+  // A poll observation is consumed once written. Do not retain the management
+  // workspace throughout the server's long poll; USB must remain usable.
+  if (boot) release_response();
   stage = "headers";
   int length = esp_http_client_fetch_headers(client),
       status = esp_http_client_get_status_code(client);

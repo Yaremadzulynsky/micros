@@ -67,8 +67,12 @@ def expand(status, serial=False):
         from micros_tooling.platforms.samd21.telemetry import expand as samd_expand
 
         return samd_expand(status, serial=serial)
-    if status.get("platform") != "esp8266" or status.get("embedded_telemetry") != 1:
+    if status.get("platform") != "esp8266" or not (status.get("embedded_telemetry") == 1 or status.get("embedded_layout") == 1):
         return status
+    if status.get("embedded_layout") == 1:
+        result = dict(status)
+        result["board"] = dict(status.get("board", {}), profile="ESP8266 4 MiB", flash_mb=4)
+        return layout(result)
     pins = status["gpio_rows"]
     result = tables(status, serial)
     result["reset_reason"] = result.get("reset_cause")
@@ -81,6 +85,11 @@ def expand(status, serial=False):
             for i, (pin, output, level) in enumerate(pins)
         ],
     )
+    return layout(result)
+
+
+def layout(result):
+    validate_slots(result)
     active = result.get("active", 0xFFFFFFFF)
     base_slot = result.get("base_ota", {}).get("slot", 0)
     parts = [
@@ -116,17 +125,18 @@ def expand(status, serial=False):
             parts.append(dict(name="Active graph reservation", offset=offset, size=4096))
             for i in range(4):
                 region = dict(offset=offset + 4096 + i * 31744, size=31744)
-                if i < len(result["services"]):
-                    service = result["services"][i]
+                indices = result.get("image_slots", list(range(len(result["services"]))))
+                if i in indices:
+                    service = result["services"][indices.index(i)]
                     slot = dict(
                         slot=i,
-                        name=service["name"],
+                        name=service.get("name", "Service slot " + str(i)),
                         offset=4096 + i * 31744,
                         reserved_bytes=31744,
-                        image_bytes=service["image_bytes"],
+                        **({"image_bytes": service["image_bytes"]} if "image_bytes" in service else {}),
                     )
                     slots.append(slot)
-                    region.update(name=service["name"], image=slot)
+                    region.update(name=service.get("name", "Service slot " + str(i)), image=slot)
                 else:
                     region.update(name="Unused service slot " + str(i), reservedCapacity=True)
                 parts.append(region)
@@ -135,3 +145,11 @@ def expand(status, serial=False):
         total_bytes=4194304, partitions=parts, services=dict(slot_bytes=31744, slots=slots)
     )
     return result
+
+
+def validate_slots(status):
+    slots = status.get('image_slots', list(range(len(status['services']))))
+    if (len(slots) != len(status['services']) or len(slots) > 4 or
+            any(type(slot) is not int or not 0 <= slot < 4 for slot in slots) or
+            len(set(slots)) != len(slots)):
+        raise ValueError('Invalid embedded image slots')

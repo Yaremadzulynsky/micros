@@ -53,6 +53,12 @@ to ground to exercise changes. Services contain no SAMD or Arduino API calls.
 
 ## Images and bounded resources
 
+The relay worker reuses its authenticated NINA TLS connection across polls and
+command results. It reconnects on a peer close, incomplete HTTP response, network
+change or base download. HTTP responses are fully framed before reuse; an
+uncertain command is never replayed to recover a connection. Reopening TLS for
+every poll/result previously made RPC round trips take about 12 seconds.
+
 Services are independently compiled into `.msp` packages and a `bank.bin` plus
 `report.json`. Code and constants execute from flash; initialized data is copied
 to a stable RAM slot. The base hash binds packages to the exact RAM/linker layout.
@@ -133,10 +139,17 @@ See `docs/archive/documentation/reviews/mkr-samd21-bringup.md` for dated evidenc
 
 The shared controller formats service, GPIO, memory and network status. The
 platform supplies measurements through `telemetry.h` and `network.h`. Each
-request owns one bounded reply allocation; the relay retains that allocation
-until acknowledgement. Unsupported measurements remain unavailable. Historical
+request borrows the shared reserved reply workspace; the relay retains mutation
+replies until acknowledgement. Unsupported measurements remain unavailable. Historical
 board measurements are in the archived bring-up review; they do not validate a
 new base build. Verify live heap headroom and task stack watermarks after changes.
+
+The build copies the pinned WiFiNINA dependency into its output directory and
+bounds its SPI receive staging buffer to 256 bytes. A failed allocation returns
+no available data before calling the driver; it cannot pass a null buffer to SPI.
+The receive path drains larger replies in chunks. Run
+`python tests/samd21/socket_buffer_check.py PATH_TO_WIFININA` to exercise allocation
+failure, partial reads and cleanup against the actual pinned library source.
 
 ## A/B base updates
 

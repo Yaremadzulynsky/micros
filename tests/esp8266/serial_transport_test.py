@@ -35,6 +35,36 @@ class SerialTransportTest(unittest.TestCase):
     def valid(self, **overrides):
         return (json.dumps(dict(result=0, platform='esp8266', target=6, activation=dict(candidate=0xffffffff,pending=0,good=0xffffffff), identity=dict(base_sha256='0'*64), **overrides)) + '\n').encode()
 
+    def test_reserved_reply_busy_retries_only_explicit_preexecution_rejection(self):
+        r = self.remote([b'{"result":-7,"error":"management_reply_busy"}\n', b'{"result":0}\n'])
+        with patch('micros_tooling.platforms.embedded.transport.time.sleep'):
+            self.assertEqual(r.rpc(10)['result'], 0)
+        self.assertEqual(r.serial.writes, [b'RPC 10 0 0 0 - -\n'] * 2)
+
+    def test_reserved_reply_waits_for_tls_but_has_a_fixed_deadline(self):
+        busy = b'{"result":-7,"error":"management_reply_busy"}\n'
+        for replies, succeeds in (([busy] * 3 + [b'{"result":0}\n'], True), ([busy] * 20, False)):
+            r = self.remote(replies)
+            now = [0]
+            read = r.serial.read_until
+            def delayed_read(*args):
+                now[0] += 5
+                return read(*args)
+            r.serial.read_until = delayed_read
+            with patch('micros_tooling.platforms.embedded.transport.time.monotonic', side_effect=lambda: now[0]), \
+                 patch('micros_tooling.platforms.embedded.transport.time.sleep'):
+                if succeeds:
+                    self.assertEqual(r.rpc(10)['result'], 0)
+                else:
+                    with self.assertRaises(TimeoutError): r.rpc(10)
+                    self.assertEqual(now[0], 45)
+
+    def test_other_busy_results_are_not_replayed(self):
+        r = self.remote([b'{"result":-7}\n'])
+        with self.assertRaises(PackageError):
+            r.rpc(10)
+        self.assertEqual(len(r.serial.writes), 1)
+
     def test_status_recovers_from_malformed_json_without_reopening(self):
         r = self.remote([b'{"result" 0}\n', self.valid()])
         with patch('micros_tooling.platforms.embedded.transport.time.sleep'):

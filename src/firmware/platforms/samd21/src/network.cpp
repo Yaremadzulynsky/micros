@@ -1,4 +1,5 @@
 #include "device_support.h"
+#include <micros/controller.h>
 #include <micros/network.h>
 #include "network_support.h"
 #include "update_support.h"
@@ -51,6 +52,9 @@ static char request_text[600];
 static char *response_text;
 static uint8_t wire[664];
 static unsigned response_bytes;
+// Only the network worker owns this connection. Reuse authenticated TLS across
+// poll/result exchanges; reconnect after framing errors or a peer close.
+static WiFiSSLClient relay_client;
 static const uint32_t SETTINGS_BASE = 0x3c00;
 static bool valid(const Settings &value)
 {
@@ -174,7 +178,7 @@ bool embedded_network_relay(const char *host, unsigned port, const char *token)
     next.port = port;
     return save(next);
 }
-static void release_response() { free(response_text);response_text=nullptr;response_bytes=0; }
+static void release_response() { micros_controller_rpc_release(response_text);response_text=nullptr;response_bytes=0; }
 void embedded_network_poll(char *(*execute)(char *)) {
  if (!request_ready || xSemaphoreTake(request_ready, 0) != pdTRUE) return;
  release_response();
@@ -200,13 +204,16 @@ struct NetworkClock
 static int exchange(const Settings &current, const char *path, const char *boot, int result_code,
                     size_t body_bytes, size_t &received)
 {
-    WiFiSSLClient client;
+    WiFiSSLClient &client = relay_client;
     client.setTimeout(8000);
     // TLS and hostname verification are delegated to the stock NINA firmware.
     // Its trust store must contain the server's CA; there is no insecure fallback.
     network_stage = "tls_connect";
-    if (!client.connect(current.host, current.port))
-        return -1;
+    if (!client.connected())
+    {
+        client.stop();
+        if (!client.connect(current.host, current.port)) return -1;
+    }
     network_stage = "request";
     client.print("POST ");
     client.print(path);
@@ -214,7 +221,7 @@ static int exchange(const Settings &current, const char *path, const char *boot,
     client.print(current.host);
     client.print("\r\nAuthorization: Bearer ");
     client.print(current.token);
-    client.print("\r\nConnection: close\r\nAccept-Encoding: identity\r\nContent-Type: "
+    client.print("\r\nConnection: keep-alive\r\nAccept-Encoding: identity\r\nContent-Type: "
                  "application/octet-stream\r\nContent-Length: ");
     client.print(body_bytes);
     if (boot)
@@ -233,17 +240,21 @@ static int exchange(const Settings &current, const char *path, const char *boot,
         client.stop();
         return -1;
     }
+    // Poll telemetry needs no acknowledgement retention. Release before the
+    // long poll so USB requests can use the same guaranteed workspace.
+    if (boot) release_response();
     network_stage = "headers";
     NetworkClock clock;
     micros_samd21::HttpReader<WiFiSSLClient, NetworkClock> reader(client, clock);
     int result = reader.response(wire, sizeof(wire), received);
-    client.stop();
+    if (result < 200 || !reader.reusable()) client.stop();
     if (result >= 200)
         network_stage = "idle";
     return result;
 }
 static bool download_base(const Settings &current)
 {
+    relay_client.stop();
     WiFiSSLClient client;
     client.setTimeout(8000);
     network_stage = "base_download";
@@ -282,6 +293,7 @@ static void network_worker(void *)
         taskEXIT_CRITICAL();
         if (reset)
         {
+            relay_client.stop();
             WiFi.disconnect();
             if (connected) ++disconnects;
             connected = 0;
@@ -294,6 +306,7 @@ static void network_worker(void *)
         }
         if (WiFi.status() != WL_CONNECTED)
         {
+            relay_client.stop();
             if (connected) ++disconnects;
             connected = 0;
             const char *ssid=next_profile && current.second_ssid[0]?current.second_ssid:current.ssid;

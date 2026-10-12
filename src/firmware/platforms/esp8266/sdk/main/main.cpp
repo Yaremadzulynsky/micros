@@ -14,7 +14,7 @@ extern "C" void app_main() {
   ESP_ERROR_CHECK(result);
   esp_log_level_set("*", ESP_LOG_ERROR);
 
-  if (xTaskCreate(controller_task, "controller", 8192, NULL, 2, NULL) !=
+  if (xTaskCreate(controller_task, "controller", MICROS_CONTROLLER_TASK_STACK_BYTES, NULL, 2, NULL) !=
       pdPASS)
     embedded_reset();
 }

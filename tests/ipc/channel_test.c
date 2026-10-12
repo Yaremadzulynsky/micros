@@ -119,7 +119,7 @@ int main(int argc, char **argv)
     assert(telemetry.retained_bytes == TEST_DEPTH * sizeof(unsigned));
     micros_runtime_usage_t allocation = micros_runtime_usage(runtime);
     assert(allocation.channel_payload_capacity == TEST_DEPTH * TEST_PAYLOAD);
-    assert(allocation.channel_storage_bytes == sizeof(micros_channel_t) * MICROS_CHANNEL_CAPACITY + TEST_DEPTH * TEST_PAYLOAD);
+    assert(allocation.channel_storage_bytes == sizeof(micros_channel_t) * MICROS_CHANNEL_CAPACITY + TEST_DEPTH * TEST_PAYLOAD + sizeof(micros_coord_channel_t));
     assert(allocation.kernel_metadata_bytes >= allocation.channel_storage_bytes);
     assert(!api_ipc_read(subscriber_context, first, output, sizeof(output), &bytes, &info) &&
            info.sequence == 4);

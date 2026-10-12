@@ -9,5 +9,5 @@ node = shutil.which("node")
 if node is None:
     print("SKIP: install Node.js to run offline console checks.")
     raise SystemExit(77)
-for name in ("flash_summary", "fleet_map", "memory_summary", "scroll_refresh", "service_map"):
+for name in ("flash_summary", "fleet_map", "log_output", "memory_summary", "scroll_refresh", "service_map"):
     subprocess.run([node, str(ROOT / "tests/server" / (name + "_test.cjs"))], cwd=ROOT, check=True)

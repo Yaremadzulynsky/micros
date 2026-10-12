@@ -42,7 +42,8 @@ class EmbeddedRemote:
             "Invalid serial command",
         )
         self.serial.write(command.encode("ascii") + b"\n")
-        deadline = time.monotonic() + (
+        started = time.monotonic()
+        deadline = started + (
             45 if command.startswith(("RPC 13 ", "RPC 15 ", "RPC 19 ", "RPC 22 ")) else 8
         )
         response = bytearray()
@@ -66,6 +67,16 @@ class EmbeddedRemote:
                 require(
                     isinstance(result, dict) and "result" in result, "Invalid device response"
                 )
+                if result.get("result") == -7 and result.get("error") == "management_reply_busy":
+                    # The controller rejected this request before executing it.
+                    # A relay may retain the reserved reply while TLS connects.
+                    # Keep waiting bounded, without replaying an ambiguous write.
+                    deadline = max(deadline, started + 45)
+                    response.clear()
+                    time.sleep(.05)
+                    if time.monotonic() < deadline:
+                        self.serial.write(command.encode("ascii") + b"\n")
+                    continue
                 require(allow_error or result["result"] == 0, f"{command.split()[0]}: {result}")
                 return result
         raise TimeoutError(

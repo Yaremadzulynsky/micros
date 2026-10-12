@@ -171,7 +171,7 @@ function render() {
     if(state.tab==='Resources')body+=disclosure('Heap history · last 24 hours','<canvas class="chart" id="heap-chart" aria-label="Free heap history"></canvas><p class="caption" id="chart-description">Loading observations…</p>','heap-history');
 
   } else if (state.tab==='Logs') {
-    body=`<section class="panel"><div class="panel-head"><div><h2>Diagnostic logs</h2><span class="caption">Device ring buffer · gaps and reboots are marked</span></div><div class="actions"><button data-action="read-logs" ${!device.online?'disabled':''}>Read logs</button><button data-action="follow" ${!device.online?'disabled':''}>${state.follow?'Stop following':'Follow logs'}</button></div></div><pre id="log-output" class="log" tabindex="0"></pre><p id="log-state" class="caption"></p></section>`;
+    body=`<section class="panel"><div class="panel-head"><div><h2>Diagnostic logs</h2><span class="caption">${['samd21','esp8266'].includes(device.status?.platform)?'Shared device log buffer · reads consume bytes; gaps are not reported':'Device ring buffer · gaps and reboots are marked'}</span></div><div class="actions"><button data-action="read-logs" ${!device.online?'disabled':''}>Read logs</button><button data-action="follow" ${!device.online?'disabled':''}>${state.follow?'Stop following':'Follow logs'}</button></div></div><pre id="log-output" class="log" tabindex="0"></pre><p id="log-state" class="caption"></p></section>`;
   } else if (state.tab==='Deploy') {
     body=deploymentGuide(device);
   } else if (state.tab==='Activity') {
@@ -283,11 +283,13 @@ async function readLogs() {
   const id=state.selected;state.logBusy=true;
   try {
     const reply=await api(devicePath(id)+'/logs?cursor='+state.cursor); if(state.selected!==id)return;
-    if(state.boot && state.boot!==reply.boot_id){state.logs+='\n[Board rebooted]\n';state.cursor=0;state.boot=reply.boot_id;state.decoder=new TextDecoder();return;}
-    state.boot=reply.boot_id;
-    if(reply.lost){state.logs+='\n['+reply.lost+' bytes lost from device buffer]\n';state.decoder=new TextDecoder();}
+    if(reply.mode!=='drain') {
+      if(state.boot && state.boot!==reply.boot_id){state.logs+='\n[Board rebooted]\n';state.cursor=0;state.boot=reply.boot_id;state.decoder=new TextDecoder();return;}
+      state.boot=reply.boot_id;
+      if(reply.lost){state.logs+='\n['+reply.lost+' bytes lost from device buffer]\n';state.decoder=new TextDecoder();}
+    }
     const raw=Uint8Array.from(reply.data_hex.match(/.{2}/g)||[],hex=>parseInt(hex,16));
-    state.logs=(state.logs+state.decoder.decode(raw,{stream:true})).slice(-65536);state.cursor=reply.next;
+    state.logs=(state.logs+state.decoder.decode(raw,{stream:true})).slice(-65536);state.cursor=reply.mode==='drain'?0:reply.next;
     if($('#log-output')){$('#log-output').textContent=state.logs||'No diagnostic output yet.';$('#log-output').scrollTop=$('#log-output').scrollHeight;$('#log-state').textContent='Read at '+new Date().toLocaleTimeString();}
   } catch(error) {if($('#log-state'))$('#log-state').textContent=error.message+(state.follow?' · Retrying read…':'');}
   finally {state.logBusy=false;}

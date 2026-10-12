@@ -9,14 +9,24 @@ STATES = ('Unloaded', 'Loaded', 'Initializing', 'Starting', 'Running', 'Stopping
 
 
 def expand(status, serial=False):
-    if not isinstance(status, dict) or status.get('platform') != 'samd21' or status.get('samd_telemetry') != 1:
+    if not isinstance(status, dict) or status.get('platform') != 'samd21' or not (status.get('samd_telemetry') == 1 or status.get('embedded_layout') == 1):
         return status
+    if status.get('embedded_layout') == 1:
+        status=dict(status)
+        status['board']=dict(status.get('board',{}),profile='Arduino MKR WiFi 1010',flash_mb=0.25)
+        return layout(status)
     from micros_tooling.platforms.embedded.telemetry import tables
     pins=status['gpio_rows'];status=tables(status,serial)
     status['board']=dict(profile='Arduino MKR WiFi 1010',flash_mb=0.25,recovery_pin=None,
         gpio=[dict(name='D'+str(pin),line=i,pin=pin,output=bool(output),level=level)
               for i,(pin,output,level) in enumerate(pins)])
     status['labels_source']='device_graph'
+    return layout(status)
+
+
+def layout(status):
+    from micros_tooling.platforms.embedded.telemetry import validate_slots
+    validate_slots(status)
     ab=status.get('layout_version')==2
     bank_bytes,slot_bytes,bank_base=(40960,9216,180224) if ab else (65536,15360,131072)
     parts=[dict(name='Arduino bootloader',offset=0,size=8192),
@@ -33,9 +43,10 @@ def expand(status, serial=False):
                dict(name='ota_0',offset=16384,size=81920),
                dict(name='ota_1',offset=98304,size=81920)]
     active=status.get('active',0xffffffff)
-    slots=[dict(slot=i,name=s['name'],offset=active*bank_bytes+4096+i*slot_bytes,
-                reserved_bytes=slot_bytes,image_bytes=s['image_bytes'])
-           for i,s in enumerate(status['services'])] if active in (0,1) else []
+    indices=status.get('image_slots',list(range(len(status['services']))))
+    slots=[dict(slot=i,name=s.get('name','Service slot '+str(i)),offset=active*bank_bytes+4096+i*slot_bytes,
+                reserved_bytes=slot_bytes,**({'image_bytes':s['image_bytes']} if 'image_bytes' in s else {}))
+           for i,s in zip(indices,status['services'])] if active in (0,1) else []
     for bank in (0,1):
         offset=bank_base+bank*bank_bytes
         if bank != active:
