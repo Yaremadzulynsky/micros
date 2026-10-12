@@ -22,6 +22,12 @@ def project_root(start=None):
         # its commands. Do not adopt the containing application's SDK pin.
         if all((path / name).exists() for name in REQUIRED):
             return None
+        if (path / 'micros').is_file() and (
+                (path / '.sdk').is_symlink() or (path / '.sdk').is_dir() or
+                ((path / 'units').is_dir() and (path / 'services').is_dir())):
+            raise ValueError(f'Application at {path} is missing micros.lock. '
+                             'Restore its SDK pin before running project commands; '
+                             'removing the lock does not upgrade the project.')
     return None
 
 

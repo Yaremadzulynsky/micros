@@ -468,6 +468,9 @@ def enroll(args):
                     result['message'] += f'\nProject unit: {unit.name}\nNext: ' + result['next_steps'][0]
                 else:
                     result['message'] += f'\nAdd or update units/{result["device_id"]}.toml for this board before deploying. Existing project settings were preserved.'
+            else:
+                result['message'] += ('\nNo application project selected; no unit file was created. '
+                                      'The board is enrolled, but needs a unit in an application before deployment.')
         return result
 
 

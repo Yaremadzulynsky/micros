@@ -133,6 +133,18 @@ class EnrollmentTest(unittest.TestCase):
             self.assertTrue(e.enroll(args())['online'])
         self.remote.raw.assert_not_called()
 
+    def test_standalone_enrollment_explains_missing_project_unit(self):
+        from contextlib import nullcontext
+        result = dict(online=True, device_id=BOARD['device_id'], platform='esp32', flash_mb=4, message='Board online.')
+        with patch('micros_tooling.deployment.server_selection.enrollment_server', return_value=nullcontext()), \
+             patch.object(e, '_enroll', return_value=result), \
+             patch('micros_tooling.storage.client.application_root', return_value=None), \
+             patch('micros_tooling.config.scaffold.bind_starter') as bind:
+            completed = e.enroll(args())
+        self.assertTrue(completed['online'])
+        self.assertIn('no unit file was created', completed['message'])
+        bind.assert_not_called()
+
     def test_picker_offers_known_unfinished_enrollment(self):
         from micros_tooling.communication import discovery
         receipt = dict(board=BOARD, name='desk', flashed=True, base_sha256='ab' * 32)

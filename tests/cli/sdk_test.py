@@ -16,6 +16,19 @@ TEST_REVISION = "a" * 40
 
 
 class SDKTests(unittest.TestCase):
+    def test_missing_application_lock_fails_before_sdk_or_enrollment_work(self):
+        (self.root / 'micros').touch()
+        (self.root / 'units').mkdir()
+        nested = self.root / 'services/hello/src'
+        nested.mkdir(parents=True)
+        with patch('pathlib.Path.cwd', return_value=nested), \
+             patch.object(cli, 'select_sdk') as select, \
+             patch('micros_tooling.dispatch.entrypoint') as dispatch:
+            with self.assertRaisesRegex(ValueError, 'missing micros.lock'):
+                cli.run(['enroll'])
+            select.assert_not_called()
+            dispatch.assert_not_called()
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.root = Path(self.tmp.name).resolve()
