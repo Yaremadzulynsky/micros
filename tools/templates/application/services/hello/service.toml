@@ -1,0 +1,17 @@
+# Behavior and setting constraints belong to the service; projects choose values.
+[service]
+name = "example.hello"
+version = "1.1.0"
+timers = ["greeting"]
+
+[service.build]
+api = "hello"
+lifecycle = "hooks"
+sources = ["src/service.c"]
+descriptor = "micros_descriptor"
+
+[service.config_schema.interval_ms]
+type = "uint32"
+default = 1000
+min = 100
+max = 60000

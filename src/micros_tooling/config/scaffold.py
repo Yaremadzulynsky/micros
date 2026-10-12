@@ -37,7 +37,11 @@ def bind_starter(root, device_id, platform, flash_mb=None):
     if sorted((root / 'units').glob('*.toml')) != [placeholder]:
         return None
     unit = read_toml(placeholder)
-    if unit != starter_unit(platform):
+    expected = starter_unit(platform)
+    # Earlier starters used the same recipe without an explicit default setting.
+    if 'config' not in unit.get('services', {}).get('hello', {}):
+        expected['services']['hello'].pop('config', None)
+    if unit != expected:
         return None
     unit['unit']['device_id'] = device_id
     if platform == 'esp32':
@@ -64,10 +68,6 @@ def create(destination, platform="esp32"):
     with tempfile.TemporaryDirectory(prefix=".micros-new-", dir=destination.parent) as temporary:
         staging = Path(temporary) / "application"
         shutil.copytree(ROOT / "tools/templates/application", staging)
-        service = staging / "services/hello"
-        (service / "src").mkdir(parents=True)
-        for name in ("service.toml", "src/service.c"):
-            shutil.copy2(ROOT / "examples/hello-service" / name, service / name)
         from micros_tooling.config.composition import toml
         if platform != "esp32":
             unit_path = staging / "units/000000000000.toml"

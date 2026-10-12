@@ -120,6 +120,21 @@ class LauncherTests(unittest.TestCase):
         self.invoke(self.routes[0], ['new', str(self.app)], self.app, code=1)
         self.assertEqual(source.read_bytes(), original)
 
+    def test_new_service_examples_and_filtered_tests_through_launchers(self):
+        for index, route in enumerate(self.routes):
+            directory = self.app / 'services' / f'counter-{index}'
+            result = self.invoke(route, ['scaffold-service', str(directory), '--example', 'counter', '--json'], self.app)
+            files = json.loads(result.stdout)['files']
+            self.assertEqual(len(files), 3)
+            before = (directory / 'src/service.c').read_bytes()
+            self.invoke(route, ['scaffold-service', str(directory), '--new'], self.app, code=1)
+            self.assertEqual((directory / 'src/service.c').read_bytes(), before)
+            self.invoke(route, ['generate', '--service', str(directory), '--json'], self.app)
+        result = self.invoke(self.routes[0], ['test', '-v', '-k', 'settings'], self.app)
+        self.assertIn('Ran 1 test', result.stderr)
+        for command in ('compose', 'pins', 'test'):
+            self.invoke(self.routes[0], [command, '--help'], self.app)
+
 
 if __name__ == '__main__':
     unittest.main()

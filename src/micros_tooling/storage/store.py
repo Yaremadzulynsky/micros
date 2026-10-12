@@ -92,7 +92,9 @@ class Store:
             versions = index['services'].setdefault(manifest['name'], {})
             existing = versions.get(manifest['version'])
             if existing:
-                require(existing == package['sha256'], 'same name/version already identifies different immutable content')
+                require(existing == package['sha256'],
+                        f'{manifest["name"]}@{manifest["version"]}: same name/version already identifies different immutable content. '
+                        'Increase this service\'s version in service.toml, then build and deploy again. The installed package was preserved.')
                 return {'installed': manifest['name'], 'version': manifest['version'], 'unchanged': True}
             require(sum(len(values) for values in index['services'].values()) < MAX_INSTALLED, 'installed package count capacity')
             used_bytes = sum(path.stat().st_size for path in (self.root / 'packages').glob('*.msp'))

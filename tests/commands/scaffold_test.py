@@ -9,7 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT/'src'))
-from micros_tooling.config.service_scaffold import create
+from micros_tooling.config.service_scaffold import create, new
 from micros_tooling.config.service_generation import generate
 from micros_tooling.config.protobuf import RUNTIME
 
@@ -28,6 +28,44 @@ class ScaffoldTests(unittest.TestCase):
             '-I'+str(RUNTIME), '-I'+str(self.generated), *map(str, sources), *extra,
         ], capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
+
+    def test_new_service_and_counter_example_compile_and_preserve_existing_work(self):
+        for example, name in ((None, 'sensor'), ('counter', 'click-count')):
+            directory = self.root / name
+            files = new(directory, example)
+            generate(directory, self.generated)
+            self.compile([directory / 'src/service.c', *self.generated.glob('*_lifecycle.c')], '-fsyntax-only')
+            before = {file: file.read_bytes() for file in files}
+            with self.assertRaisesRegex(ValueError, 'already exists'):
+                new(directory, example)
+            self.assertEqual(before, {file: file.read_bytes() for file in files})
+            if example:
+                harness = self.root / 'counter_test.c'
+                harness.write_text('''#include <assert.h>
+#include "click_count_hooks.h"
+int main(void) {
+    click_count_context_t first = {0}, second = {0};
+    uint32_t count = 99;
+    assert(click_count_handle_read(&first, &count) == MICROS_OK && count == 0);
+    assert(click_count_handle_increment(&first, &count) == MICROS_OK && count == 1);
+    assert(click_count_handle_increment(&first, &count) == MICROS_OK && count == 2);
+    assert(click_count_handle_read(&second, &count) == MICROS_OK && count == 0);
+    assert(click_count_handle_reset(&first, &count) == MICROS_OK && count == 0);
+    first.state.count = UINT32_MAX;
+    assert(click_count_handle_increment(&first, &count) == MICROS_OK && count == 0);
+}
+''')
+                binary = self.root / 'counter_test'
+                self.compile([directory / 'src/service.c', harness], '-o', str(binary))
+                subprocess.run([str(binary)], check=True, timeout=5)
+            # These destinations have different generated owners.
+            self.generated = self.root / ('generated-' + name)
+
+    def test_invalid_new_name_writes_nothing(self):
+        destination = self.root / 'Bad Name'
+        with self.assertRaisesRegex(ValueError, 'lowercase'):
+            new(destination)
+        self.assertFalse(destination.exists())
 
     def test_commands_sources_and_config_compile_and_refuse_overwrites(self):
         text = (ROOT/'examples/typed-commands/service.toml').read_text().replace('"Value"', '{ type = "uint32", min = 0, max = 100 }').replace('[service.build]', '[service.build]\nlifecycle="hooks"')

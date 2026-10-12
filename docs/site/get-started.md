@@ -124,8 +124,12 @@ With a C17 compiler installed, run from your application directory:
 ./micros test
 ```
 
-The starter compiles its real C lifecycle against a deterministic timer stub and
-checks its greeting and cleanup. This is a host test, not a physical board test.
+The starter is a hook-based heartbeat. Its `service.toml` declares a named timer
+and a bounded `interval_ms` setting; `host.toml` and the board unit choose the
+interval. Its C source contains behavior while Micros generates the lifecycle.
+The host test compiles that real code against a deterministic timer stub and
+checks default/selected intervals, greeting and cleanup. `./micros test -v` shows
+individual results; `-k NAME` filters them. This is not a physical board test.
 See [contributor checks](contributing.md) for the full SDK host suite.
 
 ### Deploy a persistent local application {#deploy-host}

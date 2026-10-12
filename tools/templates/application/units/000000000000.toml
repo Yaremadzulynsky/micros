@@ -14,3 +14,4 @@ recovery_button = ""
 source = "../services/hello"
 contract = "service.toml"
 memory = { arena = "RAM", stack_bytes = 4096 }
+config = { interval_ms = 1000 }

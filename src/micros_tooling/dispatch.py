@@ -62,6 +62,8 @@ def parser():
     pin_view.add_argument("--pin", type=int, help="explain one GPIO")
     service_scaffold = commands.add_parser("scaffold-service", help="create application hooks and state once")
     service_scaffold.add_argument("--preview", action="store_true", help="print current hook stubs without writing files")
+    service_scaffold.add_argument('--new', action='store_true', help='create a new service directory with a minimal declaration and hook sources')
+    service_scaffold.add_argument('--example', choices=['counter'], help='create a working example in a new directory (implies --new)')
     service_scaffold.add_argument("contract", type=Path, help="service directory or service.toml")
     service_scaffold.add_argument('--base', help='compare hooks with this Git revision; requires --preview')
     service_scaffold.add_argument('--json', action='store_true')
@@ -342,20 +344,32 @@ def main():
         display(compare(args.declaration, args.base), args.json, args.stubs)
         return
     if args.command == "scaffold-service":
+        args.new = args.new or bool(args.example)
+        require(not args.new or not (args.preview or args.base), '--new cannot be combined with --preview or --base.')
         if args.base:
             require(args.preview, '--base requires --preview; implementation files are never rewritten')
             from micros_tooling.config.contract_diff import compare, display
             display(compare(args.contract, args.base), args.json, True)
             return
-        from micros_tooling.config.service_scaffold import create, artifacts
+        from micros_tooling.config.service_scaffold import create, artifacts, new
         if args.preview:
             _, files = artifacts(args.contract)
             print(json.dumps({str(k):v for k,v in files.items()}, indent=2) if args.json else files[Path("src/service.c")])
             return
-        for path in create(args.contract):
+        created = new(args.contract, args.example) if args.new else create(args.contract)
+        if args.json:
+            print(json.dumps(dict(files=list(map(str, created))), indent=2))
+            return
+        for path in created:
             print("Created: " + str(path))
-        print("Generate interfaces with: ./micros generate --service " + str(args.contract))
-        print("Implement TODOs before deployment; GPIO/channel bindings still belong to the selected unit.")
+        import shlex
+        print('Generate interfaces with: ' + shlex.join(['./micros', 'generate', '--service', str(args.contract)]))
+        if args.example:
+            print('Counter commands: read, increment, reset. State resets when the service restarts.')
+        else:
+            print("Implement TODOs before deployment; GPIO/channel bindings still belong to the selected unit.")
+        if args.new:
+            print('Select this service in host.toml or units/<hardware-id>.toml before building it.')
         return
     if args.command == "scaffold-commands":
         from micros_tooling.commands.generate import scaffold

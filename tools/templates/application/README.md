@@ -17,16 +17,29 @@ unchanged starter for the same platform receives the board ID and detected ESP32
 flash capacity automatically; the original placeholder is saved under
 `build/enrollment/`. The command prints the deployment preview to run next.
 
+Start by changing `config.interval_ms` under `[services.hello]` in `host.toml`
+or your unit file. The heartbeat's `config_schema` defines the default and bounds;
+its hook-based C code logs on a timer, and Micros handles lifecycle cleanup.
+Run `./micros test -v`, then `./micros host deploy` and `./micros host logs` to
+observe it locally. Finish with `./micros host stop`.
+
+For a second working example, run
+`./micros scaffold-service services/counter --example counter`. It demonstrates
+per-instance state and typed `read`, `increment` and `reset` commands. Select it
+in your application before building/deploying. See the
+[service walkthrough](https://docs.meetmicros.com/site/write-a-service/).
+`./micros scaffold-service services/my-service --new` creates an empty hook service.
+
 If you have customized the unit, replace the placeholder ID and filename together
 and select the correct board profile before building or deploying. Enrollment
 preserves customized units and does not deploy application services.
 
-New services declare local types, `config` defaults, typed `pins`, timer-name
+New services declare local types, `config_schema` types/defaults/bounds, typed `pins`, timer-name
 lists, interface references and commands. Units select `config` values, assign
 numeric `pins`, and explicitly declare channels with the same names as service
 ports. Shared interface files own delivery policy and protobuf definitions. Generated files live only under `build/`.
 
-For a hook service, set `build.lifecycle = "hooks"`, declare `src/service.c` in
+For an existing contract, set `build.lifecycle = "hooks"`, declare `src/service.c` in
 `build.sources`, then run `./micros scaffold-service services/NAME` once. Implement
 the hooks and state; generation never overwrites application code.
 

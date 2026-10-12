@@ -13,6 +13,11 @@ Anonymous composition scenarios are available in
 [`tests/fixtures/composition/`](../tests/fixtures/composition/README.md).
 
 Start an independent application with `./micros new ../my-application`.
+The generated project starts with a configurable heartbeat using lifecycle hooks,
+so no ABI descriptor or manual cleanup is needed. Next, use
+`./micros scaffold-service services/counter --example counter` from that project
+to learn instance state and typed commands. Follow the
+[service walkthrough](../docs/site/write-a-service.md) before hardware-dependent examples.
 See [repository map](https://docs.meetmicros.com/site/contributing/#repository-map).
 
 - [Shell service](shell-service/README.md): raw protobuf commands and published status, inspectable through shell channel reads.

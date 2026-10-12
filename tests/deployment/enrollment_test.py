@@ -75,6 +75,21 @@ class EnrollmentTest(unittest.TestCase):
             self.assertIsNone(bind_starter(root, BOARD['device_id'], 'esp8266' if change == 'platform' else 'esp32', 4))
             self.assertEqual({p.name: p.read_bytes() for p in (root / 'units').glob('*.toml')}, before)
 
+    def test_binding_accepts_previous_starter_without_explicit_settings(self):
+        from micros_tooling.config.scaffold import create, bind_starter
+        from micros_tooling.config.configuration import read_toml
+        from micros_tooling.config.composition import toml
+        root = create(self.root / 'previous-starter')
+        placeholder = root / 'units/000000000000.toml'
+        unit = read_toml(placeholder)
+        del unit['services']['hello']['config']
+        placeholder.write_text(toml(unit))
+        before = placeholder.read_bytes()
+        path = bind_starter(root, BOARD['device_id'], 'esp32', 4)
+        self.assertIsNotNone(path)
+        self.assertNotIn('config', read_toml(path)['services']['hello'])
+        self.assertEqual((root / 'build/enrollment/000000000000.toml.before').read_bytes(), before)
+
     def test_project_write_failure_does_not_undo_successful_enrollment(self):
         from contextlib import nullcontext
         result = dict(online=True, device_id=BOARD['device_id'], platform='esp32', flash_mb=4, message='Board online.')
