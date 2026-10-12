@@ -30,6 +30,62 @@ class ServerCertificateTest(unittest.TestCase):
 from micros_tooling.storage.packages import PackageError
 
 
+class ConsoleHandoffTest(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory(prefix='micros console ')
+        self.addCleanup(self.directory.cleanup)
+        self.root = Path(self.directory.name)
+        with contextlib.redirect_stdout(io.StringIO()):
+            server.server_main(['--state', str(self.root), 'setup', '--host', 'localhost'])
+
+    def test_browser_failure_is_actionable_and_does_not_leak_ticket(self):
+        import shlex
+        import webbrowser
+        for outcome in (False, webbrowser.Error('No browser'), OSError('Browser missing')):
+            output = io.StringIO()
+            with patch.object(server, 'RelayRemote') as remote, \
+                 patch('webbrowser.open', side_effect=outcome if isinstance(outcome, Exception) else None,
+                       return_value=False), contextlib.redirect_stdout(output):
+                remote.return_value.raw.return_value = b'{"ticket":"private-test-ticket"}'
+                with self.assertRaisesRegex(PackageError, 'Could not open a browser') as caught:
+                    server.server_main(['--state', str(self.root), 'console'])
+            self.assertIn(shlex.quote(str(self.root.resolve())), str(caught.exception))
+            self.assertIn('--no-browser', str(caught.exception))
+            self.assertNotIn('private-test-ticket', str(caught.exception) + output.getvalue())
+
+    def test_no_browser_prints_only_link_to_stdout_and_warning_to_stderr(self):
+        output, error = io.StringIO(), io.StringIO()
+        with patch.object(server, 'RelayRemote') as remote, patch('webbrowser.open') as browser, \
+             contextlib.redirect_stdout(output), contextlib.redirect_stderr(error):
+            remote.return_value.raw.return_value = b'{"ticket":"private-test-ticket"}'
+            server.server_main(['--state', str(self.root), 'console', '--no-browser'])
+        browser.assert_not_called()
+        self.assertEqual(output.getvalue(), 'https://localhost:8443/console/#ticket=private-test-ticket\n')
+        self.assertIn('60 seconds', error.getvalue())
+
+    def test_trust_info_matches_openssl_and_does_not_connect_or_open_browser(self):
+        output = io.StringIO()
+        with patch.object(server, 'RelayRemote') as remote, patch('webbrowser.open') as browser, \
+             contextlib.redirect_stdout(output):
+            server.server_main(['--state', str(self.root), 'console', '--trust-info'])
+        expected = subprocess.check_output(['openssl', 'x509', '-in', str(self.root/'servercert.pem'),
+                                            '-noout', '-fingerprint', '-sha256'], text=True).strip().split('=')[1]
+        self.assertIn(expected, output.getvalue())
+        self.assertIn(str(self.root/'servercert.pem'), output.getvalue())
+        self.assertNotIn((self.root/'admin.token').read_text(), output.getvalue())
+        remote.assert_not_called(); browser.assert_not_called()
+
+    def test_success_opens_one_use_link_without_printing_it(self):
+        output = io.StringIO()
+        with patch.object(server, 'RelayRemote') as remote, patch('webbrowser.open', return_value=True) as browser, \
+             contextlib.redirect_stdout(output):
+            remote.return_value.raw.return_value = b'{"ticket":"private-test-ticket"}'
+            server.server_main(['--state', str(self.root), 'console'])
+        browser.assert_called_once_with('https://localhost:8443/console/#ticket=private-test-ticket')
+        self.assertNotIn('private-test-ticket', output.getvalue())
+        self.assertIn('--trust-info', output.getvalue())
+
+
 class OnboardingDefaultsTest(unittest.TestCase):
     def test_each_starter_composes_without_target_edits(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -38,6 +38,8 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--wifi-fail-once',action='store_true')
     parser.add_argument('--unnamed',action='store_true')
+    parser.add_argument('--empty',action='store_true',help='Show first use with no enrolled boards')
+    parser.add_argument('--reject-tickets',action='store_true',help='Simulate expired one-use sign-in links')
     parser.add_argument('--port',type=int,default=8766)
     parser.add_argument('--remote-flows',action='store_true',help='Illustrative incoming and outgoing remote routes')
     args=parser.parse_args()
@@ -66,6 +68,7 @@ if __name__=='__main__':
         fleet[0]['status'].pop('labels_source',None)
         for service in fleet[0]['status']['services']:
             service.pop('name',None);service.pop('version',None)
+    if args.empty: fleet=[]
     networks=[dict(ssid='Lab network',fallback=False,secured=True)]
     class Handler(BaseHTTPRequestHandler):
         def log_message(self,*args): pass
@@ -101,6 +104,8 @@ if __name__=='__main__':
             global counter,networks
             payload=json.loads(self.rfile.read(int(self.headers.get('Content-Length','0'))) or '{}')
             route=urlsplit(self.path).path
+            if route.endswith('/session') and args.reject_tickets and 'ticket' in payload:
+                return self.send(dict(error='Synthetic expired ticket'),401)
             if route.endswith('/session') or route.endswith('/logout'):return self.send({})
             if route.endswith('/enroll'):return self.send(dict(token=payload['token'],certificate='SYNTHETIC PREVIEW CERTIFICATE'))
             device=next((d for d in fleet if '/'+d['device_id']+'/' in route),None)
@@ -120,5 +125,5 @@ if __name__=='__main__':
                 return self.send(dict(job=key))
             return self.send(dict(error='Unknown synthetic operation'),404)
     server=ThreadingHTTPServer(('127.0.0.1',args.port),Handler)
-    print(f'Synthetic console design preview: http://127.0.0.1:{args.port}/console/',flush=True)
+    print(f'Synthetic console design preview: http://127.0.0.1:{server.server_port}/console/',flush=True)
     server.serve_forever()

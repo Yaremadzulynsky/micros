@@ -5,6 +5,15 @@ configuration/generation, Wi-Fi, terminal deployment and management relay/consol
 checks. Use `ctest --test-dir build/host -N` for the configured inventory and
 `ctest --test-dir build/host --output-on-failure` to run it after building.
 
+For console onboarding browser checks, with Playwright available in `NODE_PATH`
+and Chrome installed, run `node tests/server/console_onboarding_browser.cjs`.
+It starts isolated synthetic fixtures, checks sign-in recovery and the empty-server
+enrollment/deployment journey at desktop and 320px widths, then stops them.
+Screenshots go under `build/console-onboarding/` (or `MICROS_BROWSER_OUTPUT`).
+No operator credentials or physical boards are used. For manual preview,
+`build/python/bin/python tests/server/console_design_fixture.py --empty` opens
+the same first-use state.
+
 - `runtime/`, `loader/`, `integration/`: native loading, lifecycle and fault fixtures.
 - `ipc/`, `interfaces/`, `configuration/`, `services/`: bounded communication, generated APIs, settings and button/color behavior.
 - `deployment/`, `server/`: storage, activation, admission, CLI, Wi-Fi and server behavior.

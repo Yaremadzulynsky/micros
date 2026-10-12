@@ -168,8 +168,17 @@ allow two servers to bind the same host port; leave an existing server untouched
 
 ## 03 · Open the console {#open-the-console}
 
-Establish trust for your server's `servercert.pem` through your browser/OS
-certificate management, verifying the host and certificate. Keep `prvtkey.pem`
+A freshly created local server uses a private HTTPS certificate. Your CLI already
+trusts the saved certificate; your browser may not. Before your first browser sign-in,
+show the exact public certificate path and SHA-256 fingerprint:
+
+```sh
+micros server console --trust-info
+```
+
+If the browser reports an untrusted certificate, compare its host and fingerprint
+with this output before adding the saved `servercert.pem` through your browser/OS
+certificate manager. This command does not change trust settings. Keep `prvtkey.pem`
 and operator tokens private; do not disable TLS checks to connect.
 
 On a computer with the server's operator configuration:
@@ -178,8 +187,15 @@ On a computer with the server's operator configuration:
 micros server console
 ```
 
-This opens `/console/` with a short-lived sign-in ticket. For a headless Pi,
-the command cannot open a browser on your laptop. Open
+This opens `/console/` with a one-use, 60-second sign-in ticket. If certificate
+setup takes longer, rerun the command for a fresh ticket. Use
+`micros server --profile NAME console` (and the same profile with `--trust-info`)
+when connecting to a named server.
+
+For a headless Pi, the command cannot open a browser on your laptop. Run
+`micros server console --no-browser` and open the printed private link on the
+laptop within 60 seconds. The link grants operator access: do not share it or save
+it in logs. Alternatively, open
 `https://SERVER_LAN_IP:8443/console/` on the laptop and sign in with the operator
 token, or securely copy **only** `client.json`, `servercert.pem`, and `admin.token`
 to a private laptop directory and run:

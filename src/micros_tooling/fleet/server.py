@@ -141,7 +141,10 @@ def server_main(arguments):
     setup = sub.add_parser('setup', help='create private TLS/operator credentials for a server hostname or IP')
     setup.add_argument('--host', required=True)
     setup.add_argument('--port', type=int, default=8443, help='host HTTPS port (default: 8443)')
-    sub.add_parser('console', help='open the web console with a one-time sign-in link')
+    console = sub.add_parser('console', help='open the web console with a one-time sign-in link')
+    console_mode = console.add_mutually_exclusive_group()
+    console_mode.add_argument('--no-browser', action='store_true', help='print a private 60-second sign-in link instead of opening a browser')
+    console_mode.add_argument('--trust-info', action='store_true', help='show the saved public certificate and fingerprint without connecting')
     sub.add_parser('start', help='build and start the local Docker container')
     sub.add_parser('shutdown', help='stop the local container without deleting state')
     enrollment = sub.add_parser('enroll', help='authorize an ESP MAC before it connects')
@@ -220,6 +223,22 @@ def server_main(arguments):
             'or micros server setup --host SERVER_LAN_IP for a new local server.')
     server_description(state)
     config = json.loads((state/'client.json').read_text())
+    import shlex
+    selection = ['--profile', args.profile] if args.profile else ['--state', str(state)]
+    console_command = shlex.join(['micros', 'server', *selection, 'console'])
+    if args.action == 'console' and args.trust_info:
+        import hashlib
+        import ssl
+        certificate = state / 'servercert.pem'
+        der = ssl.PEM_cert_to_DER_cert(certificate.read_text())
+        fingerprint = hashlib.sha256(der).hexdigest().upper()
+        print('Console: ' + config['url'].rstrip('/') + '/console/')
+        print('Saved public certificate: ' + str(certificate))
+        print('SHA-256: ' + ':'.join(fingerprint[i:i+2] for i in range(0, len(fingerprint), 2)))
+        print('If the browser reports an untrusted local certificate, verify its host and SHA-256 fingerprint '
+              'against this saved certificate before trusting it in your browser/OS certificate manager.')
+        print('Then rerun ' + console_command + ' for a fresh sign-in link. No trust settings were changed.')
+        return
     remote = RelayRemote(config['url'], state/'servercert.pem', state/'admin.token', getattr(args,'device_id',''),
                          cloudflare_access=config.get('cloudflare_access') is True)
     if args.action == 'publish-base':
@@ -245,8 +264,19 @@ def server_main(arguments):
     elif args.action == 'console':
         import webbrowser
         ticket = json.loads(remote.raw('POST','/v1/console-ticket'))['ticket']
-        webbrowser.open(config['url']+'/console/#ticket='+ticket)
-        print('Opened management console at '+config['url']+'/console/')
+        url = config['url'].rstrip('/') + '/console/'
+        if args.no_browser:
+            print('Private one-use sign-in link; expires in 60 seconds. Do not share or save it in logs.', file=sys.stderr)
+            print(url + '#ticket=' + ticket)
+            return
+        try:
+            opened = webbrowser.open(url + '#ticket=' + ticket)
+        except (webbrowser.Error, OSError):
+            opened = False
+        require(opened, 'Could not open a browser. Run ' + console_command +
+                ' --no-browser to get a private sign-in link to open on your computer.')
+        print('Browser requested for ' + url)
+        print('If sign-in expires, rerun this command. For certificate warnings, run ' + console_command + ' --trust-info.')
     elif args.action in ('start','shutdown'):
         docker = shutil.which('docker') or '/Applications/Docker.app/Contents/Resources/bin/docker'
         if args.action == 'start':
@@ -278,6 +308,7 @@ def server_main(arguments):
                         raise
                     time.sleep(0.25)
             print('Server ready at '+config['url'])
+            print('Open your console: ' + console_command)
     elif args.action == 'enroll':
         directory = state/'enrollments'/args.device_id
         # Save the token first so an interrupted network request can be retried safely.

@@ -163,8 +163,8 @@ separate registries and expect shared command ownership.
 Run `./micros server console` to open the console at the same HTTPS origin as the
 relay. The command exchanges your existing operator credentials for a one-use,
 60-second sign-in ticket; it does not put the operator token in a URL. You can also
-open `/console/` and enter the operator token. Trust your local server certificate
-in the browser first; the initial local setup uses a private certificate.
+open `/console/` and enter the operator token. For local certificate setup and headless sign-in, follow the
+[console connection guide](../../docs/site/run-management-server.md#open-the-console).
 
 The console provides:
 
@@ -172,7 +172,8 @@ The console provides:
 - Per-board service slots, uptime, heap history, base identity and diagnostic logs.
 - Confirmed pause, recovery and reboot controls, plus rename and enrollment revocation.
 - Board-specific CLI deployment instructions with copyable deploy and dry-run commands.
-- Board enrollment with downloadable `relay.token` and `relay-ca.pem` provisioning files.
+- Guided USB enrollment through `micros enroll`, plus manual authorization with
+  downloadable `relay.token` and `relay-ca.pem` files under Advanced.
 
 Application deployment happens in the terminal. With the CLI configured for this
 server, run `micros deploy -d NAME` from your micros project. The CLI builds,
@@ -183,8 +184,8 @@ liveness. Add `--dry-run` to inspect changes without changing the board. Use
 links back to its running services. Browser upload controls are no longer shown;
 the existing authenticated deployment APIs remain compatible.
 
-Download both enrollment files before closing the
-enrollment dialog. A failed enrollment request can be retried in that dialog with
+When using advanced manual authorization, download both enrollment files before
+closing the enrollment dialog. A failed enrollment request can be retried in that dialog with
 the same token. After losing those files, revoke the enrollment before provisioning
 new credentials.
 
