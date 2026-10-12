@@ -1,0 +1,64 @@
+# Supported package: SAMD21G18A (48 pins), as used by MKR WiFi 1010.
+# CMSIS pin numbering: PAxx = xx; PBxx = 32 + xx. These are NOT Arduino D/A labels.
+[chip]
+id = "samd21"
+source_version = "CMSIS-Atmel-1.2.0 / ArduinoCore-samd-1.8.13"
+part = "SAMD21G18A"
+numbering = "PAxx = xx; PBxx = 32 + xx"
+sources = [
+  "https://github.com/arduino/ArduinoModule-CMSIS-Atmel/blob/master/CMSIS/Device/ATMEL/samd21/include/pio/samd21g18a.h",
+  "https://github.com/arduino/ArduinoCore-samd/blob/1.8.13/cores/arduino/wiring_digital.c",
+  "https://github.com/arduino/ArduinoCore-samd/blob/1.8.13/variants/mkrwifi1010/variant.cpp",
+]
+
+[gpio.groups.digital]
+pins = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 30, 31, 34, 35, 40, 41, 42, 43, 54, 55]
+input = true
+output = true
+pulls = ["none", "up", "down"]
+
+[peripherals.adc]
+routing = "fixed"
+notes = "One ADC; channels identify external AIN inputs on the G18A package. Chip capability does not imply runtime support: the current micros SAMD21 service ABI does not support analog GPIO."
+
+[gpio.pins.2]
+adc = { unit = 1, channel = 0 }
+
+[gpio.pins.3]
+adc = { unit = 1, channel = 1 }
+
+[gpio.pins.4]
+adc = { unit = 1, channel = 4 }
+
+[gpio.pins.5]
+adc = { unit = 1, channel = 5 }
+
+[gpio.pins.6]
+adc = { unit = 1, channel = 6 }
+
+[gpio.pins.7]
+adc = { unit = 1, channel = 7 }
+
+[gpio.pins.8]
+adc = { unit = 1, channel = 16 }
+
+[gpio.pins.9]
+adc = { unit = 1, channel = 17 }
+
+[gpio.pins.10]
+adc = { unit = 1, channel = 18 }
+
+[gpio.pins.11]
+adc = { unit = 1, channel = 19 }
+
+[gpio.pins.34]
+adc = { unit = 1, channel = 10 }
+
+[gpio.pins.35]
+adc = { unit = 1, channel = 11 }
+
+[gpio.pins.40]
+adc = { unit = 1, channel = 2 }
+
+[gpio.pins.41]
+adc = { unit = 1, channel = 3 }

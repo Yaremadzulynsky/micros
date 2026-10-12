@@ -1,0 +1,34 @@
+# Generic ESP8266EX + 4 MiB flash target, not a specific manufacturer's header.
+[board]
+flash_bytes = 4194304
+profile = "esp8266_4mb"
+chip = "esp8266"
+module = "Generic ESP8266EX with 4 MiB flash"
+generic = true
+numbering = "ESP8266 GPIO numbers; header labels and attached circuits vary by module."
+verified_on = "2026-10-12"
+sources = ["https://docs.espressif.com/projects/esp8266-rtos-sdk/en/v3.4/api-reference/peripherals/gpio.html"]
+exposed = [0, 2, 4, 5, 12, 13, 14, 15, 16]
+onboard = []
+
+[runtime]
+reserved = [1, 3, 6, 7, 8, 9, 10, 11]
+reserved_reason = "Reserved for UART or flash by the micros ESP8266 runtime."
+configurable_pulls = false
+analog_gpio = false
+max_gpio_resources = 4
+recovery_button = false
+recovery_reason = "ESP8266 ROM recovery uses the programmer; recovery-button bindings are not implemented"
+
+[gpio.0]
+label = "GPIO0"
+notes = "Boot strap: must be high for normal boot; low selects the ROM downloader."
+[gpio.2]
+label = "GPIO2"
+notes = "Boot strap: must be high for normal boot. An LED may be attached on some modules."
+[gpio.15]
+label = "GPIO15"
+notes = "Boot strap: must be low for normal boot."
+[gpio.16]
+label = "GPIO16 / RTC"
+notes = "RTC GPIO; supports internal pull-down rather than pull-up. Check any reset/wake wiring."

@@ -9,13 +9,16 @@ def definition(value):
     from micros_tooling.config.configuration import valid_identifier
 
     require(
-        isinstance(value, dict) and value.keys() <= {"profile", "gpio", "recovery_button"},
+        isinstance(value, dict) and value.keys() <= {"profile", "chip", "gpio", "recovery_button"},
         "Unknown ESP8266 board setting",
     )
     require(value.get("profile") == "esp8266_4mb", "Expected ESP8266 4 MiB profile")
+    from micros_tooling.config.chips import board_capabilities, validate_gpio
+    capabilities = board_capabilities("esp8266_4mb", value.get("chip"))
+    runtime = capabilities["runtime"]
     resources = value.get("gpio", {})
     require(
-        isinstance(resources, dict) and len(resources) <= 4,
+        isinstance(resources, dict) and len(resources) <= runtime["max_gpio_resources"],
         "ESP8266 supports at most four named GPIO resources",
     )
     gpio, pins = [], set()
@@ -25,20 +28,20 @@ def definition(value):
             isinstance(item, dict) and item.keys() == {"pin", "direction"},
             "GPIO requires pin and direction",
         )
-        pin = integer(item["pin"], 0, 16, "ESP8266 GPIO number")
-        require(pin not in (1, 3, 6, 7, 8, 9, 10, 11), "Pin is reserved for UART or flash")
+        pin = integer(item["pin"], 0, 255, "ESP8266 GPIO number")
         require(
             pin not in pins and item["direction"] in ("input", "output"),
             "Duplicate pin or invalid direction",
         )
+        validate_gpio(capabilities, pin, item["direction"], "none", f"board.gpio.{name}")
         pins.add(pin)
         gpio.append(dict(name=name, line=line, pin=pin, direction=item["direction"]))
     recovery = value.get("recovery_button") or None
     require(
-        recovery is None,
-        "ESP8266 ROM recovery uses the programmer; recovery-button bindings are not implemented",
+        recovery is None or runtime["recovery_button"],
+        runtime["recovery_reason"],
     )
-    result = dict(profile="esp8266_4mb", gpio=gpio, recovery_button=None, flash_bytes=4194304)
+    result = dict(profile="esp8266_4mb", gpio=gpio, recovery_button=None, flash_bytes=capabilities["board"]["flash_bytes"])
     result["sha256"] = hashlib.sha256(
         json.dumps(result, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()

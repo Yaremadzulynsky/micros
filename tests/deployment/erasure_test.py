@@ -86,11 +86,24 @@ class ErasureTest(unittest.TestCase):
             er.erase(self.args)
         self.remote.raw.assert_not_called()
 
-    def test_changed_chip_is_rejected(self):
-        with patch.object(er.e, 'probe', side_effect=[BOARD, dict(BOARD, device_id='aabbccddeeff')]):
-            with self.assertRaisesRegex(PackageError, 'changed'):
-                er.erase(self.args)
+    def test_confirmed_esp_erase_does_not_repeat_rom_probe(self):
+        self.args.yes = False
+        with patch.object(er.e, 'probe', side_effect=[BOARD]) as probe, \
+             patch.object(er.e, 'interactive', return_value=True), \
+             patch('builtins.input', return_value=BOARD['device_id']) as confirm:
+            result = er.erase(self.args)
+        self.assertTrue(result['erased'])
+        probe.assert_called_once_with('/fake')
+        confirm.assert_called_once()
+        self.assertEqual(sum('erase_flash' in c for c in self.events), 1)
+
+    def test_resumed_erase_rejects_changed_initial_identity(self):
+        self.state.write('erase.json', dict(board=dict(BOARD, flash_mb=8),
+                                         session=str(self.state.root / 'erasures/interrupted')))
+        with self.assertRaisesRegex(PackageError, 'changed'):
+            er.erase(self.args)
         self.tool.assert_not_called()
+        self.assertEqual(self.remote.raw.call_count, 1)
 
     def test_failed_erase_cannot_report_success(self):
         self.tool.side_effect = PackageError('Chip erase failed')

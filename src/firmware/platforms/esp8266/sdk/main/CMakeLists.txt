@@ -19,6 +19,8 @@ else()
     set(COMPONENT_EMBED_TXTFILES "../certs/relay-roots.pem")
 endif()
 register_component()
+# Host base validation needs this target marker even when runtime code inlines it.
+target_link_libraries(${COMPONENT_LIB} INTERFACE "-Wl,--undefined=embedded_profile")
 target_compile_definitions(${COMPONENT_LIB} PRIVATE MICROS_RUNTIME_GPIO_CAPACITY=4)
 target_compile_options(${COMPONENT_LIB} PRIVATE -Wall -Wextra -Werror
     $<$<COMPILE_LANGUAGE:C>:-std=gnu17> $<$<COMPILE_LANGUAGE:CXX>:-std=gnu++17>)
@@ -27,12 +29,12 @@ target_compile_options(${COMPONENT_LIB} PRIVATE -Wall -Wextra -Werror
 target_compile_definitions(mbedtls PRIVATE
     MBEDTLS_SSL_CIPHERSUITES=MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256)
 
-# Bound temporary signature-verification and key-exchange tables. The library
-# defaults exhaust this chip's heap when an application is already running.
-# Smaller windows trade computation time for RAM without changing key sizes,
-# accepted certificates, cipher suites, or verification requirements.
+# Balance TLS handshake time against this chip's limited heap. Window 2 with
+# fixed-point caching disabled took ~18 s and the public endpoint closed the
+# connection. Window 4 plus caching completed in ~6.6 s on ESP8266 at 160 MHz.
+# Keep RSA exponentiation bounded; cipher suites and verification are unchanged.
 foreach(tls_target mbedtls mbedx509 mbedcrypto)
     target_compile_definitions(${tls_target} PRIVATE
-        MBEDTLS_ECP_WINDOW_SIZE=2 MBEDTLS_ECP_FIXED_POINT_OPTIM=0
+        MBEDTLS_ECP_WINDOW_SIZE=4 MBEDTLS_ECP_FIXED_POINT_OPTIM=1
         MBEDTLS_MPI_WINDOW_SIZE=2)
 endforeach()
