@@ -112,14 +112,18 @@ class RelayTests(unittest.TestCase):
             with patch('server.relay.POLL_SECONDS',0):
                 self.registry.poll(DEVICE,BOOT,dict(STATUS,platform=platform))
             remote=RegistryRemote(self.registry,DEVICE)
-            with patch.object(self.registry,'command',return_value=(200,b'{"result":0}')) as command:
-                remote.request('GET','/v1/log-stream?cursor=1099511627776')
+            with patch.object(self.registry,'command',return_value=(200,b'{"result":0,"hex":"6869"}')) as command:
+                reply=remote.request('GET','/v1/log-stream?cursor=1099511627776')
+                self.assertEqual(reply,dict(mode='drain',data_hex='6869'))
                 self.assertEqual(command.call_args.args[1:5],(18,0,0,0))
-                self.assertEqual(command.call_args.args[-1],b'RPC 7 0 0 1099511627776 - -')
+                self.assertEqual(command.call_args.args[-1],b'RPC 1 0 0 0 - -')
                 remote.session_id='c'*32
                 remote.request('POST','/v1/platform-command',b'SERVICE COMMAND')
                 self.assertEqual(command.call_args.args[-1],
                     ('RPC 18 0 0 0 '+'c'*32+' '+b'SERVICE COMMAND'.hex()).encode())
+            with patch.object(self.registry,'command',return_value=(200,b'{"result":-1,"error":"rejected"}')):
+                with self.assertRaisesRegex(ValueError,'rejected'):
+                    remote.request('GET','/v1/log-stream?cursor=0')
 
     def test_timeout_and_restart_never_replay_work(self):
         self.ready()
