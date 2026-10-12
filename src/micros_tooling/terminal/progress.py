@@ -26,6 +26,23 @@ def message(text):
     print('  ' + color(text, code), file=sys.stderr, flush=True)
 
 
+def deployment_message(phase, text):
+    """Stable, readable deployment stages; no cursor controls or guessed percentages."""
+    if phase == 'build':
+        text = text.removeprefix('Building ')
+    labels = {'server': 'Device', 'project': 'Unit', 'board': 'Board',
+              'base': 'Base', 'connect': 'Connect', 'build': 'Build',
+              'memory': 'Capacity', 'stage': 'Stage', 'upload': 'Upload',
+              'activate': 'Activate', 'health': 'Verify', 'confirmed': 'Ready',
+              'unchanged': 'Ready', 'restart': 'Restart', 'stop': 'Pause',
+              'archive': 'Warning', 'labels': 'Warning', 'rollback': 'Restore',
+              'environment': 'Settings'}
+    code = ('32' if phase in ('confirmed', 'unchanged') else
+            '33' if phase in ('health', 'stop', 'archive', 'labels', 'rollback') else '36')
+    label = labels.get(phase, phase.capitalize())
+    print('  ' + color(f'{label:<9}', code) + ' ' + text, file=sys.stderr, flush=True)
+
+
 class Activity:
     """Animate blocking I/O without touching its timing or displaying payloads."""
     def __init__(self, label):

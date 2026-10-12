@@ -164,41 +164,61 @@ def deployment_plan(inspection, current, requested, *, device=None, force=False)
     )
 
 
-def format_plan(plan):
+def format_plan(plan, *, stream=None):
+    import sys
+    from micros_tooling.terminal.progress import color
+    stream = stream if stream is not None else sys.stdout
+    def styled(text, code):
+        return color(text, code, stream)
     identity = plan.get("identity") or {}
-    lines = [f'Deployment plan: {plan["device"] or identity.get("device_id", "selected board")}']
-    if identity.get("device_id"):
-        lines.append(f'Hardware: {identity["device_id"]}')
-    lines.append(f'Baseline: {plan["baseline"]["state"]}')
-    lines.append(f'Requested release: {plan["desired"]["release"]}')
-    lines.extend("Warning: " + warning for warning in plan["warnings"])
+    device = plan["device"] or identity.get("device_id", "selected board")
+    lines = [styled(f'  Deployment plan · {device}', '1;36')]
+    if identity.get("device_id") and identity["device_id"] != device:
+        lines.append('    Hardware: ' + identity["device_id"])
+    release = plan["desired"]["release"]
+    release = release[:12] + '…' if len(release) == 64 else release
+    lines.append('    Baseline: ' + plan["baseline"]["state"] + ' · Release: ' + release)
+    lines.extend(styled('    ! ' + warning, '33') for warning in plan["warnings"])
     lines.append("")
     for change in plan["changes"]:
-        path = ".".join(change["path"])
+        path = ".".join(change["path"][1:])
         action = change["action"]
         if len(change["path"]) == 2:
+            marker, label, code = dict(add=('+', 'Add', '32'), remove=('-', 'Remove', '31'),
+                                       select=('?', 'Select', '33'))[action]
             suffix = " (previous configuration unknown)" if action == "select" else ""
-            lines.append(f'{dict(add="+", remove="-", select="?")[action]} {path}: {action}{suffix}')
+            lines.append('    ' + styled(f'{marker} {label} {path}', code) + suffix)
         else:
-            lines.append(f'~ {path}: {json.dumps(change["before"], sort_keys=True)} → '
+            lines.append('    ' + styled(f'~ {path}', '33') +
+                         f': {json.dumps(change["before"], sort_keys=True)} → '
                          f'{json.dumps(change["after"], sort_keys=True)}')
     if not plan["changes"]:
-        lines.append("No differences in comparable release metadata.")
-    lines.append("\nResource reservations (not measured runtime heap):")
+        lines.append("    No differences in comparable release metadata.")
+    lines.append('\n' + styled('  Resource reservations', '1') + ' · not measured runtime heap')
+    labels = dict(requested_stack_bytes='Stack', arena_bytes='Service memory', handles='Handles',
+                  timers='Timers', channel_payload_bytes='Channel payload', image_bytes='Service images')
     for key, values in plan["resources"].items():
-        before = "unknown" if values["before"] is None else str(values["before"])
-        after = "unknown" if values["after"] is None else str(values["after"])
-        delta = f' ({values["delta"]:+d})' if values["delta"] is not None else ""
-        lines.append(f'  {key}: {before} → {after}{delta}')
-    lines.append("  Channel payload bytes exclude runtime bookkeeping.")
-    action = plan["execution"]["action"]
-    lines.append("\nAction: " + {
+        unit = ' B' if key.endswith('_bytes') else ''
+        def amount(value):
+            return 'unknown' if value is None else f'{value:,}{unit}'
+        before, after = amount(values['before']), amount(values['after'])
+        delta = values['delta']
+        change = f'{delta:+,}{unit}' if delta is not None else 'unknown change'
+        lines.append(f'    {labels.get(key, key):<17} {before:>9} → {after:<9} ' +
+                     styled('(' + change + ')', '2'))
+    lines.append(styled('    Channel payload excludes runtime bookkeeping.', '2'))
+    execution = plan["execution"]
+    action = execution["action"]
+    description = {
         "none": "Already installed and running; no device changes or flash writes.",
         "restart": "Restart the installed application; no flash writes.",
-        "deploy": "Deploy complete application graph; all current services pause during transfer, then the requested graph starts.",
-    }[action])
-    if action == "deploy" and plan["execution"].get("stages_while_running"):
-        lines[-1] = "\nAction: Stage while current services run. " + plan["execution"]["restart_reason"]
-        lines.append("Services to reload: " + (", ".join(plan["execution"]["affected_services"]) or "none"))
-    lines.append("Base firmware unchanged.")
+        "deploy": "Deploy complete application; all current services pause during transfer.",
+    }[action]
+    if action == "deploy" and execution.get("stages_while_running"):
+        description = "Stage while current services run."
+    lines.append('\n' + styled('  Action', '1') + ' · ' + description)
+    if action == 'deploy':
+        lines.append('    ' + execution['restart_reason'])
+        lines.append('    Services to reload: ' + (', '.join(execution['affected_services']) or 'none'))
+    lines.append(styled('    Base firmware unchanged.', '2'))
     return "\n".join(lines)

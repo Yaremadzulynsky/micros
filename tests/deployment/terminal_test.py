@@ -697,6 +697,7 @@ class ReceiptAndCliTests(unittest.TestCase):
                 if not unchanged:
                     prepared["banks"][0]["digest"] = "33" * 32
                 stdout = io.StringIO()
+                stderr = io.StringIO()
                 arguments = ["micros", command]
                 arguments += ["--release", str(Path(directory) / "review")] if compiled else ["--project", str(unit)]
                 if as_json:
@@ -715,19 +716,20 @@ class ReceiptAndCliTests(unittest.TestCase):
                 ), contextlib.redirect_stdout(
                     stdout
                 ), contextlib.redirect_stderr(
-                    io.StringIO()
+                    stderr
                 ):
                     cli.main()
                 self.assertEqual(build.call_count, 0 if compiled else 1)
                 self.assertEqual(release.call_count, 1 if compiled else 0)
                 if not as_json:
-                    self.assertIn("Deployment plan: board", stdout.getvalue())
+                    self.assertIn("Deployment plan · board", stdout.getvalue())
                     self.assertIn("Baseline: known", stdout.getvalue())
                     self.assertIn("all current services pause", stdout.getvalue())
                     self.assertEqual(remote.requests, [])
                     self.assertEqual([event["snapshot"] for event in workspace.history("board")], [prior["id"]])
                     continue
                 result = json.loads(stdout.getvalue())
+                self.assertEqual(stderr.getvalue(), '')
                 if dry_run:
                     self.assertTrue(result["dry_run"])
                     self.assertEqual(result["deployment_plan"]["format"], 1)

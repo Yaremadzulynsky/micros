@@ -429,6 +429,11 @@ def main():
                 "Run the application's ./micros launcher to select its unit automatically.")
 
     def progress(phase, message):
+        if args.command in ('deploy', 'rollback'):
+            if args.json:
+                return
+            from micros_tooling.terminal.progress import deployment_message
+            return deployment_message(phase, message)
         print(f"  {message}", file=sys.stderr, flush=True)
 
     if args.command == "base-update":
@@ -451,7 +456,8 @@ def main():
         discovered = discover_for_command(state, args)
         if discovered:
             connection, selected, paired = discovered
-            progress("server", f"Server device: {selected['name']} ({selected['device_id']})")
+            progress("server", ('' if args.command in ('deploy', 'rollback') else 'Server device: ') +
+                     f"{selected['name']} ({selected['device_id']})")
             if not paired:
                 status = connection.status()
                 if args.command in ("status", "doctor"):
@@ -483,7 +489,10 @@ def main():
     if args.command in ("generate", "config", "build", "deploy") and not getattr(args, "release", None):
         from micros_tooling.config.resources import select_board
         from micros_tooling.config.configuration import select_unit, read_toml
-        progress("project", "Application: " + str(args.project))
+        project_label = str(args.project)
+        if args.command == 'deploy' and args.project.resolve().is_relative_to(Path.cwd()):
+            project_label = str(args.project.resolve().relative_to(Path.cwd()))
+        progress("project", ('' if args.command == 'deploy' else 'Application: ') + project_label)
         selected = args.board
         embedded = args.project.suffix == ".toml" and "board" in read_toml(args.project)
         if selected is None and not embedded and not getattr(args, "firmware", None):
@@ -493,7 +502,7 @@ def main():
             if device in profiles["devices"] and profiles["devices"][device].get("board"):
                 selected = Path(profiles["devices"][device].get("board_source", state.root / "devices" / device / "board.toml"))
         args.board = select_board(args.project, selected)
-        if args.board:
+        if args.board and not (args.command == 'deploy' and args.board == args.project):
             progress("board", f"Board definition: {args.board}")
 
     if args.command == "generate":
@@ -876,7 +885,9 @@ def main():
             require(live.get("identity", {}).get("device_id") == expected,
                     "Authenticated board does not match selected hardware")
             firmware = fetch_base(artifact_remote, workspace, live)
-            progress("base", "Verified server base: " + live["identity"]["base_sha256"])
+            base_id = live["identity"]["base_sha256"]
+            progress("base", ('Verified · ' + base_id[:12] + '…' if args.command in ('deploy', 'rollback')
+                              else 'Verified server base: ' + base_id))
             sync_releases(artifact_remote, workspace, name)
         else:
             require(digest(firmware.read_bytes()) == profile["firmware_sha256"],
@@ -912,7 +923,7 @@ def main():
             return
         from micros_tooling.deployment.diagnostics import connect
         remote = connect(workspace, name)[2]
-        progress("connect", f'{name} via {remote.host}:{remote.port}')
+        progress("connect", ('' if args.command in ('deploy', 'rollback') else name + ' via ') + f'{remote.host}:{remote.port}')
         status = remote.status()
         expected_device = profile.get("device_id") or profile.get("mac", "").replace(":", "")
         if expected_device and status.get("identity"):
@@ -954,7 +965,8 @@ def main():
         for service, detail in receipt.get("details", {}).items():
             if "headroom" in detail:
                 free = detail["headroom"]
-                progress("memory", f"{service}: slot {detail['slot']}, {free['code_bytes']} code bytes and {free['data_bytes']} data bytes free")
+                progress("memory", f"{service} · slot {detail['slot']} · {free['code_bytes']:,} B code / {free['data_bytes']:,} B data free")
+        from micros_tooling.terminal.progress import color
         if args.dry_run:
             print(
                 json.dumps(
@@ -962,10 +974,11 @@ def main():
                          plan=inspection["plan"], deployment_plan=report)
                 )
                 if args.json
-                else format_plan(report) + "\n\nDry run passed. No device changes made."
+                else format_plan(report, stream=sys.stdout) + "\n\n" + color("  ✓ Dry run passed. No device changes made.", '32', sys.stdout)
             )
             return
-        progress("plan", format_plan(report))
+        if not args.json:
+            print('\n' + format_plan(report, stream=sys.stderr) + '\n', file=sys.stderr, flush=True)
         if isinstance(remote, RelayRemote):
             from micros_tooling.storage.artifacts import archive_release
             configuration = {}
@@ -1006,7 +1019,9 @@ def main():
         print(
             json.dumps(dict(device=name, snapshot=receipt["id"], **result))
             if args.json
-            else f'{name}: {"already up to date" if result["unchanged"] else "deployment complete"}. All {len(receipt["services"])} services are running.'
+            else '\n' + color('  ✓ ' + ('Already up to date' if result['unchanged'] else 'Deployment complete'), '1;32', sys.stdout)
+                 + f" · {name} · {len(receipt['services'])} "
+                 + ('service running.' if len(receipt['services']) == 1 else 'services running.')
         )
 
 

@@ -1,6 +1,8 @@
 """Deployment plans explain verified state without touching a physical board."""
 
 import copy
+import io
+import os
 from pathlib import Path
 import sys
 import unittest
@@ -40,6 +42,44 @@ def inspected(unchanged=False):
 
 
 class PlanningTests(unittest.TestCase):
+    def test_plan_colors_follow_the_output_stream_and_no_color(self):
+        state = inspected()
+        state['before']['activation']['good'] = NO_BANK
+        report = deployment_plan(state, None, receipt())
+        tty = io.StringIO()
+        tty.isatty = lambda: True
+        plain = io.StringIO()
+        with patch.dict(os.environ, {'TERM': 'xterm-256color'}, clear=True):
+            self.assertIn('\033[1;36m', format_plan(report, stream=tty))
+            self.assertNotIn('\033[', format_plan(report, stream=plain))
+            with patch.dict(os.environ, NO_COLOR='1'):
+                self.assertNotIn('\033[', format_plan(report, stream=tty))
+            with patch.dict(os.environ, TERM='dumb'):
+                self.assertNotIn('\033[', format_plan(report, stream=tty))
+        rendered = format_plan(report, stream=plain)
+        self.assertIn('+ Add button', rendered)
+        self.assertIn('8,192 B', rendered)
+        self.assertNotIn('requested_stack_bytes', rendered)
+
+    def test_deployment_stages_are_readable_with_or_without_color(self):
+        from contextlib import redirect_stderr
+        from micros_tooling.terminal.progress import deployment_message
+        for terminal, no_color in ((True, False), (False, False), (True, True)):
+            output = io.StringIO()
+            output.isatty = lambda: terminal
+            env = {'TERM': 'xterm', **({'NO_COLOR': '1'} if no_color else {})}
+            with patch.dict(os.environ, env, clear=True), redirect_stderr(output):
+                deployment_message('build', 'Building example.hello 1.1.0')
+                deployment_message('health', 'Waiting for confirmation')
+                deployment_message('confirmed', 'All services are running')
+            rendered = output.getvalue()
+            self.assertIn('example.hello 1.1.0', rendered)
+            self.assertNotIn('Building', rendered)
+            self.assertEqual('\033[' in rendered, terminal and not no_color)
+            if terminal and not no_color:
+                self.assertIn('\033[33m', rendered)
+                self.assertIn('\033[32m', rendered)
+
     def test_selective_preview_and_shared_layout_fallback(self):
         old = receipt()
         for i, detail in enumerate(old["details"].values()):
