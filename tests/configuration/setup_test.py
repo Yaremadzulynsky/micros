@@ -215,10 +215,15 @@ class SetupTests(unittest.TestCase):
         receiver["gpio"]["rx"]["direction"] = "output"
         with self.assertRaisesRegex(ValueError, "conflicts with board GPIO"):
             self.resolve()
-        receiver["gpio"] = dict(reserved=dict(pin=1, direction="input"))
         receiver["services"]["receiver"]["pins"]["rx"] = 27
-        with self.assertRaisesRegex(ValueError, "reserved for the resident serial controller"):
-            self.resolve()
+        # Board capability validation rejects both serial pins and flash pins,
+        # identifying the offending resource and pin before graph generation.
+        for pin in (1, 3, 6):
+            with self.subTest(pin=pin):
+                receiver["gpio"] = dict(reserved=dict(pin=pin, direction="input"))
+                with self.assertRaisesRegex(ValueError,
+                        rf"board\.gpio\.reserved: GPIO{pin}: Reserved .*serial/flash"):
+                    self.resolve()
 
     def test_memory_defaults_override_and_invalid_budget(self):
         service = self.doc["devices"]["receiver"]["services"]["receiver"]
