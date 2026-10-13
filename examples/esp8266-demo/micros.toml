@@ -1,0 +1,44 @@
+[project]
+name = "esp8266-demo"
+
+[board]
+profile = "esp8266_4mb"
+[board.gpio.led]
+pin = 2
+direction = "output"
+
+[services.hello]
+memory = { arena = "RAM", stack_bytes = 2048 }
+source = "../hello-service"
+name = "example.hello"
+version = "1.0.0"
+enabled = true
+[services.hello.build]
+sources = ["src/service.c"]
+[services.hello.capabilities]
+gpio = []
+timers = 1
+
+[services.blink]
+memory = { arena = "RAM", stack_bytes = 2048 }
+source = "../blink-service"
+name = "example.blink"
+version = "1.0.0"
+enabled = true
+[services.blink.build]
+sources = ["src/service.c"]
+[services.blink.capabilities]
+gpio = ["led"]
+timers = 1
+
+[services.cpp]
+memory = { arena = "RAM", stack_bytes = 2048 }
+source = "../cpp-service"
+name = "example.cpp"
+version = "1.0.0"
+enabled = true
+[services.cpp.build]
+sources = ["src/service.cpp"]
+[services.cpp.capabilities]
+gpio = []
+timers = 0

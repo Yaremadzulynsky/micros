@@ -1,0 +1,10 @@
+**
+!src/
+!src/server/
+!src/server/**
+!tools/
+!tools/**
+!src/micros_tooling/
+!src/micros_tooling/**
+**/__pycache__/
+**/*.pyc

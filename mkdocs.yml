@@ -1,0 +1,78 @@
+site_name: Micros Docs
+site_description: Service-oriented development and management for microcontrollers.
+site_url: https://docs.meetmicros.com/
+repo_url: https://github.com/Yaremadzulynsky/micros
+repo_name: Yaremadzulynsky/micros
+edit_uri: edit/main/docs/
+site_dir: build/docs-site
+theme:
+  name: material
+  custom_dir: docs/overrides
+  font: false
+  palette:
+    scheme: default
+    primary: black
+    accent: teal
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.footer
+    - toc.integrate
+    - content.code.copy
+plugins:
+  - search
+hooks:
+  - tools/docs/hooks.py
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+extra_css:
+  - stylesheets/micros.css
+  - stylesheets/storyboard.css
+extra_javascript:
+  - javascripts/storyboard-loader.js
+exclude_docs: |
+  /overrides/
+  /planning/
+  /archive/
+validation:
+  nav:
+    omitted_files: ignore
+  links:
+    not_found: warn
+    anchors: info
+nav:
+  - Start:
+      - Home: index.md
+      - Quickstart: site/get-started.md
+      - Architecture: site/architecture.md
+  - Build:
+      - Write a service: site/write-a-service.md
+      - Connect services: site/connect-service-ports.md
+      - Service commands: site/service-commands.md
+  - Use:
+      - Enrollment help: site/set-up-an-esp32.md
+      - Run locally: site/run-locally.md
+      - Deploy and update: site/deploy-an-application.md
+      - Service channels: site/inspect-service-channels.md
+      - Interactive shell: site/interactive-shell.md
+      - Server administration: site/run-management-server.md
+  - Reference:
+      - CLI: site/cli.md
+      - SDK setup: site/install-the-sdk.md
+      - Configuration:
+          - Which file to edit: site/declaration-authoring.md
+          - Service definitions: site/service-configuration.md
+          - Unit files: site/unit-configuration.md
+          - Shared interfaces: site/interface-configuration.md
+      - Service API: site/service-api.md
+      - Coordination: site/coordination-reference.md
+      - Contributing: site/contributing.md
+  - Tutorials:
+      - Learn the micros way: tutorials/index.md
+      - Blink an LED: tutorials/blink.md
+      - Button-controlled LED: tutorials/button.md
+  - Micros website: https://meetmicros.com/

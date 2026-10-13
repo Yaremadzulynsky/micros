@@ -1,0 +1,14 @@
+{% extends "main.html" %}
+{% block extrahead %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ config.extra.tutorial_assets['tutorial.css'] | url }}">
+{% endblock %}
+{% block content %}
+  <div id="micros-tutorial" data-lesson="{{ page.meta.lesson }}">
+    {{ page.content }}
+  </div>
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+  <script type="module" src="{{ config.extra.tutorial_assets['tutorial.js'] | url }}"></script>
+{% endblock %}

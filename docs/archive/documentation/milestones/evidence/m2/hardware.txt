@@ -1,0 +1,47 @@
+INFO code=0x40083590 data=0x3ffba970 code_capacity=16384 data_capacity=8192 heap=226076 staging=24640 arena_reserved=4096 tcb=340
+LOADED
+hello v1 init globals=7 bss=0 arena=0
+hello v1 start
+hello v1 step
+hello v1 step
+hello v1 step
+hello v1 stop steps=3
+CYCLE 1 result=0 code=280 data=148 bss=4 arena=16 stack=4096 stack_free_min=3596 writes=6
+hello v1 init globals=7 bss=0 arena=0
+hello v1 start
+hello v1 step
+hello v1 step
+hello v1 step
+hello v1 stop steps=3
+CYCLE 2 result=0 code=280 data=148 bss=4 arena=16 stack=4096 stack_free_min=3388 writes=6
+DONE
+LOADED
+hello v2 init globals=7 bss=0 arena=0
+hello v2 start
+hello v2 step
+hello v2 step
+hello v2 step
+hello v2 stop steps=3
+CYCLE 1 result=0 code=280 data=148 bss=4 arena=16 stack=4096 stack_free_min=3596 writes=6
+hello v2 init globals=7 bss=0 arena=0
+hello v2 start
+hello v2 step
+hello v2 step
+hello v2 step
+hello v2 stop steps=3
+CYCLE 2 result=0 code=280 data=148 bss=4 arena=16 stack=4096 stack_free_min=3388 writes=6
+DONE
+target: REJECT target mismatch
+abi: REJECT ABI mismatch
+code_length: REJECT section length
+descriptor_offset: REJECT descriptor offset
+slot: REJECT slot address mismatch
+reserved: REJECT reserved field
+checksum: REJECT payload checksum
+truncated: REJECT section length
+arena_budget: REJECT descriptor budget
+arena_alignment: REJECT descriptor budget
+hook_pointer: REJECT descriptor hooks
+REJECT image length
+INFO code=0x40083590 data=0x3ffba970 code_capacity=16384 data_capacity=8192 heap=226076 staging=24640 arena_reserved=4096 tcb=340
+PASS two variants, four clean cycles, 11 invalid images and empty RUN rejected

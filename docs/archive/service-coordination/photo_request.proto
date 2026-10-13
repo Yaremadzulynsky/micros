@@ -1,0 +1,7 @@
+syntax = "proto3";
+package example.camera;
+
+// Port declaration supplies "action" semantics. No developer-managed counter.
+message PhotoRequest {
+  uint32 exposure_us = 1;
+}

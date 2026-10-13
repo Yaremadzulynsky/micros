@@ -1,0 +1,10 @@
+# Example Feather V2 wiring for the first-board walkthrough.
+[board]
+profile = "adafruit_feather_esp32_v2"
+flash_mb = 8
+recovery_button = "user_button"
+
+[board.gpio.user_button]
+pin = 38
+direction = "input"
+pull = "none"

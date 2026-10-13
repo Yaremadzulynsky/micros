@@ -1,0 +1,68 @@
+[project]
+name = "Digital and analog pin monitor"
+[board]
+profile = "adafruit_feather_esp32_v2"
+flash_mb = 8
+[board.gpio.digital]
+pin = 27
+direction = "input"
+[board.gpio.analog]
+pin = 34
+direction = "input"
+
+[services.monitor]
+source = "../../services/pin-monitor"
+name = "board.pin-monitor"
+version = "1.0.0"
+enabled = true
+memory = { arena = "RAM", stack_bytes = 2048 }
+[services.monitor.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.monitor.capabilities]
+gpio = ["digital", "analog"]
+timers = 0
+[services.monitor.config]
+sample_interval_ms = 100
+analog_mask = 2 # Bit 1 selects the second GPIO in the grant list above.
+[services.monitor.config_schema.sample_interval_ms]
+type = "uint32"
+default = 100
+min = 10
+max = 60000
+[services.monitor.config_schema.analog_mask]
+type = "uint32"
+default = 0
+min = 0
+max = 15
+[services.monitor.publications.samples]
+channel = "samples"
+
+[services.bridge]
+source = "../../services/network-bridge"
+name = "board.network-bridge"
+version = "1.0.0"
+enabled = true
+memory = { arena = "RAM", stack_bytes = 2048 }
+[services.bridge.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.bridge.capabilities]
+gpio = []
+timers = 0
+[services.bridge.subscriptions.samples]
+channel = "samples"
+
+[channels.samples]
+key = 1
+name = "pin.samples"
+interface = "micros.pin.sample"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+policy = "stream"
+depth = 8
+max_payload = 64
+schema = "../../src/sdk/protos/pin/v1/pin_sample.proto"

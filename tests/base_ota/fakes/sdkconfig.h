@@ -1,0 +1,1 @@
+#define CONFIG_MICROS_BASE_OTA 1

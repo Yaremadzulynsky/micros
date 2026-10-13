@@ -1,0 +1,16 @@
+[service]
+name = "tutorial.led"
+version = "1.0.0"
+
+[service.build]
+api = "led"
+lifecycle = "hooks"
+sources = ["src/service.c"]
+descriptor = "micros_descriptor"
+
+[service.pins.led]
+type = "output"
+
+[service.subscriptions.toggle]
+interface = "../../protos/toggle/interface.toml"
+min_depth = 4

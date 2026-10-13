@@ -1,0 +1,32 @@
+# Generated build output
+/build/
+
+# macOS filesystem metadata
+.DS_Store
+
+# Python tooling caches
+__pycache__/
+*.py[cod]
+
+# Local device identities, paired firmware, deployment artifacts and history
+/.micros/
+
+# Service-local artifacts regenerated from micros.toml.
+/services/*/generated/
+/services/diagnostics/*/generated/
+/examples/services/*/generated/
+/examples/*/generated/
+
+/tests/fixtures/*/generated/
+
+# Local browser captures and IR session output
+/.playwright-mcp/
+/flash-panel.png
+/examples/captures/ir/*.log
+/examples/captures/ir/party.lock
+
+# Frontend dependencies and reproducible bundles
+/src/*.egg-info/
+/tools/vendor/service-flow/node_modules/
+
+/tools/docs/tutorials/node_modules/

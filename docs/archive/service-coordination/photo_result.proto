@@ -1,0 +1,6 @@
+syntax = "proto3";
+package example.camera;
+
+message PhotoResult {
+  uint64 photo_id = 1; // Reference to separately stored data, not the image bytes.
+}

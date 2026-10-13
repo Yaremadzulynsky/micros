@@ -1,0 +1,400 @@
+AUTOBOOT OK bank=0 trial=0
+LATENCY_US=277
+LED level=0 verified
+LATENCY_US=1750
+LED level=1 verified
+LATENCY_US=1727
+LED level=1 verified
+LATENCY_US=1727
+LED level=0 verified
+ACTIVATION sequence=31 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=131516 baseline_heap=210560 led=0 button=1
+USAGE image=4668 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=157 callbacks=0 stack_free=2868
+SERVICE index=1 state=Running result=0 steps=156 callbacks=0 stack_free=2796
+SERVICE index=2 state=Running result=0 steps=155 callbacks=4 stack_free=3316
+END STATUS
+LATENCY_US=1776
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=634
+LED level=1 verified
+LATENCY_US=1949
+LED level=0 verified
+LATENCY_US=1913
+LED level=0 verified
+LATENCY_US=1913
+LATENCY_US=459
+LED level=1 verified
+LATENCY_US=1808
+LED level=1 verified
+LATENCY_US=1772
+LED level=0 verified
+LATENCY_US=1772
+LED level=0 verified
+LATENCY_US=1772
+LED level=1 verified
+LATENCY_US=1772
+LED level=1 verified
+LATENCY_US=1772
+LED level=0 verified
+LATENCY_US=1772
+LED level=0 verified
+LATENCY_US=1772
+LED level=1 verified
+LATENCY_US=1772
+LED level=1 verified
+LATENCY_US=1772
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=635
+LED level=1 verified
+LATENCY_US=1949
+LATENCY_US=459
+LED level=1 verified
+LATENCY_US=1808
+LED level=0 verified
+LATENCY_US=1837
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1888
+LATENCY_US=1731
+LED level=1 verified
+LATENCY_US=459
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1981
+LED level=1 verified
+LATENCY_US=536
+LED level=1 verified
+LATENCY_US=1913
+LATENCY_US=459
+LED level=0 verified
+LATENCY_US=1856
+LED level=0 verified
+LATENCY_US=466
+LED level=1 verified
+LATENCY_US=1861
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=620
+LED level=0 verified
+LATENCY_US=1914
+LED level=1 verified
+LATENCY_US=2028
+LATENCY_US=1772
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=658
+LED level=0 verified
+LATENCY_US=1950
+LATENCY_US=460
+LED level=1 verified
+LATENCY_US=1808
+LED level=1 verified
+LATENCY_US=1808
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=635
+LED level=1 verified
+LATENCY_US=1949
+LATENCY_US=460
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=726
+LED level=0 verified
+LATENCY_US=3383
+LED level=1 verified
+LATENCY_US=1925
+LATENCY_US=459
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=1914
+LATENCY_US=459
+LED level=0 verified
+LATENCY_US=402
+LED level=1 verified
+LATENCY_US=1772
+LED level=1 verified
+RESUMED
+ACTIVATION sequence=31 good=0 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=114148 baseline_heap=210560 led=1 button=1
+USAGE image=4668 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2710 callbacks=0 stack_free=2868
+SERVICE index=1 state=Running result=0 steps=2709 callbacks=0 stack_free=2796
+SERVICE index=2 state=Running result=0 steps=2708 callbacks=55 stack_free=3316
+END STATUS
+LED level=0 verified
+LATENCY_US=651
+LED level=0 verified
+LATENCY_US=1950
+STOPPED OK
+C++ service initialized through the C ABI
+AUTOBOOT OK bank=1 trial=1
+BOOT OK
+LATENCY_US=301
+LED level=0 verified
+ACTIVATION sequence=33 good=0 previous=4294967295 candidate=1 attempts=1 pending=1 recovery=0
+STATUS bank=1 services=4 heap=109560 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=10 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=9 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=8 callbacks=0 stack_free=2788
+SERVICE index=3 state=Running result=0 steps=6 callbacks=1 stack_free=3312
+END STATUS
+LATENCY_US=705
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1946
+LATENCY_US=1802
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1943
+LATENCY_US=1836
+LED level=1 verified
+LATENCY_US=1731
+LED level=1 verified
+LATENCY_US=1770
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1943
+LATENCY_US=1802
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1943
+LED level=0 verified
+LATENCY_US=1946
+LATENCY_US=1802
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1952
+LATENCY_US=1802
+LED level=1 verified
+LATENCY_US=1698
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1946
+LATENCY_US=1698
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1943
+LATENCY_US=1802
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1943
+LED level=0 verified
+LATENCY_US=1967
+LATENCY_US=1802
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1943
+LATENCY_US=1802
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1978
+LATENCY_US=1802
+LED level=1 verified
+LATENCY_US=1698
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1943
+LATENCY_US=1803
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1978
+LATENCY_US=1802
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1943
+LED level=0 verified
+LATENCY_US=1910
+LATENCY_US=1802
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1943
+LATENCY_US=1802
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1946
+LATENCY_US=1802
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=1952
+LATENCY_US=1802
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1943
+LATENCY_US=1802
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1874
+LATENCY_US=1802
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1943
+LATENCY_US=1802
+LED level=1 verified
+LATENCY_US=1770
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1943
+LATENCY_US=1803
+LED level=0 verified
+HEALTH COMMITTED bank=1
+LED level=0 verified
+LATENCY_US=312
+LED level=0 verified
+LATENCY_US=815
+LED level=0 verified
+LATENCY_US=1865
+LED level=0 verified
+LATENCY_US=780
+LED level=1 verified
+LATENCY_US=1908
+LATENCY_US=1673
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1815
+LATENCY_US=1566
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1978
+LATENCY_US=1698
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1839
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=109560 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2970 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=2969 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=2968 callbacks=0 stack_free=2788
+SERVICE index=3 state=Running result=0 steps=2966 callbacks=61 stack_free=3312
+END STATUS
+C++ service stopped through the C ABI
+STOPPED OK
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=-1 services=0 heap=144452 baseline_heap=210560 led=0 button=0
+END STATUS
+C++ service initialized through the C ABI
+BOOT OK
+LED level=0 verified
+LATENCY_US=297
+LED level=0 verified
+LATENCY_US=1812
+LED level=0 verified
+LATENCY_US=1747
+LATENCY_US=1517
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1609
+LATENCY_US=1698
+LED level=1 verified
+C++ service stopped through the C ABI
+STOPPED OK
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=-1 services=0 heap=144452 baseline_heap=210560 led=0 button=0
+END STATUS
+C++ service initialized through the C ABI
+BOOT OK
+LED level=0 verified
+LATENCY_US=334
+LATENCY_US=1669
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1978
+LATENCY_US=1802
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1839
+LATENCY_US=1698
+LED level=1 verified
+C++ service stopped through the C ABI
+STOPPED OK
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=-1 services=0 heap=144452 baseline_heap=210560 led=0 button=0
+END STATUS
+C++ service initialized through the C ABI
+BOOT OK
+LED level=0 verified
+LATENCY_US=335
+LED level=0 verified
+LATENCY_US=2040
+LED level=0 verified
+LATENCY_US=1793
+LATENCY_US=1517
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1959
+LATENCY_US=1802
+LED level=1 verified
+C++ service stopped through the C ABI
+STOPPED OK
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=-1 services=0 heap=144452 baseline_heap=210560 led=0 button=0
+END STATUS
+C++ service initialized through the C ABI
+BOOT OK
+LED level=0 verified
+LATENCY_US=298
+LED level=0 verified
+LATENCY_US=1816
+LED level=0 verified
+LATENCY_US=1734
+LATENCY_US=1517
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1658
+LATENCY_US=1517
+LED level=1 verified
+C++ service stopped through the C ABI
+STOPPED OK
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=-1 services=0 heap=144452 baseline_heap=210560 led=0 button=0
+END STATUS
+C++ service initialized through the C ABI
+BOOT OK
+LED level=0 verified
+LATENCY_US=345
+LED level=0 verified
+LATENCY_US=1920
+LATENCY_US=1646
+LED level=0 verified
+LATENCY_US=1617
+LED level=0 verified
+LED level=1 verified
+LATENCY_US=1658
+LATENCY_US=1517
+LED level=1 verified
+C++ service initialized through the C ABI
+AUTOBOOT OK bank=1 trial=0
+LED level=0 verified
+LATENCY_US=409
+LED level=0 verified
+LATENCY_US=1710
+LATENCY_US=1550
+LED level=0 verified
+LED level=0 verified
+LATENCY_US=1683
+LATENCY_US=1698
+LED level=1 verified
+LATENCY_US=412
+LED level=1 verified
+LATENCY_US=1801
+LED level=1 verified
+LED level=1 verified
+LATENCY_US=1839
+LATENCY_US=1731
+LED level=1 verified
+LED level=0 verified
+LATENCY_US=1873
+LATENCY_US=1731
+LED level=0 verified
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126928 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=510 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=509 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=508 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=506 callbacks=11 stack_free=3324
+END STATUS

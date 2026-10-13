@@ -1,0 +1,6 @@
+[interface]
+interface = "example.climate.reading"
+schema = "reading.proto"
+
+[delivery]
+policy = "latest"

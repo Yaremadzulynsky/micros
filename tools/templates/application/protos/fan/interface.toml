@@ -1,0 +1,6 @@
+[interface]
+interface = "example.fan.status"
+schema = "status.proto"
+
+[delivery]
+policy = "latest"

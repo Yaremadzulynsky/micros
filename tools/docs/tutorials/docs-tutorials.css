@@ -1,0 +1,18 @@
+/* Retain the Material docs header/tabs; the lesson owns its step sidebar. */
+body:has(#micros-tutorial) .md-content__inner{margin:0}
+body:has(#micros-tutorial) .md-main__inner{margin-top:0}
+#micros-tutorial{font-size:14px;line-height:1.5}
+#micros-tutorial .bt-page{min-height:0}
+#micros-tutorial .bt-layout{padding-inline:24px;gap:28px;grid-template-columns:210px minmax(0,1fr)}
+#micros-tutorial .bt-main{padding-top:30px;padding-bottom:110px}
+#micros-tutorial .bt-title h1{font-size:36px}
+#micros-tutorial .bt-title p:not(.bt-eyebrow){font-size:15px}
+#micros-tutorial .bt-led-scene{top:115px}
+#micros-tutorial .bt-lesson-heading h2{scroll-margin-top:120px}
+#micros-tutorial .bt-page .bt-lesson-footer{left:max(262px,calc((100vw - 1500px)/2 + 262px));right:max(24px,calc((100vw - 1500px)/2 + 24px))}
+#micros-tutorial .ht-index{padding-top:35px}
+#micros-tutorial .ht-index h1{font-size:36px}
+@media(max-width:1150px){#micros-tutorial .bt-layout{grid-template-columns:170px minmax(0,1fr);gap:20px}#micros-tutorial .bt-page .bt-lesson-footer{left:214px;right:24px}}
+@media(max-width:700px){#micros-tutorial .bt-layout{display:block;padding-inline:16px}#micros-tutorial .bt-title h1{font-size:30px}#micros-tutorial .bt-page .bt-lesson-footer{left:0;right:0}#micros-tutorial .bt-led-scene{position:static}}
+#micros-tutorial .bt-source-line code{background:transparent;padding:0;border-radius:0}
+#micros-tutorial .bt-sidebar ol{margin-left:0}

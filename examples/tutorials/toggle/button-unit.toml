@@ -1,0 +1,17 @@
+# Replace [services.clock] with [services.button] in the same unit.
+# Keep [services.led] and [channels.toggle] unchanged.
+[services.button]
+source = "../services/button"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 1536 }
+pins = { button = 12 } # Placeholder: verify an input-capable pin.
+config = { sample_ms = 5, debounce_ms = 30 }
+
+[services.led]
+source = "../services/led"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 1536 }
+pins = { led = 13 } # Use the same LED pin as lesson 1.
+
+[channels.toggle]
+depth = 4

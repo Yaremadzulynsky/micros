@@ -1,0 +1,78 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "micros: setup host Python",
+      "type": "process",
+      "command": "/bin/bash",
+      "args": [
+        "-c",
+        "./micros setup"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "micros: configure host IntelliSense",
+      "type": "process",
+      "command": "/opt/homebrew/bin/cmake",
+      "args": [
+        "-S",
+        "${workspaceFolder}",
+        "-B",
+        "${workspaceFolder}/build/host",
+        "-G",
+        "Ninja",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+        "-DPython3_EXECUTABLE=${workspaceFolder}/build/python/bin/python"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "micros: build host",
+      "type": "process",
+      "command": "/opt/homebrew/bin/cmake",
+      "args": [
+        "--build",
+        "${workspaceFolder}/build/host"
+      ],
+      "dependsOn": "micros: configure host IntelliSense",
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "micros: test host",
+      "type": "process",
+      "command": "/opt/homebrew/bin/ctest",
+      "args": [
+        "--test-dir",
+        "${workspaceFolder}/build/host",
+        "--output-on-failure"
+      ],
+      "dependsOn": "micros: build host",
+      "problemMatcher": []
+    },
+    {
+      "label": "micros: configure ESP32 IntelliSense",
+      "type": "process",
+      "command": "/bin/bash",
+      "args": [
+        "-c",
+        "export IDF_PYTHON_ENV_PATH=\"$HOME/.espressif/python_env/idf5.5_py3.10_env\"; source \"$PWD/build/toolchains/esp-idf-v5.5.2/export.sh\" && idf.py -C src/firmware/platforms/esp32/sdk -B \"$PWD/build/esp32-board-config\" -D SDKCONFIG=\"$PWD/build/esp32-board-config/sdkconfig\" -D MICROS_BOARD_FILE=\"$PWD/examples/hello-service/boards/feather.toml\" reconfigure"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+# Reusable service definition. Device settings and channel bindings belong in the consuming application repository.
+
+[service]
+name = "board.pin-monitor"
+version = "1.1.0"
+
+[service.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[service.capabilities]
+gpio = ["user_button", "monitor_analog"]
+timers = 0
+
+[service.config_schema.sample_interval_ms]
+type = "uint32"
+default = 1000
+min = 10
+max = 60000
+
+[service.config_schema.analog_mask]
+type = "uint32"
+default = 0
+min = 0
+max = 15
+
+# Requirements and defaults for physical setup composition.
+
+[service.memory]
+arena = "RAM"
+stack_bytes = 2048
+
+[service.requirements]
+instance = "monitor"
+profiles = ["adafruit_feather_esp32_v2", "esp32_d0wd_v3_no_controls"]
+
+[service.hardware.user_button]
+direction = "input"
+
+[service.hardware.monitor_analog]
+direction = "input"
+
+[service.publications.samples]
+interface = "../../src/sdk/protos/pin/v1/interface.toml"
+policy = "stream"
+depth = 8

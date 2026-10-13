@@ -1,0 +1,24 @@
+[project]
+name = "Remote GPIO migration test"
+
+[services.probe]
+memory = { arena = "RAM" }
+source = "."
+name = "test.remote_gpio"
+version = "1.0.0"
+enabled = true
+
+[services.probe.config]
+[services.probe.config_schema]
+
+[services.probe.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.probe.capabilities]
+gpio = ["test_output"]
+timers = 0
+
+[services.probe.subscriptions]
+[services.probe.publications]

@@ -1,0 +1,92 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+# Application services and local channels. Hardware and network connections belong in the deployment.
+
+[project]
+name = "IR receiver fixture"
+disabled_sdkconfig = ["CONFIG_PM_ENABLE"]
+
+[project.required_sdkconfig]
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ = "160"
+
+[services.ir]
+manifest = "../../../../examples/services/ir-coordination/service.toml"
+memory = { arena = "RAM", stack_bytes = 2048 }
+
+
+[services.ir.subscriptions.operations]
+channel = "ir_actions"
+kind = "action"
+
+[services.ir.subscriptions.target]
+channel = "coord_target"
+kind = "state"
+
+[services.ir.publications.frames]
+channel = "ir_frames"
+
+[services.console]
+manifest = "../../../../examples/services/coordination-console/service.toml"
+memory = { arena = "RAM", stack_bytes = 2048 }
+
+
+[services.console.subscriptions.frames]
+channel = "ir_frames"
+
+[services.monitor]
+manifest = "../../../../services/pin-monitor/service.toml"
+memory = { arena = "RAM", stack_bytes = 2048 }
+
+[services.monitor.config]
+sample_interval_ms = 1000
+analog_mask = 2
+
+[services.monitor.publications.samples]
+channel = "pin_samples"
+
+[channels.ir_actions]
+accepts_minor = [0, 0]
+depth = 1
+interface = "micros.coordination.ir.action"
+key = 1
+major = 1
+max_payload = 32
+minor = 0
+name = "ir.actions"
+policy = "latest"
+schema = "../../../../src/sdk/protos/coordination/v1/ir_action.proto"
+
+[channels.coord_target]
+accepts_minor = [0, 0]
+depth = 1
+interface = "micros.coordination.target"
+key = 2
+major = 1
+max_payload = 16
+minor = 0
+name = "coord.target"
+policy = "latest"
+schema = "../../../../src/sdk/protos/coordination/v1/target.proto"
+
+[channels.ir_frames]
+accepts_minor = [0, 0]
+depth = 8
+interface = "micros.ir.frame"
+key = 3
+major = 1
+max_payload = 160
+minor = 0
+name = "ir.frames"
+policy = "stream"
+schema = "../../../../src/sdk/protos/ir/v1/frame.proto"
+
+[channels.pin_samples]
+key = 4
+name = "pin.samples"
+interface = "micros.pin.sample"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+policy = "stream"
+depth = 8
+max_payload = 64
+schema = "../../../../src/sdk/protos/pin/v1/pin_sample.proto"

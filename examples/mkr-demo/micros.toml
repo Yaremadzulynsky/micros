@@ -1,0 +1,44 @@
+[project]
+name = "mkr-demo"
+
+[board]
+profile = "arduino_mkr_wifi_1010"
+[board.gpio.led]
+pin = 6
+direction = "output"
+
+[services.hello]
+memory = { arena = "RAM", stack_bytes = 1024 }
+source = "../hello-service"
+name = "example.hello"
+version = "1.0.0"
+enabled = true
+[services.hello.build]
+sources = ["src/service.c"]
+[services.hello.capabilities]
+gpio = []
+timers = 1
+
+[services.blink]
+memory = { arena = "RAM", stack_bytes = 1024 }
+source = "../blink-service"
+name = "example.blink"
+version = "1.0.0"
+enabled = true
+[services.blink.build]
+sources = ["src/service.c"]
+[services.blink.capabilities]
+gpio = ["led"]
+timers = 1
+
+[services.cpp]
+memory = { arena = "RAM", stack_bytes = 1024 }
+source = "../cpp-service"
+name = "example.cpp"
+version = "1.0.0"
+enabled = true
+[services.cpp.build]
+sources = ["src/service.cpp"]
+[services.cpp.capabilities]
+gpio = []
+timers = 0

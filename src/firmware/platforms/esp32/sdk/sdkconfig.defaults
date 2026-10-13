@@ -1,0 +1,19 @@
+# Confirmed 8 MiB Feather ESP32 V2; conservative flash signaling from M1.
+CONFIG_IDF_TARGET="esp32"
+CONFIG_ESPTOOLPY_FLASHMODE_DIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_40M=y
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+# Management parsing/upload stack; service stacks remain individually admitted.
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=12288
+CONFIG_ESP_MAIN_TASK_AFFINITY_CPU1=y
+CONFIG_FREERTOS_HZ=1000
+CONFIG_ESP_TASK_WDT_EN=y
+CONFIG_ESP_TASK_WDT_INIT=y
+CONFIG_ESP_TASK_WDT_PANIC=y
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=5
+CONFIG_ESP_SYSTEM_PANIC_PRINT_REBOOT=y
+CONFIG_COMPILER_OPTIMIZATION_SIZE=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+# build_network.py enables capability-only PSRAM from the hardware profile.
+# Service arenas select RAM or PSRAM explicitly; stacks remain internal.

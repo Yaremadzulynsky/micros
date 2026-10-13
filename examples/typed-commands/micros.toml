@@ -1,0 +1,12 @@
+[project]
+name = "Typed service commands"
+
+[board]
+profile = "adafruit_feather_esp32_v2"
+flash_mb = 8
+
+[services.counter]
+source = "."
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 2048 }
+expose_commands = ["get_value", "set_value"]

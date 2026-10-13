@@ -1,0 +1,43 @@
+Test project /Users/yaremadzulynsky/Software/Major_Projects/micros/build/host-sanitize
+      Start  1: elf_profile
+ 1/19 Test  #1: elf_profile ......................   Passed    0.51 sec
+      Start  2: cpp_lifecycle
+ 2/19 Test  #2: cpp_lifecycle ....................   Passed    0.80 sec
+      Start  3: management_authentication
+ 3/19 Test  #3: management_authentication ........   Passed    0.07 sec
+      Start  4: activation_host
+ 4/19 Test  #4: activation_host ..................   Passed    8.85 sec
+      Start  5: activation_journal
+ 5/19 Test  #5: activation_journal ...............   Passed    0.31 sec
+      Start  6: board_simulation
+ 6/19 Test  #6: board_simulation .................   Passed    1.06 sec
+      Start  7: package_admission
+ 7/19 Test  #7: package_admission ................   Passed    0.09 sec
+      Start  8: local_management
+ 8/19 Test  #8: local_management .................   Passed    5.61 sec
+      Start  9: codec_boundaries
+ 9/19 Test  #9: codec_boundaries .................   Passed    0.33 sec
+      Start 10: ipc_boundaries
+10/19 Test #10: ipc_boundaries ...................   Passed    0.99 sec
+      Start 11: protobuf_interoperability
+11/19 Test #11: protobuf_interoperability ........   Passed    6.97 sec
+      Start 12: pipeline_demo
+12/19 Test #12: pipeline_demo ....................   Passed    3.11 sec
+      Start 13: runtime_lifecycle
+13/19 Test #13: runtime_lifecycle ................   Passed   11.24 sec
+      Start 14: runtime_HANG_INIT
+14/19 Test #14: runtime_HANG_INIT ................   Passed    0.37 sec
+      Start 15: runtime_HANG_START
+15/19 Test #15: runtime_HANG_START ...............   Passed    0.36 sec
+      Start 16: runtime_HANG_STEP
+16/19 Test #16: runtime_HANG_STEP ................   Passed    0.42 sec
+      Start 17: runtime_HANG_STOP
+17/19 Test #17: runtime_HANG_STOP ................   Passed    0.36 sec
+      Start 18: runtime_HANG_CALLBACK
+18/19 Test #18: runtime_HANG_CALLBACK ............   Passed    0.35 sec
+      Start 19: host_loader
+19/19 Test #19: host_loader ......................   Passed    3.52 sec
+
+100% tests passed, 0 tests failed out of 19
+
+Total Test time (real) =  45.33 sec

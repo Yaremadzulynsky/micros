@@ -1,0 +1,11 @@
+# Historical release harness: two named lines, independent of editable config/boards/.
+[board]
+profile = "adafruit_feather_esp32_v2"
+flash_mb = 8
+recovery_button = "user_button"
+[board.gpio.red_led]
+pin = 13
+direction = "output"
+[board.gpio.user_button]
+pin = 38
+direction = "input"

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package micros.environment.v1;
+
+// Latest DHT sample attempt. Values are usable only when valid is true.
+message EnvironmentReading {
+  uint32 sequence = 1;
+  uint64 monotonic_us = 2;
+  uint64 publisher_started_us = 3;
+  bool valid = 4;
+  sint32 temperature_tenths_c = 5;
+  uint32 humidity_tenths_percent = 6;
+}

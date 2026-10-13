@@ -1,0 +1,7 @@
+[interface]
+interface = "micros.coordination.target"
+schema = "target.proto"
+
+[delivery]
+policy = "latest"
+kind = "state"

@@ -1,0 +1,7 @@
+syntax = "proto3";
+package example.light;
+
+// Application-owned data only. Port declaration supplies "state" semantics.
+message LightTarget {
+  uint32 brightness_percent = 1; // Service validates 0..100.
+}

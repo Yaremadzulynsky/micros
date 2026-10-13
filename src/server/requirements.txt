@@ -1,0 +1,4 @@
+pyserial==3.5
+pyelftools==0.32
+tomli==2.2.1
+protobuf==4.25.8

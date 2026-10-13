@@ -1,0 +1,52 @@
+<svg width="300" height="482" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" viewBox="0 0 300 482">
+<rect width="300" height="482" x="0" y="0" fill="none"></rect>
+<path d="M150 140C150 173 150 173 150 206" fill="none" pointer-events="visible" stroke="#8994da" stroke-width="1.6" class="zr1-cls-1"></path>
+<path d="M150 292C150 331 150 331 150 370" fill="none" pointer-events="visible" stroke="#8994da" stroke-width="1.6" class="zr1-cls-1"></path>
+<path d="M16 8L284 8A8 8 0 0 1 292 16L292 132A8 8 0 0 1 284 140L16 140A8 8 0 0 1 8 132L8 16A8 8 0 0 1 16 8Z" fill="#fff" stroke="#b0d8d0" stroke-width="1.4" filter="url(#zr1-s0)" class="zr1-cls-1"></path>
+<path d="M96.1 18l107.8 0l0 14l-107.8 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 600 9px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="25" fill="#168575">APPLICATION SERVICES</text>
+<path d="M22 43l86.8 0l0 18l-86.8 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="start" style="font: 600 13px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="22" y="52" fill="#263449">Climate sensor</text>
+<path d="M239.6 44.5l38.4 0l0 15l-38.4 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="end" style="font: 400 10px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="278" y="52" fill="#64748b">1 worker</text>
+<path d="M22 76l79.7 0l0 18l-79.7 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="start" style="font: 600 13px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="22" y="85" fill="#263449">Fan controller</text>
+<path d="M239.6 77.5l38.4 0l0 15l-38.4 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="end" style="font: 400 10px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="278" y="85" fill="#64748b">1 worker</text>
+<path d="M22 109l81.3 0l0 18l-81.3 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="start" style="font: 600 13px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="22" y="118" fill="#263449">Status display</text>
+<path d="M239.6 110.5l38.4 0l0 15l-38.4 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="end" style="font: 400 10px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="278" y="118" fill="#64748b">1 worker</text>
+<path d="M73 160L227 160A5 5 0 0 1 232 165L232 181A5 5 0 0 1 227 186L73 186A5 5 0 0 1 68 181L68 165A5 5 0 0 1 73 160Z" fill="#fff" class="zr1-cls-1"></path>
+<path d="M85.3 165l129.4 0l0 16l-129.4 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 600 11px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="173" fill="#5965df">Service ABI · native calls</text>
+<path d="M16 206L284 206A8 8 0 0 1 292 214L292 284A8 8 0 0 1 284 292L16 292A8 8 0 0 1 8 284L8 214A8 8 0 0 1 16 206Z" fill="#f4f5ff" stroke="#a5acf0" stroke-width="1.4" filter="url(#zr1-s0)" class="zr1-cls-1"></path>
+<path d="M96.5 218.5l107.1 0l0 23l-107.1 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 650 18px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="230" fill="#5965df">Micros kernel</text>
+<path d="M84.8 250l130.4 0l0 34l-130.4 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="258.5" fill="#64748b">Lifecycle · resources</text>
+<text dominant-baseline="central" text-anchor="middle" style="font: 400 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="275.5" fill="#64748b">Channels · supervision</text>
+<path d="M36 317L264 317A5 5 0 0 1 269 322L269 338A5 5 0 0 1 264 343L36 343A5 5 0 0 1 31 338L31 322A5 5 0 0 1 36 317Z" fill="#fff" class="zr1-cls-1"></path>
+<path d="M50.6 322l198.9 0l0 16l-198.9 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 600 11px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="330" fill="#5965df">Platform interface · one target per build</text>
+<path d="M16 370L284 370A8 8 0 0 1 292 378L292 462A8 8 0 0 1 284 470L16 470A8 8 0 0 1 8 462L8 378A8 8 0 0 1 16 370Z" fill="#fff" stroke="#d6deea" stroke-width="1.4" filter="url(#zr1-s0)" class="zr1-cls-1"></path>
+<path d="M109.1 380.5l81.8 0l0 17l-81.8 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 500 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="389" fill="#263449">ESP32 adapter</text>
+<path d="M85.4 410.5l129.1 0l0 17l-129.1 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 500 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="419" fill="#263449">SAMD21 / MKR adapter</text>
+<path d="M102.4 440.5l95.3 0l0 17l-95.3 0Z" fill="none" pointer-events="visible" class="zr1-cls-1"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font: 500 12px system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" xml:space="preserve" x="150" y="449" fill="#263449">ESP8266 adapter</text>
+<defs >
+<filter id="zr1-s0" x="-100%" y="-100%" width="300%" height="300%">
+<feDropShadow dx="0" dy="3" stdDeviation="5 5" flood-color="rgb(34,51,84)" flood-opacity="0.05"></feDropShadow>
+</filter>
+</defs>
+<style ><![CDATA[
+.zr1-cls-1:hover {
+pointer-events:none;
+}
+
+]]>
+
+</style>
+</svg>

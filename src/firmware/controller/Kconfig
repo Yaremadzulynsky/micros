@@ -1,0 +1,21 @@
+menu "micros remote service management"
+config MICROS_REMOTE_ENABLED
+    bool "Enable authenticated HTTPS service management"
+    default n
+config MICROS_MANAGEMENT_TOKEN
+    string "Physically provisioned 256-bit token (64 hex characters)"
+    default ""
+    depends on MICROS_REMOTE_ENABLED
+config MICROS_RELAY_ENABLED
+    bool "Enable outbound management server connection"
+    default n
+    depends on MICROS_REMOTE_ENABLED
+config MICROS_RELAY_URL
+    string "HTTPS management server origin"
+    default ""
+    depends on MICROS_RELAY_ENABLED
+config MICROS_RELAY_TOKEN
+    string "Private device enrollment token"
+    default ""
+    depends on MICROS_RELAY_ENABLED
+endmenu

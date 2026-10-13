@@ -1,0 +1,232 @@
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=158 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=157 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=157 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=154 callbacks=4 stack_free=3324
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126780 baseline_heap=210560 led=0 button=1
+SERVICE index=0 state=Running result=0 steps=167 callbacks=0 stack_free=2944
+SERVICE index=2 state=Running result=0 steps=166 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=165 callbacks=5 stack_free=3324
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=125788 baseline_heap=210560 led=1 button=1
+SERVICE index=0 state=Running result=0 steps=181 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=179 callbacks=0 stack_free=2840
+SERVICE index=2 state=Running result=0 steps=180 callbacks=0 stack_free=2752
+SERVICE index=3 state=Running result=0 steps=178 callbacks=5 stack_free=3324
+FAULT ARMED 1
+FAULT reset boundary=1
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=8 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=6 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=5 callbacks=1 stack_free=3324
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=13 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=12 callbacks=1 stack_free=3324
+FAULT ARMED 2
+FAULT reset boundary=2
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=7 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=6 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=5 callbacks=1 stack_free=3324
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=14 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=13 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=12 callbacks=1 stack_free=3324
+FAULT ARMED 3
+FAULT reset boundary=3
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=8 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=6 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=5 callbacks=1 stack_free=3324
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=13 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=12 callbacks=1 stack_free=3324
+FAULT ARMED 4
+FAULT reset boundary=4
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126928 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=8 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=6 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=4 callbacks=1 stack_free=3324
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=13 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=11 callbacks=1 stack_free=3324
+FAULT ARMED 5
+FAULT reset boundary=5
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=8 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=6 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=5 callbacks=1 stack_free=3324
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=13 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=12 callbacks=1 stack_free=3324
+FAULT ARMED 6
+FAULT reset boundary=6
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126928 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=8 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=6 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=4 callbacks=1 stack_free=3324
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126928 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=13 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=11 callbacks=1 stack_free=3324
+FAULT ARMED 7
+FAULT reset boundary=7
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126928 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=8 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=6 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=4 callbacks=1 stack_free=3324
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=13 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=11 callbacks=1 stack_free=3324
+FAULT ARMED 8
+FAULT reset boundary=8
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=8 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=6 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=5 callbacks=1 stack_free=3324
+ACTIVATION sequence=34 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=4 heap=126892 baseline_heap=210560 led=0 button=1
+USAGE image=4972 arena=124 stack=16384 metadata=13832 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=2944
+SERVICE index=1 state=Running result=0 steps=14 callbacks=0 stack_free=2872
+SERVICE index=2 state=Running result=0 steps=13 callbacks=0 stack_free=2784
+SERVICE index=3 state=Running result=0 steps=12 callbacks=1 stack_free=3324
+FAULT ARMED 9
+FAULT reset boundary=9
+AUTOBOOT OK bank=0 trial=1
+HEALTH COMMITTED bank=0
+ACTIVATION sequence=37 good=0 previous=1 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=114132 baseline_heap=210560 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2508 callbacks=0 stack_free=2868
+SERVICE index=1 state=Running result=0 steps=2507 callbacks=0 stack_free=2796
+SERVICE index=2 state=Running result=0 steps=2508 callbacks=51 stack_free=3316
+ACTIVATION sequence=37 good=0 previous=1 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=114132 baseline_heap=210560 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2515 callbacks=0 stack_free=2868
+SERVICE index=1 state=Running result=0 steps=2514 callbacks=0 stack_free=2796
+SERVICE index=2 state=Running result=0 steps=2515 callbacks=51 stack_free=3316
+FAULT ARMED 10
+FAULT reset boundary=10
+AUTOBOOT OK bank=1 trial=1
+HEALTH COMMITTED bank=1
+ACTIVATION sequence=41 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=3 heap=114132 baseline_heap=210560 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2510 callbacks=0 stack_free=2868
+SERVICE index=1 state=Running result=0 steps=2509 callbacks=0 stack_free=2796
+SERVICE index=2 state=Running result=0 steps=2506 callbacks=51 stack_free=3316
+ACTIVATION sequence=41 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=3 heap=114132 baseline_heap=210560 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2517 callbacks=0 stack_free=2868
+SERVICE index=1 state=Running result=0 steps=2516 callbacks=0 stack_free=2796
+SERVICE index=2 state=Running result=0 steps=2513 callbacks=51 stack_free=3316
+FAULT ARMED 11
+AUTOBOOT OK bank=0 trial=1
+FAULT reset boundary=11
+AUTOBOOT OK bank=0 trial=1
+HEALTH COMMITTED bank=0
+ACTIVATION sequence=45 good=0 previous=1 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=114076 baseline_heap=210560 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2514 callbacks=0 stack_free=2836
+SERVICE index=1 state=Running result=0 steps=2515 callbacks=0 stack_free=2764
+SERVICE index=2 state=Running result=0 steps=2514 callbacks=51 stack_free=3316
+ACTIVATION sequence=45 good=0 previous=1 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=0 services=3 heap=114076 baseline_heap=210560 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=2522 callbacks=0 stack_free=2836
+SERVICE index=1 state=Running result=0 steps=2522 callbacks=0 stack_free=2764
+SERVICE index=2 state=Running result=0 steps=2521 callbacks=51 stack_free=3316
+FAULT ARMED 12
+AUTOBOOT OK bank=1 trial=1
+BOOT OK
+HEALTH COMMITTED bank=1
+FAULT reset boundary=12
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=48 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=3 heap=131480 baseline_heap=210560 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=7 callbacks=0 stack_free=2868
+SERVICE index=1 state=Running result=0 steps=7 callbacks=0 stack_free=2796
+SERVICE index=2 state=Running result=0 steps=5 callbacks=1 stack_free=3316
+ACTIVATION sequence=48 good=1 previous=0 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=3 heap=131480 baseline_heap=210560 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=15 callbacks=0 stack_free=2868
+SERVICE index=1 state=Running result=0 steps=15 callbacks=0 stack_free=2796
+SERVICE index=2 state=Running result=0 steps=13 callbacks=1 stack_free=3316
+AUTOBOOT REJECT
+AUTOBOOT REJECT
+ROLLBACK attempts exhausted
+AUTOBOOT OK bank=1 trial=0
+ACTIVATION sequence=52 good=1 previous=4294967295 candidate=4294967295 attempts=0 pending=0 recovery=0
+STATUS bank=1 services=3 heap=131468 baseline_heap=210560 led=0 button=1
+USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0
+SERVICE index=0 state=Running result=0 steps=7 callbacks=0 stack_free=2864
+SERVICE index=1 state=Running result=0 steps=6 callbacks=0 stack_free=2792
+SERVICE index=2 state=Running result=0 steps=4 callbacks=1 stack_free=3312

@@ -1,0 +1,15 @@
+# Reference protobuf implementation used only for host interoperability tests.
+protobuf==4.25.8
+# Serial/ELF utilities used by independent ESP32 service tooling.
+pyserial==3.5
+esptool==4.11.0
+pyelftools==0.32
+# Human-authored project/service configuration on Python 3.10.
+tomli==2.2.1
+# Embedded protobuf generator and its pinned protoc frontend.
+nanopb==0.4.9.1
+grpcio-tools==1.62.3
+# Consistent completion, Ctrl-C recovery and EOF on macOS (instead of libedit).
+gnureadline==8.3.3; sys_platform == "darwin"
+# Installed CLI validates the selected SDK dependency requirements.
+packaging>=24,<27

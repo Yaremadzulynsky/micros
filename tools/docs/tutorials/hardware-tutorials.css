@@ -1,0 +1,34 @@
+.ht-lesson-links{margin-top:28px;border-top:1px solid #dce3ec;padding-top:20px;display:grid;gap:11px}
+.ht-lesson-links a{font-size:12px;color:#687b93;display:flex;gap:12px}
+.ht-lesson-links a>span{font:10px monospace;color:#90a0b3}
+.ht-lesson-links a[aria-current]{color:#245fd3}
+.ht-lesson-links .bt-small-label{font-size:8px;margin:0 0 4px}
+.ht-index{max-width:980px;padding:65px 30px 90px;margin:auto}
+.ht-index h1{font-size:48px;letter-spacing:-.05em;margin:0 0 18px}
+.ht-index-intro{color:#66778d;line-height:1.7;font-size:17px}
+.ht-index-list{margin-top:45px;border-top:1px solid #dce3ec}
+.ht-index-list>a{display:flex;align-items:baseline;gap:28px;padding:28px 0;border-bottom:1px solid #dce3ec;color:#28384a}
+.ht-index-list>a>span:last-child{margin-left:auto;color:#245fd3}
+.ht-index-list h2{font-size:24px;font-weight:500;letter-spacing:-.03em;margin:0 0 9px}
+.ht-index-list p{font-size:14px;color:#64758c;margin:0 0 12px}
+.ht-index-list small{font-size:11px;color:#76879b}
+.ht-index-number{font:12px monospace;color:#7288a4}
+.ht-index-note{font-size:13px;color:#73849a;line-height:1.8;margin-top:32px}
+.ht-focus{font-size:14px;line-height:1.75;color:#61748d;padding:25px}
+.ht-focus h3{font-size:17px;color:#344960;font-weight:500;margin:0 0 18px}
+.ht-focus p{margin:20px 0 0}
+.ht-focus ul{padding-left:18px}
+.ht-focus li{padding-bottom:13px}
+.ht-focus .bt-code-wrap{margin:20px -25px 0}
+.ht-focus .bt-code-wrap .bt-code{min-height:0}
+.ht-controls{padding:18px;border-top:1px solid #dce3ec;display:grid;gap:20px}
+.ht-range{font-size:11px;color:#687e98;display:block}
+.ht-range>span{display:flex;justify-content:space-between;gap:12px}
+.ht-range strong{color:#315f9b;font-weight:500}
+.ht-range input{display:block;width:100%;margin:12px 0 0;accent-color:#386bc8}
+.ht-readouts{display:grid;grid-template-columns:1fr 1fr;border-block:1px solid #e0e7f0;background:#f4f7fc;padding:16px;gap:15px}
+.ht-readouts>div{display:flex;flex-direction:column;gap:8px}
+.ht-readouts span{font-size:10px;color:#7b8ba0}
+.ht-readouts strong{font-size:13px;color:#345c8f;font-weight:500}
+@media(max-width:1000px){.ht-controls{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}}
+@media(max-width:700px){.ht-lesson-links{display:flex;flex-wrap:wrap;gap:9px 14px;margin-top:10px;padding-top:12px}.ht-lesson-links .bt-small-label{display:none}.ht-lesson-links a{font-size:10px;gap:5px}.ht-index{padding:40px 20px}.ht-index h1{font-size:37px}.ht-index-list>a{gap:16px}.ht-index-list h2{font-size:21px}.ht-focus{padding:20px}.ht-focus .bt-code-wrap{margin-inline:-20px}.ht-controls{grid-template-columns:1fr}}

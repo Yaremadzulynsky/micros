@@ -1,0 +1,27 @@
+rsource "../../../../controller/Kconfig"
+
+config MICROS_BASE_OTA
+    bool "Compact A/B base updates over existing management transport"
+    depends on MICROS_REMOTE_ENABLED
+    select BOOTLOADER_APP_ROLLBACK_ENABLE
+    default n
+    help
+        Requires the generated OTA partition layout installed over USB. Only the base is
+        rolled back. Application storage is shared. No factory recovery image.
+
+menu "MicroS service memory"
+config MICROS_SERVICE_FLASH
+    bool "Execute service instructions and constants from mapped flash"
+    default y
+    help
+        Requires rebuilt service images. Banks are mapped read-only until all
+        service tasks have stopped. Legacy RAM images are rejected in this mode.
+config MICROS_SERVICE_DATA_BYTES
+    int "Writable bytes reserved per service"
+    range 256 4096
+    default 1024 if MICROS_SERVICE_FLASH
+    default 4096
+    help
+        Includes the ABI descriptor, initialized mutable data and BSS. Arenas
+        and task stacks are budgeted separately. Rebuild services after changing.
+endmenu

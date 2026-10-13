@@ -1,0 +1,86 @@
+# Verified against ESP-IDF v5.3.2. GPIO20 is package-dependent; present on Feather V2.
+[chip]
+id = "esp32"
+source_version = "esp-idf-v5.3.2"
+sources = [
+  "https://github.com/espressif/esp-idf/blob/v5.3.2/components/soc/esp32/include/soc/soc_caps.h",
+  "https://docs.espressif.com/projects/esp-idf/en/v5.3.2/esp32/api-reference/peripherals/gpio.html",
+  "https://github.com/espressif/esp-idf/blob/v5.3.2/components/soc/esp32/include/soc/adc_channel.h",
+]
+
+[gpio.groups.input_output]
+pins = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 32, 33]
+input = true
+output = true
+pulls = ["none", "up", "down"]
+
+[gpio.groups.input_only]
+pins = [34, 35, 36, 37, 38, 39]
+input = true
+output = false
+pulls = ["none"]
+
+[peripherals.rmt]
+routing = "gpio_matrix"
+tx_requires = "output"
+rx_requires = "input"
+shared_channels = 8
+memory_words_per_channel = 64
+
+[peripherals.adc]
+routing = "fixed"
+notes = "ADC2 is shared with Wi-Fi; micros currently exposes ADC1 only."
+
+[gpio.pins.0]
+adc = { unit = 2, channel = 1 }
+
+[gpio.pins.2]
+adc = { unit = 2, channel = 2 }
+
+[gpio.pins.4]
+adc = { unit = 2, channel = 0 }
+
+[gpio.pins.12]
+adc = { unit = 2, channel = 5 }
+
+[gpio.pins.13]
+adc = { unit = 2, channel = 4 }
+
+[gpio.pins.14]
+adc = { unit = 2, channel = 6 }
+
+[gpio.pins.15]
+adc = { unit = 2, channel = 3 }
+
+[gpio.pins.25]
+adc = { unit = 2, channel = 8 }
+
+[gpio.pins.26]
+adc = { unit = 2, channel = 9 }
+
+[gpio.pins.27]
+adc = { unit = 2, channel = 7 }
+
+[gpio.pins.32]
+adc = { unit = 1, channel = 4 }
+
+[gpio.pins.33]
+adc = { unit = 1, channel = 5 }
+
+[gpio.pins.34]
+adc = { unit = 1, channel = 6 }
+
+[gpio.pins.35]
+adc = { unit = 1, channel = 7 }
+
+[gpio.pins.36]
+adc = { unit = 1, channel = 0 }
+
+[gpio.pins.37]
+adc = { unit = 1, channel = 1 }
+
+[gpio.pins.38]
+adc = { unit = 1, channel = 2 }
+
+[gpio.pins.39]
+adc = { unit = 1, channel = 3 }

@@ -1,0 +1,29 @@
+[service]
+name = "tutorial.button"
+version = "1.0.0"
+timers = ["sample"]
+
+[service.build]
+api = "button"
+lifecycle = "hooks"
+sources = ["src/service.c"]
+descriptor = "micros_descriptor"
+
+[service.pins.button]
+type = "input" # External pull-up; do not assume an internal pull.
+
+[service.config_schema.sample_ms]
+type = "uint32"
+default = 5
+min = 1
+max = 10
+
+[service.config_schema.debounce_ms]
+type = "uint32"
+default = 30
+min = 10
+max = 100
+
+[service.publications.toggle]
+interface = "../../protos/toggle/interface.toml"
+min_depth = 4

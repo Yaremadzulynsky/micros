@@ -1,0 +1,21 @@
+#!/bin/sh
+# Anchor project discovery, then use the same CLI as every other entrypoint.
+APPLICATION_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cd -- "$APPLICATION_ROOT" || exit $?
+if [ -z "$MICROS_SDK" ] && [ -d "$APPLICATION_ROOT/.sdk" ]; then
+    export MICROS_SDK="$APPLICATION_ROOT/.sdk"
+fi
+if [ -n "$MICROS_SDK" ] && [ -x "$MICROS_SDK/build/python/bin/python" ]; then
+    exec "$MICROS_SDK/micros" "$@"
+fi
+# Cached SDKs need no per-checkout virtual environment. The installed CLI owns
+# its interpreter and resolves the project's exact SDK in a clean process.
+MICROS_COMMAND=$(command -v micros) || MICROS_COMMAND=
+if [ -n "$MICROS_COMMAND" ]; then
+    MICROS_COMMAND_DIR=$(CDPATH= cd -- "$(dirname -- "$MICROS_COMMAND")" && pwd)
+    if [ "$MICROS_COMMAND_DIR" != "$APPLICATION_ROOT" ] && ! [ "$MICROS_COMMAND" -ef "$APPLICATION_ROOT/micros" ]; then
+        exec "$MICROS_COMMAND" "$@"
+    fi
+fi
+echo 'Micros CLI unavailable. Put the installed micros command on PATH, or set MICROS_SDK to a checkout with ./micros setup completed.' >&2
+exit 1

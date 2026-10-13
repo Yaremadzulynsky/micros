@@ -1,0 +1,26 @@
+{
+  "run_id": 1,
+  "frames": [
+    {
+      "after_ms": 0,
+      "message": {
+        "sequence": 1,
+        "value": 0
+      }
+    },
+    {
+      "after_ms": 100,
+      "message": {
+        "sequence": 2,
+        "value": 1
+      }
+    },
+    {
+      "after_ms": 500,
+      "message": {
+        "sequence": 3,
+        "value": 0
+      }
+    }
+  ]
+}

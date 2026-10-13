@@ -1,0 +1,14 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "C_Cpp.default.configurationProvider": "",
+  "cmake.configureOnOpen": false,
+  "cmake.buildDirectory": "${workspaceFolder}/build/host",
+  "cmake.configureSettings": {
+    "CMAKE_EXPORT_COMPILE_COMMANDS": true
+  },
+  "C_Cpp.intelliSenseCachePath": "${workspaceFolder}/build/vscode/ipch",
+  "files.associations": {
+    "*.h": "c"
+  },
+  "python.defaultInterpreterPath": "${workspaceFolder}/build/python/bin/python"
+}

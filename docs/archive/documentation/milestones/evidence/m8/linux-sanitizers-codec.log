@@ -1,0 +1,8 @@
+Internal ctest changing into directory: /output
+Test project /output
+    Start 11: protobuf_interoperability
+1/1 Test #11: protobuf_interoperability ........   Passed   76.76 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =  76.77 sec

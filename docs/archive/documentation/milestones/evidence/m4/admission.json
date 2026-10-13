@@ -1,0 +1,74 @@
+{
+  "channels": [
+    {
+      "depth": 8,
+      "key": 1,
+      "max_payload": 64,
+      "name": "demo.samples",
+      "policy": "stream"
+    }
+  ],
+  "format": 1,
+  "resources": {
+    "arena_bytes": 96,
+    "channel_bytes": 512,
+    "handles": 4,
+    "host_stack_bytes": 196608,
+    "image_bytes": 101144,
+    "requested_stack_bytes": 12288
+  },
+  "services": [
+    {
+      "handles": 1,
+      "memory": {
+        "arena_alignment": 8,
+        "arena_bytes": 32,
+        "stack_bytes": 4096
+      },
+      "name": "demo.fast",
+      "package_sha256": "39888e26a07f4993684a4f9a747f4f7b5f48b93316fbd06cd78443500c5e045d",
+      "permissions": {
+        "gpio_mask": 0,
+        "publish_mask": 0,
+        "subscribe_mask": 1,
+        "timers": 0
+      },
+      "version": "1.0.0"
+    },
+    {
+      "handles": 2,
+      "memory": {
+        "arena_alignment": 8,
+        "arena_bytes": 32,
+        "stack_bytes": 4096
+      },
+      "name": "demo.publisher",
+      "package_sha256": "a02fff4c2caa83e349e5dba1b90f87111b6998370fd5c72c1be6a66d420ae400",
+      "permissions": {
+        "gpio_mask": 0,
+        "publish_mask": 1,
+        "subscribe_mask": 0,
+        "timers": 1
+      },
+      "version": "1.0.0"
+    },
+    {
+      "handles": 1,
+      "memory": {
+        "arena_alignment": 8,
+        "arena_bytes": 32,
+        "stack_bytes": 4096
+      },
+      "name": "demo.slow",
+      "package_sha256": "841f4a0ac939f7a3ed02047d6e7d55923a2235a6a7c9e306e841e84c318960ae",
+      "permissions": {
+        "gpio_mask": 0,
+        "publish_mask": 0,
+        "subscribe_mask": 1,
+        "timers": 0
+      },
+      "version": "1.0.0"
+    }
+  ],
+  "target": 1
+}

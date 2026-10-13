@@ -1,0 +1,13 @@
+syntax = "proto3";
+package micros.pin.v1;
+
+// One pin reading. Samples in the same scan share sequence and publisher epoch.
+message PinSample {
+  uint32 sequence = 1;
+  uint64 monotonic_us = 2;
+  uint32 pin = 3;
+  bool analog = 4;
+  uint32 value = 5; // digital 0/1 or raw 12-bit ADC count; valid only when error=0
+  sint32 error = 6; // MICROS_OK or the negative MICROS_ERROR_* read result
+  uint64 publisher_started_us = 7;
+}

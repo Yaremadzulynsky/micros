@@ -1,0 +1,44 @@
+# Deployable diagnostic instrument. Configure its ports and limits in the application.
+
+[service]
+name = "diagnostic.channel-probe"
+version = "1.0.0"
+
+[service.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[service.capabilities]
+gpio = []
+timers = 0
+
+[service.config_schema.run_id]
+type = "uint32"
+default = 1
+min = 1
+max = 4294967295
+
+[service.config_schema.duration_ms]
+type = "uint32"
+default = 10000
+min = 10
+max = 60000
+
+[service.config_schema.max_messages]
+type = "uint32"
+default = 10000
+min = 1
+max = 100000
+
+[service.config_schema.reads_per_step]
+type = "uint32"
+default = 4
+min = 1
+max = 8
+
+[service.config_schema.report_interval_ms]
+type = "uint32"
+default = 1000
+min = 10
+max = 60000

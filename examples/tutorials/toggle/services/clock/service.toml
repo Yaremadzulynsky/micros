@@ -1,0 +1,20 @@
+[service]
+name = "tutorial.clock"
+version = "1.0.0"
+timers = ["tick"]
+
+[service.build]
+api = "clock"
+lifecycle = "hooks"
+sources = ["src/service.c"]
+descriptor = "micros_descriptor"
+
+[service.config_schema.interval_ms]
+type = "uint32"
+default = 500
+min = 100
+max = 2000
+
+[service.publications.toggle]
+interface = "../../protos/toggle/interface.toml"
+min_depth = 4

@@ -1,0 +1,13 @@
+Loaded image=33560 arena=24 stack_requested=4096 stack_host=65536 handles_reserved=8
+Kernel metadata=3076 supervisor_stack=65536 arena_storage=24
+runtime timer sampled simulated GPIO
+runtime timer sampled simulated GPIO
+runtime timer sampled simulated GPIO
+runtime timer sampled simulated GPIO
+runtime timer sampled simulated GPIO
+runtime timer sampled simulated GPIO
+runtime timer sampled simulated GPIO
+runtime timer sampled simulated GPIO
+runtime timer sampled simulated GPIO
+Stopped result=0 steps=38 callbacks=9 handles=0 reboot_required=0
+Unloaded services=0 handles=0 tasks=0 image=0 arena=0 stacks=0

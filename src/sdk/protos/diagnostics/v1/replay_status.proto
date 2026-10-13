@@ -1,0 +1,13 @@
+syntax = "proto3";
+package micros.diagnostics.v1;
+message ReplayStatus {
+  uint32 run_id = 1;
+  uint32 phase = 2; // 0 awaiting data, 1 loading, 2 running, 3 completed, 4 failed.
+  uint32 loaded_mask = 3;
+  uint32 published = 4;
+  uint64 started_us = 5;
+  uint64 observed_us = 6;
+  uint64 max_late_us = 7;
+  uint32 rejected_commands = 8;
+  sint32 last_error = 9;
+}

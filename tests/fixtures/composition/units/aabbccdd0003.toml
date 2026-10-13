@@ -1,0 +1,62 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+[unit]
+device_id = "aabbccdd0003"
+
+[project]
+disabled_sdkconfig = ["CONFIG_PM_ENABLE"]
+name = "Sensor fixture"
+
+[management.server]
+url = ""
+
+# ROM probe: ESP32-D0WD-V3 revision 3.1, 4 MiB flash, 40 MHz crystal.
+[board]
+profile = "esp32_d0wd_v3_no_controls"
+flash_mb = 4
+recovery_button = ""
+
+[board.gpio]
+
+[services]
+
+[project.required_sdkconfig]
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ = "160"
+
+# DHT11 test: DATA on GPIO27, power on 3V3, common GND.
+[board.gpio.dht_data]
+pin = 27
+direction = "input"
+
+[services.dht]
+memory = { arena = "RAM", stack_bytes = 4096 }
+source = "../../../../examples/services/dht"
+name = "board.dht"
+version = "1.2.0"
+enabled = true
+
+[services.dht.config]
+[services.dht.config_schema]
+[services.dht.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.dht.capabilities]
+gpio = ["dht_data"]
+timers = 0
+[services.dht.subscriptions]
+[services.dht.publications]
+
+[services.dht.publications.environment]
+channel = "environment"
+
+[channels.environment]
+accepts_minor = [0, 0]
+depth = 1
+interface = "micros.environment.reading"
+key = 2
+major = 1
+max_payload = 64
+minor = 0
+name = "environment.reading"
+policy = "latest"
+schema = "../../../../src/sdk/protos/environment/v1/environment_reading.proto"

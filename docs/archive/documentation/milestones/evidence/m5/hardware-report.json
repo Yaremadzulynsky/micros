@@ -1,0 +1,139 @@
+{
+  "cycles": 5,
+  "warmup_cycles": 2,
+  "stopped_heaps": [
+    242424,
+    242248,
+    242248,
+    242248,
+    242248
+  ],
+  "running": [
+    [
+      "LATENCY_US=1888",
+      "STATUS bank=0 services=3 heap=212120 baseline_heap=242512 led=0 button=1",
+      "USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0",
+      "SERVICE index=0 state=Running result=0 steps=1958 callbacks=0 stack_free=2864",
+      "SERVICE index=1 state=Running result=0 steps=1957 callbacks=0 stack_free=2792",
+      "SERVICE index=2 state=Running result=0 steps=1956 callbacks=40 stack_free=3312",
+      "END STATUS"
+    ],
+    [
+      "LATENCY_US=1896",
+      "STATUS bank=0 services=3 heap=211944 baseline_heap=242512 led=0 button=1",
+      "USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0",
+      "SERVICE index=0 state=Running result=0 steps=2555 callbacks=0 stack_free=2864",
+      "SERVICE index=1 state=Running result=0 steps=2554 callbacks=0 stack_free=2792",
+      "SERVICE index=2 state=Running result=0 steps=2552 callbacks=52 stack_free=3312",
+      "END STATUS"
+    ],
+    [
+      "LATENCY_US=1900",
+      "STATUS bank=0 services=3 heap=211944 baseline_heap=242512 led=0 button=1",
+      "USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0",
+      "SERVICE index=0 state=Running result=0 steps=2555 callbacks=0 stack_free=2864",
+      "SERVICE index=1 state=Running result=0 steps=2555 callbacks=0 stack_free=2792",
+      "SERVICE index=2 state=Running result=0 steps=2553 callbacks=52 stack_free=3312",
+      "END STATUS"
+    ],
+    [
+      "LATENCY_US=1900",
+      "STATUS bank=0 services=3 heap=211944 baseline_heap=242512 led=0 button=1",
+      "USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0",
+      "SERVICE index=0 state=Running result=0 steps=2556 callbacks=0 stack_free=2864",
+      "SERVICE index=1 state=Running result=0 steps=2555 callbacks=0 stack_free=2792",
+      "SERVICE index=2 state=Running result=0 steps=2554 callbacks=52 stack_free=3312",
+      "END STATUS"
+    ],
+    [
+      "LED level=0 verified",
+      "STATUS bank=0 services=3 heap=211944 baseline_heap=242512 led=0 button=1",
+      "USAGE image=4676 arena=120 stack=12288 metadata=13388 handles=6 channels=1 channel_bytes=512 callbacks=0",
+      "SERVICE index=0 state=Running result=0 steps=2555 callbacks=0 stack_free=2864",
+      "SERVICE index=1 state=Running result=0 steps=2554 callbacks=0 stack_free=2792",
+      "SERVICE index=2 state=Running result=0 steps=2554 callbacks=52 stack_free=3312",
+      "END STATUS"
+    ]
+  ],
+  "latency_samples": 251,
+  "latency_min_us": 305,
+  "latency_median_us": 1896,
+  "latency_max_us": 7348,
+  "plan": {
+    "format": 1,
+    "target": 2,
+    "services": [
+      {
+        "name": "board.button",
+        "version": "1.0.0",
+        "package_sha256": "e2ad90a22244022c83c98d43a07204dcb9842f42816719b48e7fb47c3272ba43",
+        "memory": {
+          "arena_alignment": 8,
+          "arena_bytes": 40,
+          "stack_bytes": 4096
+        },
+        "handles": 3,
+        "permissions": {
+          "timers": 1,
+          "gpio_mask": 2,
+          "publish_mask": 1,
+          "subscribe_mask": 0
+        }
+      },
+      {
+        "name": "board.led",
+        "version": "1.0.0",
+        "package_sha256": "b095d1423593dd413c2a10368884db2fece731bb20a25bbb3d86110551396c02",
+        "memory": {
+          "arena_alignment": 8,
+          "arena_bytes": 40,
+          "stack_bytes": 4096
+        },
+        "handles": 2,
+        "permissions": {
+          "timers": 0,
+          "gpio_mask": 1,
+          "publish_mask": 0,
+          "subscribe_mask": 1
+        }
+      },
+      {
+        "name": "board.logger",
+        "version": "1.0.0",
+        "package_sha256": "e4c5f7764808ac9f46624def9573b368b49b660d5a0430dc9a66c38b47ed6c0a",
+        "memory": {
+          "arena_alignment": 8,
+          "arena_bytes": 40,
+          "stack_bytes": 4096
+        },
+        "handles": 1,
+        "permissions": {
+          "timers": 0,
+          "gpio_mask": 0,
+          "publish_mask": 0,
+          "subscribe_mask": 1
+        }
+      }
+    ],
+    "channels": [
+      {
+        "name": "demo.samples",
+        "key": 1,
+        "policy": "stream",
+        "depth": 8,
+        "max_payload": 64
+      }
+    ],
+    "resources": {
+      "image_bytes": 4676,
+      "arena_bytes": 120,
+      "requested_stack_bytes": 12288,
+      "host_stack_bytes": 12288,
+      "handles": 6,
+      "channel_bytes": 512
+    }
+  },
+  "corruption_rejected": true,
+  "slot_conflict_rejected": true,
+  "reboot_reconstructed": true
+}

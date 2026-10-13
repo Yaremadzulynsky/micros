@@ -1,0 +1,55 @@
+# Module-pad metadata, not a carrier-board header layout.
+# Covers flash-only N4/N8/H4/H8. R2 PSRAM variants and 16 MiB layouts are not covered.
+[board]
+profile = "esp32_wroom_32e"
+chip = "esp32"
+module = "ESP32-WROOM-32E (N4/N8/H4/H8, without PSRAM)"
+numbering = "ESP32 GPIO numbers at module pads; carrier headers and attached circuits vary. Flash-only N4/N8/H4/H8 variants."
+default_flash_mb = 4
+verified_on = "2026-10-12"
+source_version = "ESP32-WROOM-32E & ESP32-WROOM-32UE datasheet v2.1"
+sources = ["https://documentation.espressif.com/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.html"]
+exposed = [0, 1, 2, 3, 4, 5, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 25, 26, 27, 32, 33, 34, 35, 36, 39]
+onboard = [6, 7, 8, 9, 10, 11]
+
+[runtime]
+reserved = [1, 3, 6, 7, 8, 9, 10, 11]
+reserved_reason = "GPIO1/3 are reserved for the resident serial controller; GPIO6-GPIO11 connect to module flash and are not led out."
+configurable_pulls = false
+
+[gpio.0]
+label = "IO0"
+notes = "Boot strap: low selects the ROM downloader. No module-level button is assumed."
+[gpio.1]
+label = "TXD0"
+[gpio.2]
+label = "IO2"
+notes = "Boot strap: keep low or floating for serial download. No module-level LED is assumed."
+[gpio.3]
+label = "RXD0"
+[gpio.5]
+label = "IO5"
+notes = "Boot strap: sampled for SDIO slave timing at reset."
+[gpio.12]
+label = "IO12 / MTDI"
+notes = "Boot strap: keep low at reset for the module's 3.3 V flash supply unless its eFuse configuration explicitly overrides this."
+[gpio.15]
+label = "IO15 / MTDO"
+notes = "Boot strap: controls ROM UART output and SDIO slave timing."
+[gpio.16]
+label = "IO16"
+notes = "Available on the flash-only variants covered here; R2 variants use this pin for PSRAM and need a different profile."
+[gpio.17]
+label = "IO17"
+[gpio.34]
+label = "IO34"
+notes = "Input only; no internal pull resistors."
+[gpio.35]
+label = "IO35"
+notes = "Input only; no internal pull resistors."
+[gpio.36]
+label = "SENSOR_VP"
+notes = "Input only; no internal pull resistors."
+[gpio.39]
+label = "SENSOR_VN"
+notes = "Input only; no internal pull resistors."

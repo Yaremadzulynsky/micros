@@ -1,0 +1,11 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+# Physical wiring. Service selection belongs in applications/.
+
+[board]
+profile = "esp32_d0wd_v3_no_controls"
+flash_mb = 4
+recovery_button = ""
+
+[board.gpio.dht_data]
+pin = 27
+direction = "input"

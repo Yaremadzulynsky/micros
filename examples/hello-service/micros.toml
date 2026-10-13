@@ -1,0 +1,24 @@
+[project]
+name = "hello-world"
+
+[services.hello]
+memory = { arena = "RAM" }
+source = "."
+name = "example.hello"
+version = "1.0.0"
+enabled = true
+
+[services.hello.config]
+[services.hello.config_schema]
+
+[services.hello.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.hello.capabilities]
+gpio = []
+timers = 1
+
+[services.hello.subscriptions]
+[services.hello.publications]

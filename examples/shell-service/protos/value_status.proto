@@ -1,0 +1,9 @@
+syntax = "proto3";
+package micros.example.shell;
+message ValueStatus {
+  uint64 monotonic_us = 1;
+  uint32 value = 2;
+  uint32 accepted = 3;
+  uint32 rejected = 4;
+  uint32 gaps = 5;
+}

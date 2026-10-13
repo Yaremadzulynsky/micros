@@ -1,0 +1,11 @@
+syntax = "proto3";
+package micros.button.v1;
+
+// Confirmed button state after debouncing, including the initial stable state.
+message ButtonState {
+  uint32 sequence = 1;
+  uint64 monotonic_us = 2;
+  bool pressed = 3;
+  // Nonzero monotonic time at publisher start; changes on every service restart.
+  uint64 publisher_started_us = 4;
+}

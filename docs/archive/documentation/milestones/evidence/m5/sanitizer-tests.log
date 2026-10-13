@@ -1,0 +1,33 @@
+Test project /Users/yaremadzulynsky/Software/Major_Projects/micros/build/host-sanitize
+      Start  1: board_simulation
+ 1/14 Test  #1: board_simulation .................   Passed    1.21 sec
+      Start  2: package_admission
+ 2/14 Test  #2: package_admission ................   Passed    0.12 sec
+      Start  3: local_management
+ 3/14 Test  #3: local_management .................   Passed    4.96 sec
+      Start  4: codec_boundaries
+ 4/14 Test  #4: codec_boundaries .................   Passed    0.07 sec
+      Start  5: ipc_boundaries
+ 5/14 Test  #5: ipc_boundaries ...................   Passed    0.86 sec
+      Start  6: protobuf_interoperability
+ 6/14 Test  #6: protobuf_interoperability ........   Passed    6.30 sec
+      Start  7: pipeline_demo
+ 7/14 Test  #7: pipeline_demo ....................   Passed    3.03 sec
+      Start  8: runtime_lifecycle
+ 8/14 Test  #8: runtime_lifecycle ................   Passed   10.97 sec
+      Start  9: runtime_HANG_INIT
+ 9/14 Test  #9: runtime_HANG_INIT ................   Passed    0.36 sec
+      Start 10: runtime_HANG_START
+10/14 Test #10: runtime_HANG_START ...............   Passed    0.37 sec
+      Start 11: runtime_HANG_STEP
+11/14 Test #11: runtime_HANG_STEP ................   Passed    0.42 sec
+      Start 12: runtime_HANG_STOP
+12/14 Test #12: runtime_HANG_STOP ................   Passed    0.37 sec
+      Start 13: runtime_HANG_CALLBACK
+13/14 Test #13: runtime_HANG_CALLBACK ............   Passed    0.41 sec
+      Start 14: host_loader
+14/14 Test #14: host_loader ......................   Passed    3.43 sec
+
+100% tests passed, 0 tests failed out of 14
+
+Total Test time (real) =  32.91 sec

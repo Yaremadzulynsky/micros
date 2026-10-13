@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+message Toggle {
+  uint64 emitted_us = 1;
+}

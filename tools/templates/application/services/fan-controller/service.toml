@@ -1,0 +1,28 @@
+[service]
+name = "example.fan-controller"
+version = "1.0.0"
+
+[service.build]
+api = "fan"
+lifecycle = "hooks"
+sources = ["src/service.c"]
+descriptor = "micros_descriptor"
+
+# Hysteresis: start at/above on, stop at/below off. off must be below on.
+[service.config_schema.on_millicelsius]
+type = "uint32"
+default = 28000
+min = 1000
+max = 60000
+
+[service.config_schema.off_millicelsius]
+type = "uint32"
+default = 24000
+min = 0
+max = 59000
+
+[service.subscriptions.climate_reading]
+interface = "../../protos/climate/interface.toml"
+
+[service.publications.fan_status]
+interface = "../../protos/fan/interface.toml"

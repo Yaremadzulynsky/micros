@@ -1,0 +1,14 @@
+#!/bin/sh
+# Resolve the repository without depending on the caller's working directory.
+MICROS_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+if [ "${1:-}" = setup ]; then
+    shift
+    exec sh "$MICROS_ROOT/tools/setup.sh" "$@"
+fi
+if [ ! -x "$MICROS_ROOT/build/python/bin/python" ]; then
+    echo 'micros: Python environment missing. Run ./micros setup first.' >&2
+    exit 1
+fi
+export PATH="$MICROS_ROOT/build/python/bin:$PATH"
+export PYTHONPATH="$MICROS_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+exec "$MICROS_ROOT/build/python/bin/python" -m micros_tooling.cli "$@"

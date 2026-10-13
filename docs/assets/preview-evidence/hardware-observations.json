@@ -1,0 +1,2574 @@
+[
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 0.0,
+    "request_seconds": 0.637,
+    "success": true,
+    "uptime_us": 1098574257672,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 80630,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 80597,
+        "callbacks": 7791,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 80617,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 80636,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 0.943,
+    "request_seconds": 1.435,
+    "success": true,
+    "uptime_us": 1098575978417,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 81480,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 81446,
+        "callbacks": 7875,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 81467,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 81489,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 2.679,
+    "request_seconds": 0.851,
+    "success": true,
+    "uptime_us": 1098577088773,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 82032,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 82001,
+        "callbacks": 7928,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 82020,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 82042,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 3.839,
+    "request_seconds": 0.967,
+    "success": true,
+    "uptime_us": 1098578398400,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 82682,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 82647,
+        "callbacks": 7991,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 82668,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 82691,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 5.111,
+    "request_seconds": 0.868,
+    "success": true,
+    "uptime_us": 1098579509699,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 83228,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 83193,
+        "callbacks": 8044,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 83215,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 83237,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 6.287,
+    "request_seconds": 0.91,
+    "success": true,
+    "uptime_us": 1098580818775,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 83877,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 83842,
+        "callbacks": 8108,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 83865,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 83888,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 7.5,
+    "request_seconds": 0.885,
+    "success": true,
+    "uptime_us": 1098581928706,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 84423,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 84388,
+        "callbacks": 8161,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 84412,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 84434,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 8.691,
+    "request_seconds": 1.156,
+    "success": true,
+    "uptime_us": 1098583439682,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 85170,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 85134,
+        "callbacks": 8234,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 85161,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 85181,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 10.155,
+    "request_seconds": 0.873,
+    "success": true,
+    "uptime_us": 1098584649783,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 85768,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 85733,
+        "callbacks": 8292,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 85759,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 85779,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 11.333,
+    "request_seconds": 0.715,
+    "success": true,
+    "uptime_us": 1098585659809,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 86263,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 86230,
+        "callbacks": 8341,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 86255,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 86275,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 12.353,
+    "request_seconds": 0.739,
+    "success": true,
+    "uptime_us": 1098586670747,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 86760,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 86728,
+        "callbacks": 8389,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 86753,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 86772,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 13.395,
+    "request_seconds": 2.118,
+    "success": true,
+    "uptime_us": 1098589090795,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 87958,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 87921,
+        "callbacks": 8506,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 87950,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 87968,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 15.818,
+    "request_seconds": 1.822,
+    "success": true,
+    "uptime_us": 1098591212342,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 89006,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 88970,
+        "callbacks": 8608,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 88999,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 89019,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 17.945,
+    "request_seconds": 0.984,
+    "success": true,
+    "uptime_us": 1098592527657,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 89654,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 89619,
+        "callbacks": 8671,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 89646,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 89665,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 19.234,
+    "request_seconds": 1.411,
+    "success": true,
+    "uptime_us": 1098594140631,
+    "activation": {
+      "sequence": 108,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 90350,
+        "callbacks": 0,
+        "instance": "4294967297"
+      },
+      {
+        "index": 1,
+        "state": "Running",
+        "result": 0,
+        "steps": 90312,
+        "callbacks": 8741,
+        "instance": "4294967298"
+      },
+      {
+        "index": 2,
+        "state": "Running",
+        "result": 0,
+        "steps": 90340,
+        "callbacks": 0,
+        "instance": "4294967299"
+      },
+      {
+        "index": 3,
+        "state": "Running",
+        "result": 0,
+        "steps": 90361,
+        "callbacks": 0,
+        "instance": "4294967300"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 20.95,
+    "request_seconds": 0.929,
+    "success": true,
+    "uptime_us": 1098595497121,
+    "activation": {
+      "sequence": 110,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 0,
+      "attempts": 1,
+      "pending": 1,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 154,
+        "callbacks": 0,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 22.185,
+    "request_seconds": 0.713,
+    "success": true,
+    "uptime_us": 1098596515144,
+    "activation": {
+      "sequence": 110,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 0,
+      "attempts": 1,
+      "pending": 1,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 661,
+        "callbacks": 1,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 23.203,
+    "request_seconds": 1.101,
+    "success": true,
+    "uptime_us": 1098597940214,
+    "activation": {
+      "sequence": 110,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 0,
+      "attempts": 1,
+      "pending": 1,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 1372,
+        "callbacks": 2,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 24.609,
+    "request_seconds": 0.746,
+    "success": true,
+    "uptime_us": 1098598958160,
+    "activation": {
+      "sequence": 110,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 0,
+      "attempts": 1,
+      "pending": 1,
+      "good_sha256": "e0042fdc33b3483b9350cc08cc6ee40b64c7e8bd8bbcf7ba97d7096c8b1d39ec"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 1880,
+        "callbacks": 3,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 25.66,
+    "request_seconds": 1.763,
+    "success": true,
+    "uptime_us": 1098601036923,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 2889,
+        "callbacks": 5,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 27.728,
+    "request_seconds": 0.902,
+    "success": true,
+    "uptime_us": 1098602256792,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 3496,
+        "callbacks": 7,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 28.935,
+    "request_seconds": 2.321,
+    "success": true,
+    "uptime_us": 1098604864770,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 4799,
+        "callbacks": 9,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 31.561,
+    "request_seconds": 0.984,
+    "success": true,
+    "uptime_us": 1098606171796,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 5451,
+        "callbacks": 10,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 32.85,
+    "request_seconds": 1.344,
+    "success": true,
+    "uptime_us": 1098607687868,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 6209,
+        "callbacks": 12,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 34.499,
+    "request_seconds": 1.248,
+    "success": true,
+    "uptime_us": 1098609309894,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 7016,
+        "callbacks": 14,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v1",
+    "elapsed_s": 36.052,
+    "request_seconds": 0.792,
+    "success": true,
+    "uptime_us": 1098610426894,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 7576,
+        "callbacks": 15,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 37.149,
+    "request_seconds": 1.213,
+    "success": true,
+    "uptime_us": 1098611947904,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 8337,
+        "callbacks": 16,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 38.667,
+    "request_seconds": 0.65,
+    "success": true,
+    "uptime_us": 1098612964842,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 8845,
+        "callbacks": 17,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 39.623,
+    "request_seconds": 0.933,
+    "success": true,
+    "uptime_us": 1098614172888,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 9447,
+        "callbacks": 18,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 40.861,
+    "request_seconds": 1.655,
+    "success": true,
+    "uptime_us": 1098616080914,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 10400,
+        "callbacks": 20,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 42.82,
+    "request_seconds": 1.254,
+    "success": true,
+    "uptime_us": 1098617588874,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 11156,
+        "callbacks": 22,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 44.379,
+    "request_seconds": 2.435,
+    "success": true,
+    "uptime_us": 1098620196876,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 12461,
+        "callbacks": 24,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 47.119,
+    "request_seconds": 1.722,
+    "success": true,
+    "uptime_us": 1098622204808,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 13467,
+        "callbacks": 27,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 49.145,
+    "request_seconds": 2.27,
+    "success": true,
+    "uptime_us": 1098624812852,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 14771,
+        "callbacks": 29,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 51.719,
+    "request_seconds": 1.859,
+    "success": true,
+    "uptime_us": 1098627222868,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 15976,
+        "callbacks": 32,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 53.882,
+    "request_seconds": 1.023,
+    "success": true,
+    "uptime_us": 1098628529890,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 16628,
+        "callbacks": 33,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 55.21,
+    "request_seconds": 1.522,
+    "success": true,
+    "uptime_us": 1098630337813,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 17531,
+        "callbacks": 35,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 57.036,
+    "request_seconds": 0.974,
+    "success": true,
+    "uptime_us": 1098631644696,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 18184,
+        "callbacks": 36,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 58.318,
+    "request_seconds": 1.185,
+    "success": true,
+    "uptime_us": 1098633152896,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 18940,
+        "callbacks": 37,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 59.808,
+    "request_seconds": 0.903,
+    "success": true,
+    "uptime_us": 1098634360834,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 19545,
+        "callbacks": 39,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 61.017,
+    "request_seconds": 1.587,
+    "success": true,
+    "uptime_us": 1098636168844,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 20449,
+        "callbacks": 40,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 62.909,
+    "request_seconds": 1.815,
+    "success": true,
+    "uptime_us": 1098638377683,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 21554,
+        "callbacks": 43,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 65.029,
+    "request_seconds": 1.293,
+    "success": true,
+    "uptime_us": 1098639692657,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 22212,
+        "callbacks": 44,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 66.626,
+    "request_seconds": 0.86,
+    "success": true,
+    "uptime_us": 1098641107777,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 22919,
+        "callbacks": 45,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 67.788,
+    "request_seconds": 0.921,
+    "success": true,
+    "uptime_us": 1098642327394,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 23528,
+        "callbacks": 47,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 69.015,
+    "request_seconds": 0.928,
+    "success": true,
+    "uptime_us": 1098643565911,
+    "activation": {
+      "sequence": 111,
+      "good": 0,
+      "previous": 1,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 24037,
+        "callbacks": 48,
+        "instance": "4294967297"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 70.248,
+    "request_seconds": 0.69,
+    "success": true,
+    "uptime_us": 1098644574284,
+    "activation": {
+      "sequence": 112,
+      "good": 0,
+      "previous": 4294967295,
+      "candidate": 1,
+      "attempts": 1,
+      "pending": 1,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 255,
+        "callbacks": 0,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 71.244,
+    "request_seconds": 1.021,
+    "success": true,
+    "uptime_us": 1098645891153,
+    "activation": {
+      "sequence": 112,
+      "good": 0,
+      "previous": 4294967295,
+      "candidate": 1,
+      "attempts": 1,
+      "pending": 1,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 913,
+        "callbacks": 1,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 72.569,
+    "request_seconds": 1.537,
+    "success": true,
+    "uptime_us": 1098647718264,
+    "activation": {
+      "sequence": 112,
+      "good": 0,
+      "previous": 4294967295,
+      "candidate": 1,
+      "attempts": 1,
+      "pending": 1,
+      "good_sha256": "fb70bf73838104338a3c18a74aaa4f86326f95a3c133e7a1dd17ca33d1c8fc86"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 1827,
+        "callbacks": 3,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 74.411,
+    "request_seconds": 1.434,
+    "success": true,
+    "uptime_us": 1098649405852,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 2636,
+        "callbacks": 5,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 76.15,
+    "request_seconds": 0.929,
+    "success": true,
+    "uptime_us": 1098650717805,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 3296,
+        "callbacks": 6,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 77.381,
+    "request_seconds": 1.866,
+    "success": true,
+    "uptime_us": 1098652624919,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 4248,
+        "callbacks": 8,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 79.552,
+    "request_seconds": 1.277,
+    "success": true,
+    "uptime_us": 1098654432971,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 5153,
+        "callbacks": 10,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 81.134,
+    "request_seconds": 1.167,
+    "success": true,
+    "uptime_us": 1098655948832,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 5910,
+        "callbacks": 11,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 82.603,
+    "request_seconds": 1.382,
+    "success": true,
+    "uptime_us": 1098657566674,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 6716,
+        "callbacks": 13,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "deploy-v2",
+    "elapsed_s": 84.29,
+    "request_seconds": 1.29,
+    "success": true,
+    "uptime_us": 1098659188947,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 7533,
+        "callbacks": 15,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 85.889,
+    "request_seconds": 0.906,
+    "success": true,
+    "uptime_us": 1098660406869,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 8146,
+        "callbacks": 16,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 87.099,
+    "request_seconds": 0.672,
+    "success": true,
+    "uptime_us": 1098661421851,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 8652,
+        "callbacks": 17,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 88.076,
+    "request_seconds": 0.905,
+    "success": true,
+    "uptime_us": 1098662630107,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 9256,
+        "callbacks": 18,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 89.282,
+    "request_seconds": 0.914,
+    "success": true,
+    "uptime_us": 1098663836725,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 9858,
+        "callbacks": 19,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 90.498,
+    "request_seconds": 1.129,
+    "success": true,
+    "uptime_us": 1098665244881,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 10562,
+        "callbacks": 21,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 91.927,
+    "request_seconds": 1.008,
+    "success": true,
+    "uptime_us": 1098666553691,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 11216,
+        "callbacks": 22,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 93.236,
+    "request_seconds": 0.679,
+    "success": true,
+    "uptime_us": 1098667560877,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 11719,
+        "callbacks": 23,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 94.218,
+    "request_seconds": 0.701,
+    "success": true,
+    "uptime_us": 1098668468901,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 12172,
+        "callbacks": 24,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 95.224,
+    "request_seconds": 0.889,
+    "success": true,
+    "uptime_us": 1098669676884,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 12777,
+        "callbacks": 25,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 96.422,
+    "request_seconds": 0.638,
+    "success": true,
+    "uptime_us": 1098670686869,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 13282,
+        "callbacks": 26,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 97.361,
+    "request_seconds": 0.703,
+    "success": true,
+    "uptime_us": 1098671694893,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 13786,
+        "callbacks": 27,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 98.368,
+    "request_seconds": 0.753,
+    "success": true,
+    "uptime_us": 1098672702889,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 14289,
+        "callbacks": 28,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 99.427,
+    "request_seconds": 2.423,
+    "success": true,
+    "uptime_us": 1098673711911,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 14793,
+        "callbacks": 29,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 102.151,
+    "request_seconds": 0.648,
+    "success": true,
+    "uptime_us": 1098676427881,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 16150,
+        "callbacks": 32,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 103.103,
+    "request_seconds": 2.313,
+    "success": true,
+    "uptime_us": 1098679042831,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 17454,
+        "callbacks": 34,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 105.722,
+    "request_seconds": 1.384,
+    "success": true,
+    "uptime_us": 1098680755694,
+    "activation": {
+      "sequence": 113,
+      "good": 1,
+      "previous": 0,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 18209,
+        "callbacks": 36,
+        "instance": "8589934593"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 107.411,
+    "request_seconds": 0.658,
+    "success": true,
+    "uptime_us": 1098681704955,
+    "activation": {
+      "sequence": 115,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 51,
+        "callbacks": 0,
+        "instance": "17179869185"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 108.374,
+    "request_seconds": 0.715,
+    "success": true,
+    "uptime_us": 1098682625805,
+    "activation": {
+      "sequence": 115,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 513,
+        "callbacks": 1,
+        "instance": "17179869185"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 109.397,
+    "request_seconds": 0.718,
+    "success": true,
+    "uptime_us": 1098683739915,
+    "activation": {
+      "sequence": 115,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 1070,
+        "callbacks": 2,
+        "instance": "17179869185"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 110.421,
+    "request_seconds": 1.02,
+    "success": true,
+    "uptime_us": 1098685046807,
+    "activation": {
+      "sequence": 115,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 1723,
+        "callbacks": 3,
+        "instance": "17179869185"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 111.747,
+    "request_seconds": 0.969,
+    "success": true,
+    "uptime_us": 1098686252853,
+    "activation": {
+      "sequence": 115,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 2327,
+        "callbacks": 4,
+        "instance": "17179869185"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 113.021,
+    "request_seconds": 1.317,
+    "success": true,
+    "uptime_us": 1098687876845,
+    "activation": {
+      "sequence": 115,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 3141,
+        "callbacks": 6,
+        "instance": "17179869185"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  },
+  {
+    "phase": "failed-start",
+    "elapsed_s": 114.647,
+    "request_seconds": 1.322,
+    "success": true,
+    "uptime_us": 1098689499773,
+    "activation": {
+      "sequence": 115,
+      "good": 1,
+      "previous": 4294967295,
+      "candidate": 4294967295,
+      "attempts": 0,
+      "pending": 0,
+      "good_sha256": "a6cb45bf8c3a38fed41dae0092fedc0e060393aced8c59f04565809642183112"
+    },
+    "services": [
+      {
+        "index": 0,
+        "state": "Running",
+        "result": 0,
+        "steps": 3955,
+        "callbacks": 7,
+        "instance": "17179869185"
+      }
+    ],
+    "connected": true,
+    "disconnects": 3313
+  }
+]

@@ -1,0 +1,30 @@
+# Enrollment supplies the detected identity. All input and output are simulated.
+[project]
+name = "Simulated climate"
+
+[board]
+profile = "esp32_d0wd_v3_no_controls"
+flash_mb = 4
+recovery_button = ""
+
+[services.climate_sensor]
+source = "../services/climate-sensor"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 4096 }
+config = { interval_ms = 1000 }
+
+[services.fan_controller]
+source = "../services/fan-controller"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 4096 }
+config = { on_millicelsius = 28000, off_millicelsius = 24000 }
+
+[services.status_display]
+source = "../services/status-display"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 4096 }
+config = { stale_after_ms = 5000 }
+
+[channels.climate_reading]
+
+[channels.fan_status]

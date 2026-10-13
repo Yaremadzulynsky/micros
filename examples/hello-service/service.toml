@@ -1,0 +1,14 @@
+# Reusable service definition. Device settings and channel bindings belong in the consuming application repository.
+
+[service]
+timers = ["greeting"]
+name = "example.hello"
+version = "1.0.1"
+
+[service.config]
+
+[service.build]
+api = "hello"
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"

@@ -1,0 +1,126 @@
+# Offline fixture with synthetic device IDs; never an operator deployment.
+[unit]
+device_id = "aabbccdd0002"
+
+[project]
+disabled_sdkconfig = ["CONFIG_PM_ENABLE"]
+name = "hello-world"
+
+[services.hello]
+memory = { arena = "RAM", stack_bytes = 4096 }
+source = "../../../../examples/hello-service"
+name = "example.hello"
+version = "1.0.1"
+enabled = true
+
+[services.hello.config]
+[services.hello.config_schema]
+
+[services.hello.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+
+[services.hello.capabilities]
+gpio = []
+timers = 1
+
+[services.hello.subscriptions]
+[services.hello.publications]
+
+# USB probe: ESP32-D0WD-V3 revision 3.1, 4 MiB flash, 40 MHz crystal.
+# User reports no PSRAM, onboard light or user button. Runtime uses internal RAM.
+[board]
+profile = "esp32_d0wd_v3_no_controls"
+flash_mb = 4
+# No boot recovery input. USB serial management and ROM flashing remain available.
+recovery_button = ""
+
+[board.gpio]
+
+[management.server]
+url = ""
+
+[project.required_sdkconfig]
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ = "160"
+
+# DHT11 test: DATA on GPIO27, power on 3V3, common GND.
+[board.gpio.dht_data]
+pin = 27
+direction = "input"
+
+[services.dht]
+memory = { arena = "RAM", stack_bytes = 4096 }
+source = "../../../../examples/services/dht"
+name = "board.dht"
+version = "1.2.0"
+enabled = true
+
+[services.dht.config]
+[services.dht.config_schema]
+[services.dht.build]
+sources = ["src/service.c"]
+defines = []
+descriptor = "micros_descriptor"
+[services.dht.capabilities]
+gpio = ["dht_data"]
+timers = 0
+[services.dht.subscriptions]
+[services.dht.publications]
+
+[services.dht.publications.environment]
+channel = "environment"
+
+[channels.environment]
+accepts_minor = [0, 0]
+depth = 1
+interface = "micros.environment.reading"
+key = 2
+major = 1
+max_payload = 64
+minor = 0
+name = "environment.reading"
+policy = "latest"
+schema = "../../../../src/sdk/protos/environment/v1/environment_reading.proto"
+
+# Location-transparent coordination controller; existing services retained.
+[services.controller]
+source = "../../../../examples/services/coordination-controller"
+name = "coordination.controller"
+version = "1.2.0"
+enabled = true
+memory = { arena = "RAM", stack_bytes = 2048 }
+[services.controller.build]
+sources = ["src/service.c"]
+descriptor = "micros_descriptor"
+[services.controller.capabilities]
+gpio = []
+timers = 1
+[services.controller.publications.target]
+channel = "target"
+kind = "state"
+[services.controller.publications.operation]
+channel = "operation"
+kind = "action"
+[channels.target]
+key = 3
+name = "coord.target"
+interface = "micros.coordination.target"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+policy = "latest"
+depth = 1
+max_payload = 16
+schema = "../../../../src/sdk/protos/coordination/v1/target.proto"
+[channels.operation]
+key = 1
+name = "ir.actions"
+interface = "micros.coordination.ir.action"
+major = 1
+minor = 0
+accepts_minor = [0, 0]
+policy = "latest"
+depth = 1
+max_payload = 32
+schema = "../../../../src/sdk/protos/coordination/v1/ir_action.proto"

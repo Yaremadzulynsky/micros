@@ -1,0 +1,190 @@
+-- The C compiler identification is AppleClang 21.0.0.21000101
+-- The CXX compiler identification is AppleClang 21.0.0.21000101
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Found Python3: /Users/yaremadzulynsky/Software/Major_Projects/micros/build/python/bin/python (found suitable version "3.10.9", minimum required is "3.10") found components: Interpreter
+-- Configuring done (1.5s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/yaremadzulynsky/Software/Major_Projects/micros/build/fresh-v1/build/host
+[1/127] Building C object CMakeFiles/micros_image.dir/kernel/src/loader/elf.c.o
+[2/127] Building C object CMakeFiles/hello_v2.dir/examples/hello-service/src/service.c.o
+[3/127] Building C object CMakeFiles/micros_image.dir/kernel/src/loader/image.c.o
+[4/127] Building C object CMakeFiles/hello_v1.dir/examples/hello-service/src/service.c.o
+[5/127] Building C object CMakeFiles/hung_service.dir/tests/integration/hung_service.c.o
+[6/127] Building C object CMakeFiles/micros_runtime.dir/kernel/src/ipc/channel.c.o
+[7/127] Building C object CMakeFiles/pipeline_publisher.dir/examples/sensor-pipeline/src/service.c.o
+[8/127] Building C object CMakeFiles/pipeline_publisher.dir/sdk/c/src/sample.c.o
+[9/127] Building C object CMakeFiles/pipeline_fast.dir/examples/sensor-pipeline/src/service.c.o
+[10/127] Building C object CMakeFiles/pipeline_fast.dir/sdk/c/src/sample.c.o
+[11/127] Building C object CMakeFiles/micros_runtime.dir/platforms/host/src/platform.c.o
+[12/127] Building C object CMakeFiles/pipeline_slow.dir/examples/sensor-pipeline/src/service.c.o
+[13/127] Building C object CMakeFiles/micros_runtime.dir/kernel/src/runtime/runtime.c.o
+[14/127] Building C object CMakeFiles/runtime_service.dir/examples/runtime-service/src/service.c.o
+[15/127] Building C object CMakeFiles/board_1.dir/examples/sensor-pipeline/src/service.c.o
+[16/127] Building C object CMakeFiles/board_0.dir/examples/sensor-pipeline/src/service.c.o
+[17/127] Building C object CMakeFiles/board_3.dir/examples/sensor-pipeline/src/service.c.o
+[18/127] Building C object CMakeFiles/pipeline_slow.dir/sdk/c/src/sample.c.o
+[19/127] Building C object CMakeFiles/board_1.dir/sdk/c/src/sample.c.o
+[20/127] Building C object CMakeFiles/board_3.dir/sdk/c/src/sample.c.o
+[21/127] Building C object CMakeFiles/board_0.dir/sdk/c/src/sample.c.o
+[22/127] Building C object CMakeFiles/fixture_NORMAL.dir/tests/runtime/fixture.c.o
+[23/127] Linking C static library libmicros_image.a
+[24/127] Building C object CMakeFiles/fixture_FAIL_INIT.dir/tests/runtime/fixture.c.o
+[25/127] Building C object CMakeFiles/fixture_NORMAL_PEER.dir/tests/runtime/fixture.c.o
+[26/127] Building C object CMakeFiles/fixture_HANG_STEP.dir/tests/runtime/fixture.c.o
+[27/127] Building C object CMakeFiles/fixture_FAIL_STEP.dir/tests/runtime/fixture.c.o
+[28/127] Building C object CMakeFiles/fixture_HANG_INIT.dir/tests/runtime/fixture.c.o
+[29/127] Building C object CMakeFiles/fixture_FAIL_START.dir/tests/runtime/fixture.c.o
+[30/127] Building C object CMakeFiles/fixture_HANG_START.dir/tests/runtime/fixture.c.o
+[31/127] Building C object CMakeFiles/fixture_HANG_STOP.dir/tests/runtime/fixture.c.o
+[32/127] Building C object CMakeFiles/fixture_FAIL_STOP.dir/tests/runtime/fixture.c.o
+[33/127] Building C object CMakeFiles/fixture_HANG_CALLBACK.dir/tests/runtime/fixture.c.o
+[34/127] Building C object CMakeFiles/fixture_SLOW_INIT.dir/tests/runtime/fixture.c.o
+[35/127] Building C object CMakeFiles/fixture_SLOW_START.dir/tests/runtime/fixture.c.o
+[36/127] Building C object CMakeFiles/fixture_CALLBACK_ERROR.dir/tests/runtime/fixture.c.o
+[37/127] Building C object CMakeFiles/fixture_SLOW_CALLBACK.dir/tests/runtime/fixture.c.o
+[38/127] Building CXX object CMakeFiles/cpp_service.dir/examples/cpp-service/src/service.cpp.o
+[39/127] Building C object CMakeFiles/fixture_HANDLE_CHECKS.dir/tests/runtime/fixture.c.o
+[40/127] Linking C shared library libhello_v2.dylib
+[41/127] Linking C shared library libhung_service.dylib
+[42/127] Building C object CMakeFiles/micros-host.dir/platforms/host/src/main.c.o
+[43/127] Linking C shared library libhello_v1.dylib
+[44/127] Linking C static library libmicros_runtime.a
+[45/127] Building C object CMakeFiles/micros-control.dir/platforms/host/src/control_main.c.o
+[46/127] Building C object CMakeFiles/micros-runtime.dir/platforms/host/src/runtime_main.c.o
+[47/127] Building C object CMakeFiles/micros-pipeline.dir/platforms/host/src/pipeline_main.c.o
+[48/127] Linking C shared library libpipeline_publisher.dylib
+[49/127] Linking C shared library libpipeline_slow.dylib
+[50/127] Linking C shared library libboard_0.dylib
+[51/127] Linking C shared library libpipeline_fast.dylib
+[52/127] Linking C shared library libboard_1.dylib
+[53/127] Building C object CMakeFiles/elf-tests.dir/kernel/src/loader/elf.c.o
+[54/127] Linking C shared library libboard_3.dylib
+[55/127] Linking CXX shared library libcpp_service.dylib
+[56/127] Building C object CMakeFiles/elf-tests.dir/tests/loader/elf_test.c.o
+[57/127] Linking C shared library libruntime_service.dylib
+[58/127] Linking C shared library libfixture_FAIL_START.dylib
+[59/127] Linking C shared library libfixture_FAIL_INIT.dylib
+[60/127] Linking C shared library libfixture_HANG_START.dylib
+[61/127] Linking C shared library libfixture_HANG_INIT.dylib
+[62/127] Linking C shared library libfixture_NORMAL.dylib
+[63/127] Linking C shared library libfixture_FAIL_STEP.dylib
+[64/127] Linking C shared library libfixture_NORMAL_PEER.dylib
+[65/127] Linking C shared library libfixture_HANG_STOP.dylib
+[66/127] Linking C shared library libfixture_SLOW_INIT.dylib
+[67/127] Linking C shared library libfixture_HANG_CALLBACK.dylib
+[68/127] Building C object CMakeFiles/runtime-tests.dir/kernel/src/ipc/channel.c.o
+[69/127] Linking C shared library libfixture_SLOW_CALLBACK.dylib
+[70/127] Linking C shared library libfixture_CALLBACK_ERROR.dylib
+[71/127] Linking C shared library libfixture_FAIL_STOP.dylib
+[72/127] Building C object CMakeFiles/ipc-tests.dir/kernel/src/ipc/channel.c.o
+[73/127] Linking C shared library libfixture_HANDLE_CHECKS.dylib
+[74/127] Linking C shared library libfixture_HANG_STEP.dylib
+[75/127] Linking C shared library libfixture_SLOW_START.dylib
+[76/127] Building C object CMakeFiles/ipc-tests.dir/tests/ipc/channel_test.c.o
+[77/127] Building C object CMakeFiles/codec-tests.dir/tests/ipc/codec_test.c.o
+[78/127] Building C object CMakeFiles/management-auth-tests.dir/tests/deployment/management_auth_test.c.o
+[79/127] Building C object CMakeFiles/management-auth-tests.dir/services/management/src/auth.c.o
+[80/127] Building C object CMakeFiles/runtime-tests.dir/platforms/host/src/platform.c.o
+[81/127] Building C object CMakeFiles/codec-tests.dir/sdk/c/src/sample.c.o
+[82/127] Building C object CMakeFiles/activation-tests.dir/tests/deployment/activation_test.c.o
+[83/127] Building C object CMakeFiles/activation-tests.dir/kernel/src/deployment/activation.c.o
+[84/127] Building C object CMakeFiles/runtime-tests.dir/tests/runtime/runtime_test.c.o
+[85/127] Building C object CMakeFiles/codec-tool.dir/sdk/c/src/sample.c.o
+[86/127] Building C object CMakeFiles/ipc-tests.dir/platforms/host/src/platform.c.o
+[87/127] Building C object CMakeFiles/micros_abi_c_check.dir/tools/checks/abi_compile.c.o
+[88/127] Building C object CMakeFiles/codec-tool.dir/tests/ipc/codec_tool.c.o
+[89/127] Building CXX object CMakeFiles/micros_abi_cpp_check.dir/tools/checks/abi_compile.cpp.o
+[90/127] Linking C executable micros-host
+[91/127] Linking C executable micros-runtime
+[92/127] Linking C executable micros-pipeline
+[93/127] Linking C executable elf-tests
+[94/127] Linking C executable micros-control
+[95/127] Generating hello_v1.mimg
+[96/127] Linking C executable ipc-tests
+[97/127] Linking C executable activation-tests
+[98/127] Linking C executable codec-tests
+[99/127] Linking C executable management-auth-tests
+[100/127] Linking C executable runtime-tests
+[101/127] Linking C executable codec-tool
+[102/127] Generating pipeline_fast.mimg
+[103/127] Generating hung.mimg
+[104/127] Generating board_1.mimg
+[105/127] Generating pipeline_publisher.mimg
+[106/127] Generating board_0.mimg
+[107/127] Generating hello_v2.mimg
+[108/127] Generating fixture_NORMAL.mimg
+[109/127] Generating cpp.mimg
+[110/127] Generating runtime.mimg
+[111/127] Generating fixture_NORMAL_PEER.mimg
+[112/127] Generating board_3.mimg
+[113/127] Generating fixture_FAIL_START.mimg
+[114/127] Generating fixture_FAIL_STOP.mimg
+[115/127] Generating fixture_FAIL_STEP.mimg
+[116/127] Generating pipeline_slow.mimg
+[117/127] Generating fixture_HANG_INIT.mimg
+[118/127] Generating fixture_HANG_STEP.mimg
+[119/127] Generating fixture_FAIL_INIT.mimg
+[120/127] Generating fixture_HANG_START.mimg
+[121/127] Generating fixture_HANG_STOP.mimg
+[122/127] Generating fixture_SLOW_INIT.mimg
+[123/127] Generating fixture_HANG_CALLBACK.mimg
+[124/127] Generating fixture_SLOW_START.mimg
+[125/127] Generating fixture_SLOW_CALLBACK.mimg
+[126/127] Generating fixture_HANDLE_CHECKS.mimg
+[127/127] Generating fixture_CALLBACK_ERROR.mimg
+Test project /Users/yaremadzulynsky/Software/Major_Projects/micros/build/fresh-v1/build/host
+      Start  1: elf_profile
+ 1/19 Test  #1: elf_profile ......................   Passed    0.41 sec
+      Start  2: cpp_lifecycle
+ 2/19 Test  #2: cpp_lifecycle ....................   Passed    0.77 sec
+      Start  3: management_authentication
+ 3/19 Test  #3: management_authentication ........   Passed    0.23 sec
+      Start  4: activation_host
+ 4/19 Test  #4: activation_host ..................   Passed    8.29 sec
+      Start  5: activation_journal
+ 5/19 Test  #5: activation_journal ...............   Passed    0.26 sec
+      Start  6: board_simulation
+ 6/19 Test  #6: board_simulation .................   Passed    0.94 sec
+      Start  7: package_admission
+ 7/19 Test  #7: package_admission ................   Passed    0.11 sec
+      Start  8: local_management
+ 8/19 Test  #8: local_management .................   Passed    5.91 sec
+      Start  9: codec_boundaries
+ 9/19 Test  #9: codec_boundaries .................   Passed    0.24 sec
+      Start 10: ipc_boundaries
+10/19 Test #10: ipc_boundaries ...................   Passed    0.80 sec
+      Start 11: protobuf_interoperability
+11/19 Test #11: protobuf_interoperability ........   Passed    0.88 sec
+      Start 12: pipeline_demo
+12/19 Test #12: pipeline_demo ....................   Passed    3.00 sec
+      Start 13: runtime_lifecycle
+13/19 Test #13: runtime_lifecycle ................   Passed   11.22 sec
+      Start 14: runtime_HANG_INIT
+14/19 Test #14: runtime_HANG_INIT ................   Passed    0.28 sec
+      Start 15: runtime_HANG_START
+15/19 Test #15: runtime_HANG_START ...............   Passed    0.26 sec
+      Start 16: runtime_HANG_STEP
+16/19 Test #16: runtime_HANG_STEP ................   Passed    0.27 sec
+      Start 17: runtime_HANG_STOP
+17/19 Test #17: runtime_HANG_STOP ................   Passed    0.38 sec
+      Start 18: runtime_HANG_CALLBACK
+18/19 Test #18: runtime_HANG_CALLBACK ............   Passed    0.26 sec
+      Start 19: host_loader
+19/19 Test #19: host_loader ......................   Passed    2.39 sec
+
+100% tests passed, 0 tests failed out of 19
+
+Total Test time (real) =  36.92 sec
+V1 install/run/loss/stop/restart/C++ update/rollback/reboot passed: /Users/yaremadzulynsky/Software/Major_Projects/micros/build/fresh-v1/build/demo/run-b_mng1iv

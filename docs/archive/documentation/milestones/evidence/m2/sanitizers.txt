@@ -1,0 +1,19 @@
+Test project /Users/yaremadzulynsky/Software/Major_Projects/micros/build/host-sanitize
+    Start 1: runtime_lifecycle
+1/7 Test #1: runtime_lifecycle ................   Passed   10.96 sec
+    Start 2: runtime_HANG_INIT
+2/7 Test #2: runtime_HANG_INIT ................   Passed    0.35 sec
+    Start 3: runtime_HANG_START
+3/7 Test #3: runtime_HANG_START ...............   Passed    0.39 sec
+    Start 4: runtime_HANG_STEP
+4/7 Test #4: runtime_HANG_STEP ................   Passed    0.43 sec
+    Start 5: runtime_HANG_STOP
+5/7 Test #5: runtime_HANG_STOP ................   Passed    0.34 sec
+    Start 6: runtime_HANG_CALLBACK
+6/7 Test #6: runtime_HANG_CALLBACK ............   Passed    0.34 sec
+    Start 7: host_loader
+7/7 Test #7: host_loader ......................   Passed    4.09 sec
+
+100% tests passed, 0 tests failed out of 7
+
+Total Test time (real) =  16.89 sec

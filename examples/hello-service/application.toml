@@ -1,0 +1,7 @@
+# Composition input; physical identity and wiring come from the consuming deployment.
+[project]
+name = "Hello Micros"
+
+[services.hello]
+manifest = "service.toml"
+memory = { arena = "RAM", stack_bytes = 4096 }

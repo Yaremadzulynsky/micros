@@ -1,0 +1,7 @@
+# Generic example wiring; no enrolled device identity.
+[board]
+profile = "arduino_mkr_wifi_1010"
+
+[board.gpio.led]
+pin = 6
+direction = "output"

@@ -1,0 +1,6 @@
+[interface]
+interface = "tutorial.toggle"
+schema = "toggle.proto"
+
+[delivery]
+policy = "stream"

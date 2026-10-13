@@ -1,0 +1,16 @@
+# Merge into units/<hardware-id>.toml; retain [unit] and [board].
+# Replace the starter services and channels with these sections.
+[services.clock]
+source = "../services/clock"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 1536 }
+config = { interval_ms = 500 }
+
+[services.led]
+source = "../services/led"
+contract = "service.toml"
+memory = { arena = "RAM", stack_bytes = 1536 }
+pins = { led = 13 } # Placeholder: replace with your LED pin.
+
+[channels.toggle]
+depth = 4
